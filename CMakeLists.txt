@@ -1,22 +1,29 @@
 project(GLplayground)
 cmake_minimum_required(VERSION 3.17)
 
-# Point to our own cmake modules
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
-
-# Find SDL2
+# Finding dependencies
 find_package(SDL2 REQUIRED)
-
-# Find OpenGL
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 
 # Add global definitions
 add_definitions("-Wall")
-include_directories(${SDL2_INCLUDE_DIR})
 
-add_executable(${CMAKE_PROJECT_NAME} main.cpp graphene.cpp)
-install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
-target_link_libraries(${CMAKE_PROJECT_NAME} ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+# Add compiler flags
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+    add_compile_options(-Wno-write-strings)
+endif()
+
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    add_compile_options(-g -ggdb)
+endif()
+
+add_executable(${CMAKE_PROJECT_NAME} main.cpp graphene.cpp graphene_shader.cpp graphene_program.cpp)
+
+target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
+target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+
+install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
