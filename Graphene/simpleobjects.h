@@ -13,7 +13,7 @@ public:
 class Graphene::SimpleObjects::Square : public Graphene::Model
 {
 public:
-    Square() = default;
+    Square();
     virtual ~Square() = default;
 };
 

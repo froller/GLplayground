@@ -122,13 +122,19 @@ public:
 class Graphene::Camera : public Graphene::Object
 {
 public:
+    class Free;
+    class Targeted;
+public:
     float m_AspectRatio;
     float m_FOV;
-    Graphene::Object m_Target;
 public:
     Camera() = default;
     virtual ~Camera() = default;
+    virtual const fmat4 view() const = 0;
+    virtual const fmat4 projection() const;
 };
+
+#include "camera.h"
 
 class Graphene::SimpleObjects
 {
