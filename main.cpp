@@ -1,4 +1,4 @@
-#include "graphene.h"
+#include "Graphene/graphene.h"
 #include <SDL2/SDL.h>
 
 #define WINDOW_WIDTH 800

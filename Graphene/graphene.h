@@ -9,23 +9,20 @@
 #include <vector>
 #include <filesystem>
 #include <map>
+#include <array>
 
-enum ShaderType {
-    Geometry,
-    Vertex,
-    TesselationControl,
-    TesselationEvaluation,
-    Fragment,
-    Compute,
-    Invalid
-};
+#include "graphene_types.h"
 
 class Graphene
 {
 public:
     class Shader;
     class Program;
-
+    class Object;
+    class Model;
+    class Camera;
+    class SimpleObjects;
+    
 protected:
     Program *m_Program;
     
@@ -93,5 +90,55 @@ public:
     virtual GLuint uniforms() const;
     virtual const char* log() const;
 };
+
+class Graphene::Object
+{
+public:
+    fvec3 m_Position;
+    fvec3 m_Rotation;
+    fvec3 m_Scale;
+    
+public:
+    Object() = default;
+    virtual ~Object() = default;
+};
+
+class Graphene::Model : public Graphene::Object
+{
+public:
+    std::vector<fvec3> m_Vertices;
+    std::vector<fvec3> m_Attributes;
+    std::vector<std::array<unsigned int, 3>> m_Primitives;
+public:
+    Model() = default;
+    virtual ~Model() = default;
+    //virtual load(cont std::filesystem::path &path);
+    virtual void addPrimitive(const fvec3 a, const fvec3 b, const fvec3 c);
+    virtual void addPrimitive(const std::array<fvec3, 3> vertices);
+    virtual const fvec3 *VBO() const;
+    virtual const unsigned int *EBO() const;
+};
+
+class Graphene::Camera : public Graphene::Object
+{
+public:
+    float m_AspectRatio;
+    float m_FOV;
+    Graphene::Object m_Target;
+public:
+    Camera() = default;
+    virtual ~Camera() = default;
+};
+
+class Graphene::SimpleObjects
+{
+    class Triangle;
+    class Square;
+    class Tetrahedron;
+    class Cube;
+    class Sphere;
+};
+
+#include "simpleobjects.h"
 
 #endif // __GRAPHENE_H__
