@@ -20,7 +20,7 @@ public:
 class Graphene::SimpleObjects::Tetrahedron : public Graphene::Model
 {
 public:
-    Tetrahedron() = default;
+    Tetrahedron();
     virtual ~Tetrahedron() = default;
 };
 
