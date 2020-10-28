@@ -29,7 +29,10 @@ void Graphene::Program::addShader(Shader &shader)
 
 int Graphene::Program::link()
 {
-    //std::for_each(m_Shaders.begin(), m_Shaders.end(), [](auto &s){ s.compiled() || s.compile(); });
+    for (auto shader = m_Shaders.begin(); shader != m_Shaders.end(); ++shader)
+        if (!shader->compiled())
+            if (shader->compile())
+                return -1;
     glLinkProgram(m_Handle);
     GLint logLen;
     glGetProgramiv(m_Handle, GL_INFO_LOG_LENGTH, &logLen);
@@ -38,6 +41,7 @@ int Graphene::Program::link()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetProgramInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
+        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error linking program: %s\n", m_Log.c_str());
         return -1;
     }
     else

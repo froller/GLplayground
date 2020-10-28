@@ -73,14 +73,17 @@ int main(int argc, char ** argv) {
     Graphene *graphene = new Graphene;
     
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
-    graphene->addShader(ShaderType::Vertex, std::filesystem::path("vertex.glsl"));
-    graphene->addShader(ShaderType::Fragment, std::filesystem::path("fragment.glsl"));
+    graphene->addShader(ShaderType::Vertex, std::filesystem::path("../vertex.glsl"));
+    graphene->addShader(ShaderType::Fragment, std::filesystem::path("../fragment.glsl"));
     
-    /* Main loop */
+    graphene->scene()->addModel(Graphene::SimpleObjects::Triangle());
+    if (graphene->run())
+        SDL_Quit();
+
+        /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     while (!SDL_QuitRequested()) {
         /* Place your simulation code and rendering code here */
-        graphene->run();
         SDL_GL_SwapWindow(window);
     }
 

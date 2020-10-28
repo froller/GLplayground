@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <SDL2/SDL.h>
+
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -22,9 +24,11 @@ public:
     class Model;
     class Camera;
     class SimpleObjects;
+    class Scene;
     
 protected:
     Program *m_Program;
+    Scene *m_Scene;
     
 public:
     Graphene();
@@ -36,6 +40,7 @@ public:
     virtual int run();
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
+    virtual Scene *scene() const;
 protected:
     virtual void clear() const;
 };
@@ -115,8 +120,10 @@ public:
     //virtual load(cont std::filesystem::path &path);
     virtual void addPrimitive(const fvec3 a, const fvec3 b, const fvec3 c);
     virtual void addPrimitive(const std::array<fvec3, 3> vertices);
-    virtual const fvec3 *VBO() const;
-    virtual const unsigned int *EBO() const;
+    virtual const size_t VBOsize() const;
+    virtual const void *VBO() const;
+    virtual const size_t EBOsize() const;
+    virtual const void *EBO() const;
 };
 
 class Graphene::Camera : public Graphene::Object
@@ -138,6 +145,7 @@ public:
 
 class Graphene::SimpleObjects
 {
+public:
     class Triangle;
     class Square;
     class Tetrahedron;
@@ -146,5 +154,24 @@ class Graphene::SimpleObjects
 };
 
 #include "simpleobjects.h"
+
+class Graphene::Scene
+{
+protected:
+    std::vector<Graphene::Model> m_Models;
+    Graphene::Camera *m_DefaultCamera;
+    Graphene::Camera *m_Camera;
+public:
+    Scene();
+    virtual ~Scene();
+    virtual void resetCamera();
+    virtual void setCamera(Graphene::Camera *camera);
+    virtual void addModel(const Graphene::Model &model);
+    virtual const unsigned int vertexCount() const;
+    virtual const uint64_t VBOsize() const;
+    virtual const void *VBO() const;
+    virtual const uint64_t EBOsize() const;
+    virtual const void *EBO() const;
+};
 
 #endif // __GRAPHENE_H__

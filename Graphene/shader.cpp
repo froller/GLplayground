@@ -26,12 +26,14 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
     if (!shaderSourceFile)
     {
         m_LastError = errno;
+        m_Log = strerror(m_LastError);
         return -1;
     }
     struct stat shaderSourceFileStat;
     if (fstat(fileno(shaderSourceFile), &shaderSourceFileStat))
     {
         m_LastError = errno;
+        m_Log = strerror(m_LastError);
         fclose(shaderSourceFile);
         return -1;
     }
@@ -41,6 +43,7 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
     if (fread(shaderSource, shaderSourceFileSize, 1, shaderSourceFile) != 1)
     {
         m_LastError = errno;
+        m_Log = strerror(m_LastError);
         free(shaderSource);
         fclose(shaderSourceFile);
         return -1;
@@ -66,6 +69,7 @@ int Graphene::Shader::compile()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetShaderInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
+        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error compiling shader: %s\n", m_Log.c_str());
         return -1;
     }
     else

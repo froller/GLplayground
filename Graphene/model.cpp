@@ -23,12 +23,22 @@ void Graphene::Model::addPrimitive ( const std::array<fvec3, 3> vertices )
     m_Primitives.push_back(primitive);
 }
 
-const fvec3 *Graphene::Model::VBO() const
+const size_t Graphene::Model::VBOsize() const
+{
+    return m_Vertices.size() * sizeof(fvec3);
+}
+
+const void *Graphene::Model::VBO() const
 {
     return m_Vertices.data();
 }
 
-const unsigned int * Graphene::Model::EBO() const
+const size_t Graphene::Model::EBOsize() const
+{
+    return m_Primitives.size() * 3 * sizeof(const unsigned int);
+}
+
+const void *Graphene::Model::EBO() const
 {
     return reinterpret_cast<const unsigned int *>(m_Primitives.data());
 }
