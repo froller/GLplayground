@@ -62,10 +62,10 @@ void Graphene::Shader::setSource(const std::string &shaderSource)
 int Graphene::Shader::compile()
 {
     glCompileShader(m_Handle);
-    GLint logLen;
-    glGetShaderiv(m_Handle, GL_INFO_LOG_LENGTH, &logLen);
-    if (logLen)
+    if (!compiled())
     {
+        GLint logLen;
+        glGetShaderiv(m_Handle, GL_INFO_LOG_LENGTH, &logLen);
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetShaderInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());

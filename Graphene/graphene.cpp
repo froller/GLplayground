@@ -21,21 +21,47 @@ Graphene::~Graphene()
 
 int Graphene::run()
 {
-    if (!m_Program->linked())
-        if (m_Program->link())
-            return -1;
     clear();
+
+//     const void *sceneVBO = m_Scene->VBO();
+//     const void *sceneEBO = m_Scene->EBO();
     
-    GLuint bufferHandles[2];
-    glCreateBuffers(2, bufferHandles);
+    GLuint bufferHandles[1];
+    glCreateBuffers(1, bufferHandles);
+    
+    fvec3 vertexBuffer[6] = {
+        { 0.f,                1.f,  0.f },
+        { sqrtf(3.f) / -2.f, -0.5,  0.f },
+        { sqrtf(3.f) /  2.f, -0.5,  0.f },
+        { 0.f,                1.f, -0.1 },
+        { sqrtf(3.f) / -2.f, -0.5, -0.1 },
+        { sqrtf(3.f) /  2.f, -0.5, -0.1 }
+    };
+    GLuint elementBuffer[6] = { 0, 1, 2, 3, 4, 5};
+
+    m_Program->use();
+    
+    glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, bufferHandles[0]);
-    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_Scene->VBO(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferHandles[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_Scene->EBO(), GL_STATIC_DRAW);
+    glVertexAttribPointer(
+        0,                  // Атрибут 0. Подробнее об этом будет рассказано в части, посвященной шейдерам.
+        3,                  // Размер
+        GL_FLOAT,           // Тип
+        GL_FALSE,           // Указывает, что значения не нормализованы
+        0,                  // Шаг
+        (void*)0            // Смещение массива в буфере
+    );
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_STATIC_DRAW);
     
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->vertexCount());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glDisableVertexAttribArray(0);
     
-    glUseProgram(m_Program->handle());
+    glDeleteBuffers(1, bufferHandles);
+
+//     free((void *)sceneVBO);
+//     free((void *)sceneEBO);
+
     return 0;
 }
 
@@ -67,6 +93,6 @@ Graphene::Scene * Graphene::scene() const
 
 void Graphene::clear() const
 {
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.0, 0.5, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

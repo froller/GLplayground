@@ -23,6 +23,11 @@ void Graphene::Model::addPrimitive ( const std::array<fvec3, 3> vertices )
     m_Primitives.push_back(primitive);
 }
 
+const size_t Graphene::Model::vertexCount() const
+{
+    return m_Vertices.size();
+}
+
 const size_t Graphene::Model::VBOsize() const
 {
     return m_Vertices.size() * sizeof(fvec3);

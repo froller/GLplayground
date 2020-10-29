@@ -77,13 +77,12 @@ int main(int argc, char ** argv) {
     graphene->addShader(ShaderType::Fragment, std::filesystem::path("../fragment.glsl"));
     
     graphene->scene()->addModel(Graphene::SimpleObjects::Triangle());
-    if (graphene->run())
-        SDL_Quit();
 
-        /* Main loop */
+    /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     while (!SDL_QuitRequested()) {
-        /* Place your simulation code and rendering code here */
+        if (graphene->run())
+            SDL_Quit();
         SDL_GL_SwapWindow(window);
     }
 

@@ -23,21 +23,30 @@ GLuint Graphene::Program::handle() const
 
 void Graphene::Program::addShader(Shader &shader)
 {
+    shader.compile();
+    glAttachShader(m_Handle, shader.handle());
     m_Shaders.push_back(std::move(shader));
-    glAttachShader(m_Handle, m_Shaders.back().handle());
+}
+
+int Graphene::Program::use()
+{
+    if (!linked())
+        if (link())
+            return -1;
+    glUseProgram(m_Handle);
+    return 0;
 }
 
 int Graphene::Program::link()
 {
     for (auto shader = m_Shaders.begin(); shader != m_Shaders.end(); ++shader)
         if (!shader->compiled())
-            if (shader->compile())
-                return -1;
+            return -1;
     glLinkProgram(m_Handle);
-    GLint logLen;
-    glGetProgramiv(m_Handle, GL_INFO_LOG_LENGTH, &logLen);
-    if (logLen)
+    if (!linked())
     {
+        GLint logLen;
+        glGetProgramiv(m_Handle, GL_INFO_LOG_LENGTH, &logLen);
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetProgramInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());

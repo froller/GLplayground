@@ -87,6 +87,7 @@ public:
     virtual GLuint handle() const;
     virtual void addShader(Shader &shader);
     virtual int link();
+    virtual int use();
     virtual bool linked() const;
     virtual bool deleted() const;
     virtual bool valid() const;
@@ -120,6 +121,7 @@ public:
     //virtual load(cont std::filesystem::path &path);
     virtual void addPrimitive(const fvec3 a, const fvec3 b, const fvec3 c);
     virtual void addPrimitive(const std::array<fvec3, 3> vertices);
+    virtual const size_t vertexCount() const;
     virtual const size_t VBOsize() const;
     virtual const void *VBO() const;
     virtual const size_t EBOsize() const;

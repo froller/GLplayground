@@ -31,7 +31,7 @@ const unsigned int Graphene::Scene::vertexCount() const
 {
     size_t count = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
-        count += model->m_Vertices.size();
+        count += model->vertexCount();
     return count;
 }
 
