@@ -78,25 +78,91 @@ bool Graphene::Program::valid() const
     return rv;
 }
 
-GLuint Graphene::Program::shaders() const
+int Graphene::Program::shaders() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ATTACHED_SHADERS, &rv);
     return rv;   
 }
 
-GLuint Graphene::Program::attributes() const
+int Graphene::Program::attributes() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ACTIVE_ATTRIBUTES, &rv);
     return rv;   
 }
 
-GLuint Graphene::Program::uniforms() const
+int Graphene::Program::uniforms() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORMS, &rv);
     return rv;       
+}
+
+int Graphene::Program::uniformMaxLen() const
+{
+    GLint rv;
+    glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORM_MAX_LENGTH, &rv);
+    return rv;
+}
+
+char *Graphene::Program::uniformName(const unsigned int index) const
+{
+    constexpr size_t rvCapacity = 256;
+    char *rv = new char[rvCapacity];
+    int rvSize;
+    glGetActiveUniform(m_Handle, index, rvCapacity, &rvSize, nullptr, nullptr, rv);
+    return rv;
+}
+
+unsigned int Graphene::Program::uniformType(const unsigned int index) const
+{
+    unsigned int rv;
+    glGetActiveUniform(m_Handle, index, 0, nullptr, nullptr, &rv, nullptr);
+    return rv;  
+}
+
+int Graphene::Program::uniformSize(const unsigned int index) const
+{
+    int rv;
+    glGetActiveUniform(m_Handle, index, 0, nullptr, &rv, nullptr, nullptr);
+    return rv;     
+}
+
+template<>
+void Graphene::Program::setUniform<int>(const unsigned int index, int value) const
+{
+    glUniform1i(index, value);
+}
+
+template<>
+void Graphene::Program::setUniform<unsigned int>(const unsigned int index, unsigned int value) const
+{
+    glUniform1ui(index, value);
+}
+
+template<>
+void Graphene::Program::setUniform<float>(const unsigned int index, float value) const
+{
+    glUniform1f(index, value);
+}
+
+template<>
+void Graphene::Program::setUniform<double>(const unsigned int index, double value) const
+{
+    glUniform1d(index, value);
+}
+
+template<>
+void Graphene::Program::setUniform<fvec3>(const unsigned int index, fvec3 value) const
+{
+    glUniform3fv(index, sizeof(value), (float *)&value);
+}
+
+template<>
+void Graphene::Program::setUniform<fmat4>(const unsigned int index, fmat4 value) const
+{
+    glUniformMatrix4fv(index, sizeof(value), false, (float *)&value);
 }
 
 const char *Graphene::Program::log() const

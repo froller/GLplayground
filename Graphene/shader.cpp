@@ -90,7 +90,7 @@ bool Graphene::Shader::deleted() const
     return rv;
 }
 
-bool Graphene::Shader::type() const
+int Graphene::Shader::type() const
 {
     GLint rv;
     glGetShaderiv(m_Handle, GL_SHADER_TYPE, &rv);

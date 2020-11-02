@@ -38,6 +38,10 @@ int Graphene::run()
         { sqrtf(3.f) /  2.f, -0.5, -0.1 }
     };
     GLuint elementBuffer[6] = { 0, 1, 2, 3, 4, 5};
+    
+    m_Program->setUniform("MVP[0]", m_Scene->model());
+    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
+    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
 
     m_Program->use();
     
@@ -85,11 +89,27 @@ int Graphene::addShader(const ShaderType type, const std::filesystem::path &path
     return 0;
 }
 
+void Graphene::setCamera(Graphene::Camera *camera) 
+{
+    m_Scene->setCamera(camera);
+}
+
+void Graphene::addModel(const Graphene::Model &model)
+{
+    m_Scene->addModel(model);
+}
+
+#ifdef GRAPHENE_EXPOSE_INTERNALS
 Graphene::Scene * Graphene::scene() const
 {
     return m_Scene;
 }
 
+Graphene::Program * Graphene::program() const
+{
+    return m_Program;
+}
+#endif
 
 void Graphene::clear() const
 {

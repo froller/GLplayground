@@ -1,9 +1,8 @@
 #include "graphene.h"
 #include <math.h>
 
-Graphene::Scene::Scene()
+Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(0, 0, 2), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
-    m_DefaultCamera = new Graphene::Camera::Targeted(fvec3(0, 0, 2), fvec3(0, 0, 0), 1.25f, M_PI_4); // Default camera
     m_Camera = m_DefaultCamera;
 }
 
@@ -22,7 +21,7 @@ void Graphene::Scene::setCamera(Graphene::Camera *camera)
     m_Camera = camera;
 }
 
-void Graphene::Scene::addModel(const Graphene::Model& model)
+void Graphene::Scene::addModel(const Graphene::Model &model)
 {
     m_Models.push_back(model);
 }
@@ -73,4 +72,14 @@ const void *Graphene::Scene::EBO() const
         eboTop = (char *)eboTop + model->EBOsize();
     }
     return ebo;
+}
+
+Graphene::Camera *Graphene::Scene::camera()
+{
+    return m_Camera;
+}
+
+fmat4 Graphene::Scene::model() const
+{
+    return fmat4(1);
 }

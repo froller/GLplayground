@@ -15,6 +15,12 @@
 
 #include "graphene_types.h"
 
+/*******************************************************************************
+ * 
+ * Graphene
+ * 
+ ******************************************************************************/
+
 class Graphene
 {
 public:
@@ -40,10 +46,22 @@ public:
     virtual int run();
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
+    virtual void setCamera(Graphene::Camera *camera);
+    virtual void addModel(const Graphene::Model &model);
+    
+#ifdef GRAPHENE_EXPOSE_INTERNALS
     virtual Scene *scene() const;
+    virtual Program *program() const;
+#endif
 protected:
     virtual void clear() const;
 };
+
+/*******************************************************************************
+ * 
+ * Graphene::Shader
+ * 
+ ******************************************************************************/
 
 class Graphene::Shader
 {    
@@ -59,17 +77,23 @@ public:
     virtual ~Shader();
     Shader &operator=(const Shader &) = delete;
     Shader &operator=(Shader &&) = default;
+    virtual GLuint handle() const;
     virtual int loadSource(const std::filesystem::path &path);
     virtual void setSource(const std::string &shader);
     virtual int compile();
     virtual bool compiled() const;
     virtual bool deleted() const;
-    virtual bool type() const;
+    virtual int type() const;
     virtual const GLuint shaderType(const ShaderType type) const;
     virtual const ShaderType shaderType(const GLuint type) const;
-    virtual GLuint handle() const;
     virtual const char *log() const;
 };
+
+/*******************************************************************************
+ * 
+ * Graphene::Program
+ * 
+ ******************************************************************************/
 
 class Graphene::Program
 {
@@ -91,11 +115,35 @@ public:
     virtual bool linked() const;
     virtual bool deleted() const;
     virtual bool valid() const;
-    virtual GLuint shaders() const;
-    virtual GLuint attributes() const;
-    virtual GLuint uniforms() const;
+    virtual int shaders() const;
+    virtual int attributes() const;
+    virtual int uniforms() const;
+    virtual int uniformMaxLen() const;
+    virtual char *uniformName(const unsigned int index) const;
+    virtual unsigned int uniformType(const unsigned int index) const;
+    virtual int uniformSize(const unsigned int index) const;
+
+    template<typename T>
+    void setUniform(const unsigned int index, T value) const;
+    
+    template<typename T>
+    int setUniform(const char *name, T value) const
+    {
+        const unsigned int index = glGetUniformLocation(m_Handle, name);
+        if (index < 0)
+            return index;
+        setUniform(index, value);
+        return 0;
+    }
+    
     virtual const char* log() const;
 };
+
+/*******************************************************************************
+ * 
+ * Graphene::Object
+ * 
+ ******************************************************************************/
 
 class Graphene::Object
 {
@@ -128,6 +176,12 @@ public:
     virtual const void *EBO() const;
 };
 
+/*******************************************************************************
+ * 
+ * Graphene::Camera
+ * 
+ ******************************************************************************/
+
 class Graphene::Camera : public Graphene::Object
 {
 public:
@@ -139,11 +193,17 @@ public:
 public:
     Camera() = default;
     virtual ~Camera() = default;
-    virtual const fmat4 view() const = 0;
-    virtual const fmat4 projection() const;
+    virtual fmat4 view() const = 0;
+    virtual fmat4 projection() const;
 };
 
 #include "camera.h"
+
+/*******************************************************************************
+ * 
+ * Graphene::SimpleObjects
+ * 
+ ******************************************************************************/
 
 class Graphene::SimpleObjects
 {
@@ -157,11 +217,17 @@ public:
 
 #include "simpleobjects.h"
 
+/*******************************************************************************
+ * 
+ * Graphene::Scene
+ * 
+ ******************************************************************************/
+
 class Graphene::Scene
 {
 protected:
     std::vector<Graphene::Model> m_Models;
-    Graphene::Camera *m_DefaultCamera;
+    Graphene::Camera * const m_DefaultCamera;
     Graphene::Camera *m_Camera;
 public:
     Scene();
@@ -174,6 +240,8 @@ public:
     virtual const void *VBO() const;
     virtual const uint64_t EBOsize() const;
     virtual const void *EBO() const;
+    virtual Graphene::Camera *camera();
+    virtual fmat4 model() const;
 };
 
 #endif // __GRAPHENE_H__
