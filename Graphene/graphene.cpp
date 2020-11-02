@@ -26,18 +26,18 @@ int Graphene::run()
 //     const void *sceneVBO = m_Scene->VBO();
 //     const void *sceneEBO = m_Scene->EBO();
     
-    GLuint bufferHandles[1];
-    glCreateBuffers(1, bufferHandles);
-    
+//
+// Это вообще тестовая заглушка. Еее не должно здесь быть. Вся эта хрень должна быть сделана в момент создания сцены.
+//  
     fvec3 vertexBuffer[6] = {
         { 0.f,                1.f,  0.f },
         { sqrtf(3.f) / -2.f, -0.5,  0.f },
         { sqrtf(3.f) /  2.f, -0.5,  0.f },
-        { 0.f,                1.f, -0.1 },
-        { sqrtf(3.f) / -2.f, -0.5, -0.1 },
-        { sqrtf(3.f) /  2.f, -0.5, -0.1 }
+        { 0.f,                1.f, -0.5 },
+        { sqrtf(3.f) / -2.f, -0.5, -0.5 },
+        { sqrtf(3.f) /  2.f, -0.5, -0.5 }
     };
-    GLuint elementBuffer[6] = { 0, 1, 2, 3, 4, 5};
+    unsigned int elementBuffer[12] = { 0, 1, 2,  3, 4, 5,  2, 1, 4,  4, 5, 2 };
     
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
@@ -45,23 +45,35 @@ int Graphene::run()
 
     m_Program->use();
     
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, bufferHandles[0]);
-    glVertexAttribPointer(
-        0,                  // Атрибут 0. Подробнее об этом будет рассказано в части, посвященной шейдерам.
-        3,                  // Размер
-        GL_FLOAT,           // Тип
-        GL_FALSE,           // Указывает, что значения не нормализованы
-        0,                  // Шаг
-        (void*)0            // Смещение массива в буфере
-    );
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_STATIC_DRAW);
+    GLuint vertexBufferHandle;
+    glGenBuffers(1, &vertexBufferHandle);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);   
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fvec3) * 6, vertexBuffer, GL_STATIC_DRAW);
+
+    GLuint elementBufferHandle;
+    glGenBuffers(1, &elementBufferHandle);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferHandle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * 4, elementBuffer, GL_STATIC_DRAW);
+
+//
+// Это должно выполняться на рендере каждого кадра
+//
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);   
+    glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(fvec3), (void *)0);
     
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferHandle);
+    
+    glDrawElements(GL_TRIANGLES, 3 * 4, GL_UNSIGNED_INT, (void *)0);
 
     glDisableVertexAttribArray(0);
     
-    glDeleteBuffers(1, bufferHandles);
+//
+// ...а это - уже нет. Это должно вызываться в перед разрушением сцены.
+//
+    glDeleteBuffers(1, &vertexBufferHandle);
+    glDeleteBuffers(1, &elementBufferHandle);
+    
 
 //     free((void *)sceneVBO);
 //     free((void *)sceneEBO);
