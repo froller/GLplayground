@@ -226,9 +226,17 @@ public:
 class Graphene::Scene
 {
 protected:
+    enum BufferType {
+        VertexBuffer = 0,
+        ElementBuffer,
+        BufferTypeMax
+    };
+protected:
     std::vector<Graphene::Model> m_Models;
     Graphene::Camera * const m_DefaultCamera;
     Graphene::Camera *m_Camera;
+    unsigned int m_VAO;
+    unsigned int m_Buffers[BufferTypeMax];
 public:
     Scene();
     virtual ~Scene();
@@ -236,10 +244,12 @@ public:
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual const unsigned int vertexCount() const;
+    virtual unsigned int VBO() const;
+    virtual unsigned int EBO() const;
     virtual const uint64_t VBOsize() const;
-    virtual const void *VBO() const;
+    virtual const void *fillVBO() const;
     virtual const uint64_t EBOsize() const;
-    virtual const void *EBO() const;
+    virtual const void *fillEBO() const;
     virtual Graphene::Camera *camera();
     virtual fmat4 model() const;
 };

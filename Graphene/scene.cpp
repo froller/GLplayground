@@ -4,10 +4,20 @@
 Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
     m_Camera = m_DefaultCamera;
+    
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
+    
+    glGenBuffers(2, m_Buffers);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
 }
 
 Graphene::Scene::~Scene()
 {
+    glDeleteBuffers(2, m_Buffers);
+    glDeleteVertexArrays(1, &m_VAO);
+    
     delete m_DefaultCamera;   
 }
 
@@ -34,6 +44,16 @@ const unsigned int Graphene::Scene::vertexCount() const
     return count;
 }
 
+unsigned int Graphene::Scene::VBO() const
+{
+    return m_Buffers[BufferType::VertexBuffer];
+}
+
+unsigned int Graphene::Scene::EBO() const
+{
+    return m_Buffers[BufferType::ElementBuffer];
+}
+
 const size_t Graphene::Scene::VBOsize() const
 {
     size_t vboSize = 0;
@@ -42,7 +62,7 @@ const size_t Graphene::Scene::VBOsize() const
     return vboSize;
 }
 
-const void *Graphene::Scene::VBO() const
+const void *Graphene::Scene::fillVBO() const
 {
     void *vbo = malloc(VBOsize());
     void *vboTop = vbo;
@@ -62,7 +82,7 @@ const size_t Graphene::Scene::EBOsize() const
     return eboSize;
 }
 
-const void *Graphene::Scene::EBO() const
+const void *Graphene::Scene::fillEBO() const
 {
     void *ebo = malloc(EBOsize());
     void *eboTop = ebo;

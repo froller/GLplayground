@@ -1,6 +1,7 @@
 #include "graphene.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 /*******************************************************************************
  * 
@@ -44,37 +45,23 @@ int Graphene::run()
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
 
     m_Program->use();
-    
-    GLuint vertexBufferHandle;
-    glGenBuffers(1, &vertexBufferHandle);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);   
+     
     glBufferData(GL_ARRAY_BUFFER, sizeof(fvec3) * 6, vertexBuffer, GL_STATIC_DRAW);
-
-    GLuint elementBufferHandle;
-    glGenBuffers(1, &elementBufferHandle);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferHandle);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * 4, elementBuffer, GL_STATIC_DRAW);
 
 //
 // Это должно выполняться на рендере каждого кадра
 //
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferHandle);   
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(fvec3), (void *)0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());   
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0 /* плотно упакованы, то же, что и sizeof(fvec3) */, (void *)0);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferHandle);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
     
     glDrawElements(GL_TRIANGLES, 3 * 4, GL_UNSIGNED_INT, (void *)0);
 
     glDisableVertexAttribArray(0);
     
-//
-// ...а это - уже нет. Это должно вызываться в перед разрушением сцены.
-//
-    glDeleteBuffers(1, &vertexBufferHandle);
-    glDeleteBuffers(1, &elementBufferHandle);
-    
-
 //     free((void *)sceneVBO);
 //     free((void *)sceneEBO);
 
