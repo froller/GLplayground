@@ -58,7 +58,12 @@ int Graphene::run()
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
     
+#ifdef WIREFRAME
+    for (int i = 0; i < 3 * 4; i += 3)
+        glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_INT, (void *)(i * sizeof(unsigned int)));
+#else
     glDrawElements(GL_TRIANGLES, 3 * 4, GL_UNSIGNED_INT, (void *)0);
+#endif // WIREFRAME
 
     glDisableVertexAttribArray(0);
     
