@@ -97,10 +97,12 @@ size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
 size_t Graphene::Scene::EBOdata(void *elementBuffer) const
 {
     void *bufferTop = elementBuffer;
+    Index indexOffset = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
-        size_t modelBufferSize = model->EBOdata(bufferTop);
+        size_t modelBufferSize = model->EBOdata(bufferTop, indexOffset);
         bufferTop = (char *)bufferTop + modelBufferSize;
+        indexOffset += model->vertexCount();
     }
     return (char *)bufferTop - (char *)elementBuffer;
 }

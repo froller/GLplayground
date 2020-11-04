@@ -198,7 +198,7 @@ public:
     virtual size_t VBOsize() const;
     virtual size_t EBOsize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
-    virtual size_t EBOdata(void *elementBuffer) const;
+    virtual size_t EBOdata(void *elementBuffer, Index offset) const;
 };
 
 /*******************************************************************************
