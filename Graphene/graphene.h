@@ -48,12 +48,7 @@ public:
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
-    
-#ifdef GRAPHENE_EXPOSE_INTERNALS
-    virtual Scene *scene() const;
-    virtual Program *program() const;
-#endif
-protected:
+    virtual void setClearColor(float R, float G, float B);
     virtual void clear() const;
 };
 

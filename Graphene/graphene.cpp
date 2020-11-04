@@ -13,6 +13,7 @@ Graphene::Graphene()
 {
     m_Program = new Program();
     m_Scene = new Scene();
+    m_ClearColor = { 0, 0, 0 };
 }
 
 Graphene::~Graphene()
@@ -103,20 +104,13 @@ void Graphene::addModel(const Graphene::Model &model)
     m_Scene->addModel(model);
 }
 
-#ifdef GRAPHENE_EXPOSE_INTERNALS
-Graphene::Scene * Graphene::scene() const
+void Graphene::setClearColor(float R, float G, float B)
 {
-    return m_Scene;
+    m_ClearColor = { R, G, B };
 }
-
-Graphene::Program * Graphene::program() const
-{
-    return m_Program;
-}
-#endif
 
 void Graphene::clear() const
 {
-    glClearColor(0.0, 0.5, 0.0, 1.0);
+    glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
