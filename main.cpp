@@ -77,10 +77,10 @@ int main(int argc, char ** argv) {
     graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
     
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
-//    graphene->addModel(Graphene::SimpleObjects::Square());
+    graphene->addModel(Graphene::SimpleObjects::Square());
     graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
     
-    graphene->setCamera(new Graphene::Camera::Targeted({.33, .5, 2}, {0, 0, 0}, 1.25, M_PI_4));
+    graphene->setCamera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
