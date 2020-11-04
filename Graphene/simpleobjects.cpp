@@ -15,10 +15,10 @@ Graphene::SimpleObjects::Triangle::Triangle()
 
 Graphene::SimpleObjects::Square::Square()
 {
-    m_Vertices.push_back(VERTEX(-1.f, -1.f, 0.f, 1.f, 0.f, 0.f));
-    m_Vertices.push_back(VERTEX(-1.f,  1.f, 0.f, 1.f, 0.f, 0.f));
-    m_Vertices.push_back(VERTEX( 1.f,  1.f, 0.f, 1.f, 0.f, 0.f));
-    m_Vertices.push_back(VERTEX( 1.f, -1.f, 0.f, 1.f, 0.f, 0.f));
+    m_Vertices.push_back(VERTEX(-0.5, -0.5, 0.f, 1.f, 0.f, 0.f));
+    m_Vertices.push_back(VERTEX(-0.5,  0.5, 0.f, 1.f, 0.f, 0.f));
+    m_Vertices.push_back(VERTEX( 0.5,  0.5, 0.f, 1.f, 0.f, 0.f));
+    m_Vertices.push_back(VERTEX( 0.5, -0.5, 0.f, 1.f, 0.f, 0.f));
     m_Primitives.push_back(ELEMENT(0, 2, 1));
     m_Primitives.push_back(ELEMENT(0, 2, 3));
 }
