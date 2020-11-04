@@ -36,11 +36,24 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
     m_Models.push_back(model);
 }
 
-const unsigned int Graphene::Scene::vertexCount() const
+void Graphene::Scene::draw() const
+{
+
+}
+
+size_t Graphene::Scene::vertexCount() const
 {
     size_t count = 0;
-    for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
-        count += model->vertexCount();
+    for (auto &model : m_Models)
+        count += model.vertexCount();
+    return count;
+}
+
+size_t Graphene::Scene::elementCount() const
+{
+    size_t count = 0;
+    for (auto &model : m_Models)
+        count += model.elementCount();
     return count;
 }
 
@@ -54,7 +67,7 @@ unsigned int Graphene::Scene::EBO() const
     return m_Buffers[BufferType::ElementBuffer];
 }
 
-const size_t Graphene::Scene::VBOsize() const
+size_t Graphene::Scene::VBOsize() const
 {
     size_t vboSize = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
@@ -62,19 +75,7 @@ const size_t Graphene::Scene::VBOsize() const
     return vboSize;
 }
 
-const void *Graphene::Scene::fillVBO() const
-{
-    void *vbo = malloc(VBOsize());
-    void *vboTop = vbo;
-    for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
-    {
-        memcpy(vboTop, model->VBO(), model->VBOsize());
-        vboTop = (char *)vboTop + model->VBOsize();
-    }
-    return vbo;
-}
-
-const size_t Graphene::Scene::EBOsize() const
+size_t Graphene::Scene::EBOsize() const
 {
     size_t eboSize = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
@@ -82,16 +83,26 @@ const size_t Graphene::Scene::EBOsize() const
     return eboSize;
 }
 
-const void *Graphene::Scene::fillEBO() const
+size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
 {
-    void *ebo = malloc(EBOsize());
-    void *eboTop = ebo;
+    void *bufferTop = vertexBuffer;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
-        memcpy(eboTop, model->EBO(), model->EBOsize());
-        eboTop = (char *)eboTop + model->EBOsize();
+        size_t modelBufferSize = model->VBOdata(bufferTop);
+        bufferTop = (char *)bufferTop + modelBufferSize;
     }
-    return ebo;
+    return (char *)bufferTop - (char *)vertexBuffer;
+}
+
+size_t Graphene::Scene::EBOdata(void *elementBuffer) const
+{
+    void *bufferTop = elementBuffer;
+    for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
+    {
+        size_t modelBufferSize = model->EBOdata(bufferTop);
+        bufferTop = (char *)bufferTop + modelBufferSize;
+    }
+    return (char *)bufferTop - (char *)elementBuffer;
 }
 
 Graphene::Camera *Graphene::Scene::camera()

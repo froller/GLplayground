@@ -102,7 +102,7 @@ GLuint Graphene::Shader::handle() const
     return m_Handle;
 }
 
-const GLuint Graphene::Shader::shaderType(const ShaderType type) const
+const GLuint Graphene::Shader::shaderType(const enum Graphene::ShaderType type) const
 {
     constexpr GLuint map[] = {
         GL_GEOMETRY_SHADER,
@@ -116,15 +116,15 @@ const GLuint Graphene::Shader::shaderType(const ShaderType type) const
     return map[type];
 }
 
-const ShaderType Graphene::Shader::shaderType(const GLuint type) const
+const enum Graphene::ShaderType Graphene::Shader::shaderType(const GLuint type) const
 {
     const std::map<const GLuint, const ShaderType> map = {
-        {GL_GEOMETRY_SHADER, Geometry},
-        {GL_VERTEX_SHADER, Vertex},
-        {GL_TESS_CONTROL_SHADER, TesselationControl},
-        {GL_TESS_EVALUATION_SHADER, TesselationEvaluation},
-        {GL_FRAGMENT_SHADER, Fragment},
-        {GL_COMPUTE_SHADER, Compute},
+        {GL_GEOMETRY_SHADER, GeometryShader},
+        {GL_VERTEX_SHADER, VertexShader},
+        {GL_TESS_CONTROL_SHADER, TesselationControlShader},
+        {GL_TESS_EVALUATION_SHADER, TesselationEvaluationShader},
+        {GL_FRAGMENT_SHADER, FragmentShader},
+        {GL_COMPUTE_SHADER, ComputeShader},
         {GL_INVALID_ENUM, Invalid}
     };
     return map.at(type);

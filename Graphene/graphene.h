@@ -31,10 +31,34 @@ public:
     class Camera;
     class SimpleObjects;
     class Scene;
+
+    enum ShaderType {
+        GeometryShader,
+        VertexShader,
+        TesselationControlShader,
+        TesselationEvaluationShader,
+        FragmentShader,
+        ComputeShader,
+        Invalid
+    };
     
+    typedef struct Vertex
+    {
+        fvec3 position;
+        fvec3 color;
+        inline bool operator==(const struct Vertex &that);
+    } Vertex;
+    
+    constexpr static unsigned int ElementSize = 3;
+    
+    typedef unsigned int Index;
+    
+    typedef std::array<Index, ElementSize> Element;
+
 protected:
     Program *m_Program;
     Scene *m_Scene;
+    fvec3 m_ClearColor;
     
 public:
     Graphene();
@@ -152,23 +176,29 @@ public:
     virtual ~Object() = default;
 };
 
+/*******************************************************************************
+ * 
+ * Graphene::Model
+ * 
+ ******************************************************************************/
+
 class Graphene::Model : public Graphene::Object
 {
 public:
-    std::vector<fvec3> m_Vertices;
-    std::vector<fvec3> m_Attributes;
+    std::vector<Vertex> m_Vertices;
     std::vector<std::array<unsigned int, 3>> m_Primitives;
 public:
     Model() = default;
     virtual ~Model() = default;
     //virtual load(cont std::filesystem::path &path);
-    virtual void addPrimitive(const fvec3 a, const fvec3 b, const fvec3 c);
-    virtual void addPrimitive(const std::array<fvec3, 3> vertices);
-    virtual const size_t vertexCount() const;
-    virtual const size_t VBOsize() const;
-    virtual const void *VBO() const;
-    virtual const size_t EBOsize() const;
-    virtual const void *EBO() const;
+    virtual void addPrimitive(const Vertex a, const Vertex b, const Vertex c);
+    virtual void addPrimitive(const std::array<Vertex, 3> vertices);
+    virtual size_t vertexCount() const;
+    virtual size_t elementCount() const;
+    virtual size_t VBOsize() const;
+    virtual size_t EBOsize() const;
+    virtual size_t VBOdata(void *vertexBuffer) const;
+    virtual size_t EBOdata(void *elementBuffer) const;
 };
 
 /*******************************************************************************
@@ -238,13 +268,15 @@ public:
     virtual void resetCamera();
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
-    virtual const unsigned int vertexCount() const;
+    virtual void draw() const;
+    virtual size_t vertexCount() const;
+    virtual size_t elementCount() const;
     virtual unsigned int VBO() const;
     virtual unsigned int EBO() const;
-    virtual const uint64_t VBOsize() const;
-    virtual const void *fillVBO() const;
-    virtual const uint64_t EBOsize() const;
-    virtual const void *fillEBO() const;
+    virtual size_t VBOsize() const;
+    virtual size_t EBOsize() const;
+    virtual size_t VBOdata(void *vertexBuffer) const;
+    virtual size_t EBOdata(void *elementBuffer) const;
     virtual Graphene::Camera *camera();
     virtual fmat4 model() const;
 };

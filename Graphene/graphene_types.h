@@ -1,16 +1,6 @@
 #ifndef __GRAPHENE_TYPES_H__
 #define __GRAPHENE_TYPES_H__
 
-enum ShaderType {
-    Geometry,
-    Vertex,
-    TesselationControl,
-    TesselationEvaluation,
-    Fragment,
-    Compute,
-    Invalid
-};
-
 #ifdef USE_GLM
 
 #include <glm/glm.hpp>

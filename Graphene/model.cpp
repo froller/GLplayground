@@ -2,12 +2,17 @@
 #include <array>
 #include <algorithm>
 
-void Graphene::Model::addPrimitive(const fvec3 a, const fvec3 b, const fvec3 c)
+inline bool Graphene::Vertex::operator==(const Graphene::Vertex &that)
+{
+    return position == that.position && color == that.color;
+}
+
+void Graphene::Model::addPrimitive(const Vertex a, const Vertex b, const Vertex c)
 {
     addPrimitive({a, b, c});
 }
 
-void Graphene::Model::addPrimitive ( const std::array<fvec3, 3> vertices )
+void Graphene::Model::addPrimitive ( const std::array<Vertex, 3> vertices )
 {
     std::array<unsigned int, 3> primitive;
     for (char i = 0; i < 3; ++i)
@@ -23,27 +28,36 @@ void Graphene::Model::addPrimitive ( const std::array<fvec3, 3> vertices )
     m_Primitives.push_back(primitive);
 }
 
-const size_t Graphene::Model::vertexCount() const
+size_t Graphene::Model::vertexCount() const
 {
     return m_Vertices.size();
 }
 
-const size_t Graphene::Model::VBOsize() const
+size_t Graphene::Model::elementCount() const
 {
-    return m_Vertices.size() * sizeof(fvec3);
+    return m_Primitives.size();
 }
 
-const void *Graphene::Model::VBO() const
+size_t Graphene::Model::VBOsize() const
 {
-    return m_Vertices.data();
+    return m_Vertices.size() * sizeof(Vertex);
 }
 
-const size_t Graphene::Model::EBOsize() const
+size_t Graphene::Model::EBOsize() const
 {
-    return m_Primitives.size() * 3 * sizeof(const unsigned int);
+    return m_Primitives.size() * sizeof(Element);
 }
 
-const void *Graphene::Model::EBO() const
+size_t Graphene::Model::VBOdata(void *vertexBuffer) const
 {
-    return reinterpret_cast<const unsigned int *>(m_Primitives.data());
+    const size_t s = VBOsize();
+    memcpy(vertexBuffer, m_Vertices.data(), s);
+    return s;
+}
+
+size_t Graphene::Model::EBOdata(void *elementBuffer) const
+{
+    const size_t s = EBOsize();
+    memcpy(elementBuffer, m_Primitives.data(), s);
+    return s;
 }

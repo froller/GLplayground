@@ -73,10 +73,12 @@ int main(int argc, char ** argv) {
     Graphene *graphene = new Graphene;
     
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
-    graphene->addShader(ShaderType::Vertex, std::filesystem::path("../vertex.glsl"));
-    graphene->addShader(ShaderType::Fragment, std::filesystem::path("../fragment.glsl"));
+    graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
+    graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
     
-    graphene->addModel(Graphene::SimpleObjects::Triangle());
+//    graphene->addModel(Graphene::SimpleObjects::Triangle());
+    graphene->addModel(Graphene::SimpleObjects::Square());
+//    graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");

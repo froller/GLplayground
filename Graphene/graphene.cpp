@@ -25,51 +25,42 @@ int Graphene::run()
 {
     clear();
 
-//     const void *sceneVBO = m_Scene->VBO();
-//     const void *sceneEBO = m_Scene->EBO();
+    void *vertexBuffer = malloc(m_Scene->VBOsize());
+    void *elementBuffer = malloc(m_Scene->EBOsize());
     
-//
-// Это вообще тестовая заглушка. Еее не должно здесь быть. Вся эта хрень должна быть сделана в момент создания сцены.
-//  
-    fvec3 vertexBuffer[6] = {
-        { 0.f,                1.f,  0.f },
-        { sqrtf(3.f) / -2.f, -0.5,  0.f },
-        { sqrtf(3.f) /  2.f, -0.5,  0.f },
-        { 0.f,                1.f, -0.5 },
-        { sqrtf(3.f) / -2.f, -0.5, -0.5 },
-        { sqrtf(3.f) /  2.f, -0.5, -0.5 }
-    };
-    unsigned int elementBuffer[12] = { 0, 1, 2,  3, 4, 5,  2, 1, 4,  4, 5, 2 };
+    m_Scene->VBOdata(vertexBuffer);
+    m_Scene->EBOdata(elementBuffer);
     
+// Это меняется только при изменении камеры
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
 
     m_Program->use();
      
-    glBufferData(GL_ARRAY_BUFFER, sizeof(fvec3) * 6, vertexBuffer, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * 4, elementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Graphene::Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Graphene::Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
 
 //
 // Это должно выполняться на рендере каждого кадра
 //
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());   
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0 /* плотно упакованы, то же, что и sizeof(fvec3) */, (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
-    
+
 #ifdef WIREFRAME
-    for (int i = 0; i < 3 * 4; i += 3)
-        glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_INT, (void *)(i * sizeof(unsigned int)));
+    for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
+        glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
 #else
-    glDrawElements(GL_TRIANGLES, 3 * 4, GL_UNSIGNED_INT, (void *)0);
+    glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
 #endif // WIREFRAME
 
     glDisableVertexAttribArray(0);
     
-//     free((void *)sceneVBO);
-//     free((void *)sceneEBO);
+    free(vertexBuffer);
+    free(elementBuffer);
 
     return 0;
 }
