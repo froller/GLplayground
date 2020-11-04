@@ -7,9 +7,9 @@
 
 Graphene::SimpleObjects::Triangle::Triangle()
 {
-    m_Vertices.push_back(VERTEX(0.f,                1.f,  0.f, 0.f, 1.f, 0.f));
-    m_Vertices.push_back(VERTEX(sqrtf(3.f) / -2.f, -0.5f, 0.f, 0.f, 1.f, 0.f));
-    m_Vertices.push_back(VERTEX(sqrtf(3.f) /  2.f, -0.5f, 0.f, 0.f, 1.f, 0.f));
+    m_Vertices.push_back(VERTEX( 0.f,  1.f / sqrtf(3.f),  0.f,  0.f, 1.f, 0.f));
+    m_Vertices.push_back(VERTEX(-0.5, -0.5 / sqrtf(3.f),  0.f,  0.f, 1.f, 0.f));
+    m_Vertices.push_back(VERTEX( 0.5, -0.5 / sqrtf(3.f),  0.f,  0.f, 1.f, 0.f));
     m_Primitives.push_back(ELEMENT(0, 1, 2));
 }
 
@@ -25,13 +25,14 @@ Graphene::SimpleObjects::Square::Square()
 
 Graphene::SimpleObjects::Tetrahedron::Tetrahedron()
 {
-    m_Vertices.push_back(VERTEX(             -1.f,             -1.f,  0.f, 0.f, 0.5, 1.f));
-    m_Vertices.push_back(VERTEX(sqrtf(3.f) / -2.f, sqrt(3.f) / -4.f, -0.5, 0.f, 0.5, 1.f));
-    m_Vertices.push_back(VERTEX(sqrtf(3.f) /  2.f, sqrt(3.f) / -4.f, -0.5, 0.f, 0.5, 1.f));
-    m_Vertices.push_back(VERTEX(0.f,               sqrt(3.f) / -4.f,  1.f, 0.f, 0.5, 1.f));
-    m_Primitives.push_back(ELEMENT(0, 2, 1));
-    m_Primitives.push_back(ELEMENT(0, 3, 2));
-    m_Primitives.push_back(ELEMENT(0, 1, 4));
+    m_Vertices.push_back(VERTEX( 0.f,  sqrtf(6.f) / -12.f,  1.f / sqrtf(3.f),  0.f, 1.f, 1.f));
+    m_Vertices.push_back(VERTEX(-0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),  0.f, 1.f, 1.f));
+    m_Vertices.push_back(VERTEX( 0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),  0.f, 1.f, 1.f));
+    m_Vertices.push_back(VERTEX( 0.f,  0.5 * sqrtf(1.f),   -0.f,               0.f, 1.f, 1.f));
+
+    m_Primitives.push_back(ELEMENT(0, 1, 2));
+    m_Primitives.push_back(ELEMENT(0, 3, 1));
+    m_Primitives.push_back(ELEMENT(2, 3, 0));
     m_Primitives.push_back(ELEMENT(1, 3, 2));
 }
 
