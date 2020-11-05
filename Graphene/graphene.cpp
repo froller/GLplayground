@@ -44,9 +44,14 @@ int Graphene::run()
 //
 // Это должно выполняться на рендере каждого кадра
 //
+    // Координаты
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());   
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+    // Цвета
+    glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
+    glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
 
