@@ -81,6 +81,11 @@ int Graphene::run()
     return 0;
 }
 
+Graphene::Scene *Graphene::scene() const
+{
+    return m_Scene;   
+}
+
 int Graphene::addShader(const ShaderType type, const std::string &source)
 {
     Shader shader(type);

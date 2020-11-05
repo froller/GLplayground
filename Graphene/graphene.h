@@ -72,6 +72,7 @@ public:
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
     virtual int run();
+    virtual Graphene::Scene *scene() const;
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void setCamera(Graphene::Camera *camera);
