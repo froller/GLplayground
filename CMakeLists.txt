@@ -13,21 +13,23 @@ add_definitions("-Wall")
 # Add compiler flags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     add_compile_options(-Wno-write-strings)
-endif()
-
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    add_compile_options(-g -ggdb)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -ggdb")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -ggdb")
 endif()
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.cpp
     Graphene/graphene.h
+    Graphene/graphene_types.h
     Graphene/graphene.cpp
     Graphene/shader.cpp
     Graphene/program.cpp
     Graphene/model.cpp
+    Graphene/simpleobjects.h
     Graphene/simpleobjects.cpp
+    Graphene/camera.h
     Graphene/camera.cpp
+    Graphene/light.h
     Graphene/light.cpp
     Graphene/scene.cpp
 )

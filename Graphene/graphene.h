@@ -54,8 +54,8 @@ public:
     typedef struct Vertex
     {
         fvec3 position;
-        fvec3 normals;
-        Color color;
+        fvec3 normal;
+        Color color;       
         inline bool operator==(const struct Vertex &that);
     } Vertex;
     

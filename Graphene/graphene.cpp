@@ -46,7 +46,6 @@ int Graphene::run()
 // Это должно бытб перенесено в сцену
     m_Program->setUniform("ambientColor", m_Scene->m_Ambient);
 
-
 //
 // Это должно выполняться на рендере каждого кадра
 //
@@ -72,6 +71,8 @@ int Graphene::run()
     glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
 #endif // WIREFRAME
 
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     
     free(vertexBuffer);

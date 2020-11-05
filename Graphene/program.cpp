@@ -156,13 +156,13 @@ void Graphene::Program::setUniform<double>(const unsigned int index, double valu
 template<>
 void Graphene::Program::setUniform<fvec3>(const unsigned int index, fvec3 value) const
 {
-    glUniform3fv(index, sizeof(value), (float *)&value);
+    glUniform3fv(index, 1, (float *)&value);
 }
 
 template<>
 void Graphene::Program::setUniform<fmat4>(const unsigned int index, fmat4 value) const
 {
-    glUniformMatrix4fv(index, sizeof(value), false, (float *)&value);
+    glUniformMatrix4fv(index, 1, false, (float *)&value);
 }
 
 const char *Graphene::Program::log() const
