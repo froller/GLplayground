@@ -29,6 +29,7 @@ public:
     class Object;
     class Model;
     class Camera;
+    class Light;
     class SimpleObjects;
     class Scene;
 
@@ -42,19 +43,22 @@ public:
         Invalid
     };
     
-    typedef struct Vertex
-    {
-        fvec3 position;
-        fvec3 color;
-        inline bool operator==(const struct Vertex &that);
-    } Vertex;
-    
     constexpr static unsigned int ElementSize = 3;
     
     typedef unsigned int Index;
     
     typedef std::array<Index, ElementSize> Element;
+    
+    typedef fvec3 Color;
 
+    typedef struct Vertex
+    {
+        fvec3 position;
+        fvec3 normals;
+        Color color;
+        inline bool operator==(const struct Vertex &that);
+    } Vertex;
+    
 protected:
     Program *m_Program;
     Scene *m_Scene;
@@ -226,6 +230,27 @@ public:
 
 /*******************************************************************************
  * 
+ * Graphene::Light
+ * 
+ ******************************************************************************/
+
+class Graphene::Light : public Graphene::Object
+{
+public:
+    class Omni;
+public:
+    fvec3 m_Color;
+public:
+    Light() = default;
+    virtual ~Light() = default;
+    virtual fmat4 view() const = 0;
+    virtual fmat4 projection() const = 0;
+};
+
+#include "light.h"
+
+/*******************************************************************************
+ * 
  * Graphene::SimpleObjects
  * 
  ******************************************************************************/
@@ -250,6 +275,8 @@ public:
 
 class Graphene::Scene
 {
+    friend Graphene; // FIXME это зло должно быть уничтожено
+    // сейчас используется для получения доступа к m_Ambient
 protected:
     enum BufferType {
         VertexBuffer = 0,
@@ -260,6 +287,8 @@ protected:
     std::vector<Graphene::Model> m_Models;
     Graphene::Camera * const m_DefaultCamera;
     Graphene::Camera *m_Camera;
+    Graphene::Color m_Ambient;
+    
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
 public:
@@ -268,6 +297,7 @@ public:
     virtual void resetCamera();
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
+    virtual void setAmbient(const Graphene::Color color);
     virtual void draw() const;
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;

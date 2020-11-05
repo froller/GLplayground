@@ -28,6 +28,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     Graphene/model.cpp
     Graphene/simpleobjects.cpp
     Graphene/camera.cpp
+    Graphene/light.cpp
     Graphene/scene.cpp
 )
 

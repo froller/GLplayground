@@ -35,6 +35,9 @@ int Graphene::run()
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
+    
+// Это должно бытб перенесено в сцену
+    m_Program->setUniform("ambientColor", m_Scene->m_Ambient);
 
     m_Program->use();
      
@@ -48,10 +51,14 @@ int Graphene::run()
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());   
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
-    // Цвета
-    glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
+    // Нормали
+    glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный 
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+    // Цвета
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)((3 + 3) * sizeof(float)));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
 

@@ -39,6 +39,12 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
     m_Models.push_back(model);
 }
 
+void Graphene::Scene::setAmbient(const Graphene::Color color)
+{
+    m_Ambient = color;
+}
+
+
 void Graphene::Scene::draw() const
 {
 
