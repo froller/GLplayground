@@ -10,7 +10,10 @@ Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(
     
     glGenBuffers(2, m_Buffers);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
+    
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 }
 
 Graphene::Scene::~Scene()

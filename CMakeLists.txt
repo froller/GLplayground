@@ -32,7 +32,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 #target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -frepo)
-target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_GLM WIREFRAME)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_GLM)
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
