@@ -25,21 +25,24 @@ int Graphene::run()
 {
     clear();
 
+    m_Program->use();
+
+    // Аллокация буферов
     void *vertexBuffer = malloc(m_Scene->VBOsize());
     void *elementBuffer = malloc(m_Scene->EBOsize());
     
+    // Заполнение буферов
     m_Scene->VBOdata(vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Graphene::Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
+
     m_Scene->EBOdata(elementBuffer);
-    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Graphene::Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
+
 // Это меняется только при изменении камеры
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
-
-    m_Program->use();
-     
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Graphene::Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Graphene::Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
+   
 
 //
 // Это должно выполняться на рендере каждого кадра
