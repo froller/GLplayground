@@ -1,8 +1,7 @@
 #include "graphene.h"
-#include <math.h>
 #include <array>
 
-#define VERTEX(x,y,z,r,g,b) m_Vertices.push_back({position: fvec3(x, y, z), color: fvec3(r, g, b)})
+#define VERTEX(x,y,z,r,g,b) m_Vertices.push_back({fvec3(x, y, z), fvec3(r, g, b)})
 #define ELEMENT(a,b,c) m_Primitives.push_back({a, b, c})
 
 Graphene::SimpleObjects::Triangle::Triangle()

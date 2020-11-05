@@ -22,7 +22,7 @@ Graphene::Shader::~Shader()
 
 int Graphene::Shader::loadSource(const std::filesystem::path &path)
 {
-    FILE *shaderSourceFile = fopen(path.c_str(), "rb");
+    FILE *shaderSourceFile = fopen(path.string().c_str(), "rb");
     if (!shaderSourceFile)
     {
         m_LastError = errno;
@@ -49,7 +49,7 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
         return -1;
     }
     fclose(shaderSourceFile);
-    glShaderSource(m_Handle, 1, &shaderSource, nullptr);
+    glShaderSource(m_Handle, 1, const_cast<const char **>(&shaderSource), nullptr);
     return 0;
 }
 

@@ -1,5 +1,4 @@
 #include "graphene.h"
-#include <math.h>
 
 Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
