@@ -82,6 +82,8 @@ int main(int argc, char ** argv) {
     
     graphene->setCamera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
     
+    graphene->scene()->setAmbient({0.1, 0.1, 0.1});
+    
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     while (!SDL_QuitRequested()) {

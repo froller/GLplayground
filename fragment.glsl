@@ -2,10 +2,12 @@
 
 uniform vec3 ambientColor;
 
-in vec3 fragmentColor;
-out vec3 color;
+in vec3 normal;
+in vec3 color;
+
+out vec3 fragmentColor;
 
 void main()
 {
-    color = fragmentColor;
+    fragmentColor = ambientColor * color;
 }

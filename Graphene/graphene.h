@@ -77,7 +77,7 @@ public:
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
-    virtual void setClearColor(float R, float G, float B);
+    virtual void setClearColor(const Color color);
     virtual void clear() const;
 };
 

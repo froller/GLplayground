@@ -7,7 +7,8 @@ layout(location = 2) in vec3 vertexColor;
 uniform mat4 MVP[3];
 
 //out vec2 UV;
-out vec3 fragmentColor;
+out vec3 normal;
+out vec3 color;
 
 void main()
 {
@@ -15,5 +16,6 @@ void main()
 //    gl_Position.w = 1.0;
 
     gl_Position = MVP[2] * MVP[1] * MVP[0] * vec4(vertexPosition, 1);
-    fragmentColor = vertexColor;
+    normal = vertexNormal;
+    color = vertexColor;
 }

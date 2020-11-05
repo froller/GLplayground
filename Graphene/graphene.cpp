@@ -116,9 +116,9 @@ void Graphene::addModel(const Graphene::Model &model)
     m_Scene->addModel(model);
 }
 
-void Graphene::setClearColor(float R, float G, float B)
+void Graphene::setClearColor(const Color color)
 {
-    m_ClearColor = { R, G, B };
+    m_ClearColor = color;
 }
 
 void Graphene::clear() const
