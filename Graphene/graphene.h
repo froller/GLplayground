@@ -155,7 +155,7 @@ public:
     template<typename T>
     int setUniform(const char *name, T value) const
     {
-        const unsigned int index = glGetUniformLocation(m_Handle, name);
+        const int index = glGetUniformLocation(m_Handle, name);
         if (index < 0)
             return index;
         setUniform(index, value);
