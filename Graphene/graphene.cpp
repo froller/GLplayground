@@ -33,18 +33,25 @@ int Graphene::run()
     
     // Заполнение буферов
     m_Scene->VBOdata(vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Graphene::Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
 
     m_Scene->EBOdata(elementBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Graphene::Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
     
 // Это меняется только при изменении камеры
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
 
-// Это должно бытб перенесено в сцену
+// Это должно быть перенесено в сцену
     m_Program->setUniform("ambientColor", m_Scene->m_Ambient);
+
+    size_t lightsBufferSize = m_Scene->lightsCount() * sizeof(LightSource);
+    void *lightsBuffer = malloc(lightsBufferSize);
+    m_Scene->lightsData(lightsBuffer);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Scene->m_Buffers[Graphene::Scene::BufferType::LightsBuffer], 0, lightsBufferSize);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, lightsBufferSize, lightsBuffer, GL_STATIC_DRAW);
+    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightsCount()));
 
 //
 // Это должно выполняться на рендере каждого кадра
@@ -52,18 +59,18 @@ int Graphene::run()
     // Координаты
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());   
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
     // Нормали
     glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
     // Цвета
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_Scene->VBO());
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)((3 + 3) * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBO());
-
+    
 #ifdef WIREFRAME
     for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
         glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
@@ -71,6 +78,8 @@ int Graphene::run()
     glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
 #endif // WIREFRAME
 
+    free(lightsBuffer);
+    
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);

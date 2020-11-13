@@ -12,10 +12,7 @@
 class Graphene::Light::Omni : public Graphene::Light
 {
 public:
-    Omni(const fvec3 position, const Color color);
-    virtual ~Omni() = default;
-    virtual fmat4 view() const override;
-    virtual fmat4 projection() const override;
+    Omni(const fvec3 position, const Graphene::Color color);
 };
 
 #endif // __LIGHT_H__
