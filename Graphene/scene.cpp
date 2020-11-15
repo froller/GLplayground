@@ -154,5 +154,5 @@ Graphene::Camera *Graphene::Scene::camera()
 
 fmat4 Graphene::Scene::model() const
 {
-    return fmat4(1);
+    return fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
 }

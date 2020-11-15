@@ -61,13 +61,14 @@ public:
 
     typedef struct LightSource
     {
+    public:
         fvec3 position;
-//    private:
-//        char p0 = 0;
-//    public:
+    private:
+        char padding0[sizeof(float)] = { 0 };
+    public:
         Color color;
-//    private:
-//        char p1 = 0;
+    private:
+        char padding1[sizeof(float)] = { 0 };
     } LightSource;
     
 protected:
