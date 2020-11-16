@@ -4,12 +4,14 @@ project(GLplayground)
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 
+set(CMAKE_glsl_COMPILE_OBJECT )
+
 if(WIN32)
-	# Copy NuGet packages config
-	set(PACKAGES_CONFIG "packages.config")
-	message(STATUS "Copying ${PROJECT_SOURCE_DIR}/${PACKAGES_CONFIG} to ${PROJECT_BINARY_DIR}")
-	file(READ "${PROJECT_SOURCE_DIR}/${PACKAGES_CONFIG}" TMP)
-	file(WRITE "${PROJECT_BINARY_DIR}/${PACKAGES_CONFIG}" "${TMP}")
+    # Copy NuGet packages config
+    set(PACKAGES_CONFIG "packages.config")
+    message(STATUS "Copying ${PROJECT_SOURCE_DIR}/${PACKAGES_CONFIG} to ${PROJECT_BINARY_DIR}")
+    file(READ "${PROJECT_SOURCE_DIR}/${PACKAGES_CONFIG}" TMP)
+    file(WRITE "${PROJECT_BINARY_DIR}/${PACKAGES_CONFIG}" "${TMP}")
 
     # Package settings for NuGet
     set(SDL2_LIBRARIES "SDL2.lib")
@@ -18,8 +20,8 @@ if(WIN32)
     set(PNG_LIBRARIES "libpng16.lib")
 
     set(SDL2_LIBDIR "build/packages/sdl2.2.0.5/build/native/lib/$(Platform)/dynamic")
-	set(SDL2_BINDIR "build/packages/sdl2.redist.2.0.5/build/native/bin/$(Platform)/dynamic")
-	set(GLEW_LIBDIR "build/packages/Glew_dynamic.2.0.0.0/build/native/lib/v140/$(Platform)")
+    set(SDL2_BINDIR "build/packages/sdl2.redist.2.0.5/build/native/bin/$(Platform)/dynamic")
+    set(GLEW_LIBDIR "build/packages/Glew_dynamic.2.0.0.0/build/native/lib/v140/$(Platform)")
 
     set(SDL2_INCLUDE_DIRS "build/packages/sdl2.2.0.5/build/native/include")
     set(GLEW_INCLUDE_DIRS "build/packages/Glew_dynamic.2.0.0.0/build/native/include")
@@ -27,11 +29,11 @@ if(WIN32)
 
     add_compile_definitions("USE_GLM")
 else()
-	# Finding dependencies
-	find_package(SDL2 REQUIRED)
-	find_package(OpenGL REQUIRED)
-	find_package(GLEW REQUIRED)
-	find_package(glm REQUIRED)
+    # Finding dependencies
+    find_package(SDL2 REQUIRED)
+    find_package(OpenGL REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(glm REQUIRED)
 
     if(${glm_FOUND})
         add_compile_definitions("USE_GLM")
@@ -68,15 +70,7 @@ set(SOURCES
     Graphene/light.h
     Graphene/light.cpp
     Graphene/scene.cpp
-	fragment.glsl
-	vertex.glsl
 )
-set_source_files_properties(fragment.glsl vertex.glsl
-	PROPERTIES
-	LANGUAGE glsl
-	VS_COPY_TO_OUT_DIR Always
-)
-source_group(Shaders REGULAR_EXPRESSION glsl$)
 
 if (WIN32)
     add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCES})
@@ -89,5 +83,17 @@ target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+
+set(SHADERS
+    fragment.glsl
+    vertex.glsl
+)
+set_source_files_properties(fragment.glsl vertex.glsl
+    PROPERTIES
+    LANGUAGE glsl
+    VS_COPY_TO_OUT_DIR Always
+)
+source_group(SHADERS REGULAR_EXPRESSION glsl$)
+add_custom_target(SHADER_TARGET SOURCES ${SHADERS})
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
