@@ -1,11 +1,19 @@
 #include "Graphene/graphene.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
+
+#ifdef _WIN32
+#   include <Windows.h>
+#endif // _WIN32
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-int main(int argc, char ** argv) {
-    
+#ifdef _WIN32
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+#else
+int main(int argc, char ** argv)
+#endif
+{    
     /* Initializing SDL */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Initializing SDL");
     if (SDL_Init(SDL_INIT_VIDEO))

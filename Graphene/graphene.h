@@ -5,13 +5,20 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <string>
 #include <vector>
 #include <filesystem>
 #include <map>
 #include <array>
+
+#include <math.h>
+#ifdef _WIN32
+#   define M_PI_2 M_PI / 2.f
+#   define M_PI_4 M_PI / 4.f
+#   define M_2_PI M_PI * 2.f
+#endif
 
 #include "graphene_types.h"
 
