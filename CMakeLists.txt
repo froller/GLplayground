@@ -71,6 +71,10 @@ set(SOURCES
     Graphene/light.cpp
     Graphene/scene.cpp
 )
+set(SHADERS
+    fragment.glsl
+    vertex.glsl
+)
 
 if (WIN32)
     add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCES})
@@ -84,16 +88,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLU
 target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
-set(SHADERS
-    fragment.glsl
-    vertex.glsl
-)
 set_source_files_properties(fragment.glsl vertex.glsl
     PROPERTIES
     LANGUAGE glsl
     VS_COPY_TO_OUT_DIR Always
 )
-source_group(SHADERS REGULAR_EXPRESSION glsl$)
-add_custom_target(SHADER_TARGET SOURCES ${SHADERS})
+source_group(Shaders REGULAR_EXPRESSION glsl$)
+add_custom_target(Shaders SOURCES ${SHADERS})
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
