@@ -106,6 +106,11 @@ int Graphene::Program::uniformMaxLen() const
     return rv;
 }
 
+unsigned int Graphene::Program::uniformIndex(const char* name) const
+{
+    return glGetUniformLocation(m_Handle, name);
+}
+
 char *Graphene::Program::uniformName(const unsigned int index) const
 {
     constexpr size_t rvCapacity = 256;
@@ -127,6 +132,26 @@ int Graphene::Program::uniformSize(const unsigned int index) const
     int rv;
     glGetActiveUniform(m_Handle, index, 0, nullptr, &rv, nullptr, nullptr);
     return rv;     
+}
+
+int Graphene::Program::setUniformBuffer(const unsigned int index, void *buffer) const
+{
+    (void)index;
+    (void)buffer;
+    
+    
+    
+    return 0;
+}
+
+int Graphene::Program::setUniformBuffer(const char *name, void *buffer) const
+{
+        //const int index = glGetUniformBlockIndex(m_Handle, name);
+    const int index = glGetUniformBlockIndex(m_Handle, name);
+    if (index < 0)
+        return index;
+    setUniformBuffer(index, buffer);
+    return 0;
 }
 
 template<>
@@ -156,13 +181,13 @@ void Graphene::Program::setUniform<double>(const unsigned int index, double valu
 template<>
 void Graphene::Program::setUniform<fvec3>(const unsigned int index, fvec3 value) const
 {
-    glUniform3fv(index, sizeof(value), (float *)&value);
+    glUniform3fv(index, 1, (float *)&value);
 }
 
 template<>
 void Graphene::Program::setUniform<fmat4>(const unsigned int index, fmat4 value) const
 {
-    glUniformMatrix4fv(index, sizeof(value), false, (float *)&value);
+    glUniformMatrix4fv(index, 1, false, (float *)&value);
 }
 
 const char *Graphene::Program::log() const

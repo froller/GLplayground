@@ -7,17 +7,22 @@ Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     
-    glGenBuffers(2, m_Buffers);
+    glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightsBuffer]);
+    //glMapNamedBuffer(m_Buffers[BufferType::LightsBuffer], GL_WRITE_ONLY);
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    
+    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 Graphene::Scene::~Scene()
 {
-    glDeleteBuffers(2, m_Buffers);
+    //glUnmapNamedBuffer(m_Buffers[BufferType::LightsBuffer]);
+    glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
     glDeleteVertexArrays(1, &m_VAO);
     
     delete m_DefaultCamera;   
@@ -38,6 +43,17 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
     m_Models.push_back(model);
 }
 
+void Graphene::Scene::addLight(Graphene::Light *light)
+{
+    m_Lights.push_back(*light);
+}
+
+void Graphene::Scene::setAmbient(const Graphene::Color color)
+{
+    m_Ambient = color;
+}
+
+
 void Graphene::Scene::draw() const
 {
 
@@ -57,6 +73,11 @@ size_t Graphene::Scene::elementCount() const
     for (auto &model : m_Models)
         count += model.elementCount();
     return count;
+}
+
+size_t Graphene::Scene::lightsCount() const
+{
+    return m_Lights.size();
 }
 
 unsigned int Graphene::Scene::VBO() const
@@ -85,6 +106,11 @@ size_t Graphene::Scene::EBOsize() const
     return eboSize;
 }
 
+size_t Graphene::Scene::lightsSize() const
+{
+    return lightsCount() * sizeof(LightSource);
+}
+
 size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
 {
     void *bufferTop = vertexBuffer;
@@ -109,6 +135,17 @@ size_t Graphene::Scene::EBOdata(void *elementBuffer) const
     return (char *)bufferTop - (char *)elementBuffer;
 }
 
+size_t Graphene::Scene::lightsData(void* lightsBuffer) const
+{
+    void *bufferTop = lightsBuffer;
+    for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
+    {
+        light->lightData(bufferTop);
+        bufferTop = (char *)bufferTop + sizeof(LightSource);
+    }
+    return (char *)bufferTop - (char *)lightsBuffer;
+}
+
 Graphene::Camera *Graphene::Scene::camera()
 {
     return m_Camera;
@@ -116,5 +153,5 @@ Graphene::Camera *Graphene::Scene::camera()
 
 fmat4 Graphene::Scene::model() const
 {
-    return fmat4(1);
+    return fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
 }

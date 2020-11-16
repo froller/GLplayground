@@ -36,6 +36,7 @@ public:
     class Object;
     class Model;
     class Camera;
+    class Light;
     class SimpleObjects;
     class Scene;
 
@@ -49,19 +50,34 @@ public:
         Invalid
     };
     
-    typedef struct Vertex
-    {
-        fvec3 position;
-        fvec3 color;
-        inline bool operator==(const struct Vertex &that);
-    } Vertex;
-    
     constexpr static unsigned int ElementSize = 3;
     
     typedef unsigned int Index;
     
     typedef std::array<Index, ElementSize> Element;
+    
+    typedef fvec3 Color;
 
+    typedef struct Vertex
+    {
+        fvec3 position;
+        fvec3 normal;
+        Color color;       
+        inline bool operator==(const struct Vertex &that);
+    } Vertex;
+
+    typedef struct LightSource
+    {
+    public:
+        fvec3 position;
+    private:
+        char padding0[sizeof(float)] = { 0 };
+    public:
+        Color color;
+    private:
+        char padding1[sizeof(float)] = { 0 };
+    } LightSource;
+    
 protected:
     Program *m_Program;
     Scene *m_Scene;
@@ -75,11 +91,12 @@ public:
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
     virtual int run();
+    virtual Graphene::Scene *scene() const;
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
-    virtual void setClearColor(float R, float G, float B);
+    virtual void setClearColor(const Color color);
     virtual void clear() const;
 };
 
@@ -145,9 +162,12 @@ public:
     virtual int attributes() const;
     virtual int uniforms() const;
     virtual int uniformMaxLen() const;
+    virtual unsigned int uniformIndex(const char *name) const;
     virtual char *uniformName(const unsigned int index) const;
     virtual unsigned int uniformType(const unsigned int index) const;
     virtual int uniformSize(const unsigned int index) const;
+    virtual int setUniformBuffer(const unsigned int index, void *buffer) const;
+    virtual int setUniformBuffer(const char *name, void *buffer) const;
 
     template<typename T>
     void setUniform(const unsigned int index, T value) const;
@@ -233,6 +253,28 @@ public:
 
 /*******************************************************************************
  * 
+ * Graphene::Light
+ * 
+ ******************************************************************************/
+
+class Graphene::Light : public Graphene::Object
+{
+public:
+    class Omni;
+public:
+    fvec3 m_Color;
+public:
+    Light() = default;
+    virtual ~Light() = default;
+    virtual fmat4 view() const;
+    virtual fmat4 projection() const;
+    virtual size_t lightData(void *lightBuffer) const;
+};
+
+#include "light.h"
+
+/*******************************************************************************
+ * 
  * Graphene::SimpleObjects
  * 
  ******************************************************************************/
@@ -257,16 +299,22 @@ public:
 
 class Graphene::Scene
 {
+    friend Graphene; // FIXME это зло должно быть уничтожено
+    // сейчас используется для получения доступа к m_Ambient
 protected:
     enum BufferType {
         VertexBuffer = 0,
         ElementBuffer,
+        LightsBuffer,
         BufferTypeMax
     };
 protected:
     std::vector<Graphene::Model> m_Models;
+    std::vector<Graphene::Light> m_Lights;
     Graphene::Camera * const m_DefaultCamera;
     Graphene::Camera *m_Camera;
+    Graphene::Color m_Ambient;
+    
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
 public:
@@ -275,15 +323,20 @@ public:
     virtual void resetCamera();
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
+    virtual void addLight(Graphene::Light *light);
+    virtual void setAmbient(const Graphene::Color color);
     virtual void draw() const;
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;
+    virtual size_t lightsCount() const;
     virtual unsigned int VBO() const;
     virtual unsigned int EBO() const;
     virtual size_t VBOsize() const;
     virtual size_t EBOsize() const;
+    virtual size_t lightsSize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
     virtual size_t EBOdata(void *elementBuffer) const;
+    virtual size_t lightsData(void *lightsBuffer) const;
     virtual Graphene::Camera *camera();
     virtual fmat4 model() const;
 };
