@@ -82,6 +82,13 @@ protected:
     Program *m_Program;
     Scene *m_Scene;
     fvec3 m_ClearColor;
+
+    void *m_VertexBuffer = nullptr;
+    void *m_ElementBuffer = nullptr;
+    void *m_LightBuffer = nullptr;
+    size_t m_VertexBufferSize = 0;
+    size_t m_ElementBufferSize = 0;
+    size_t m_LightBufferSize = 0;
     
 public:
     Graphene();
@@ -90,14 +97,23 @@ public:
     virtual ~Graphene();
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
-    virtual int run();
+    virtual int draw();
     virtual Graphene::Scene *scene() const;
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
+    virtual void addLight(const Graphene::Light &light);
     virtual void setClearColor(const Color color);
     virtual void clear() const;
+
+protected:
+    virtual void reAllocateVertexBuffer();
+    virtual void reAllocateElementBuffer();
+    virtual void reAllocateLightBuffer();
+    virtual void fillVertexBuffer();
+    virtual void fillElementBuffer();
+    virtual void fillLightBuffer();
 };
 
 /*******************************************************************************
@@ -305,10 +321,11 @@ protected:
     enum BufferType {
         VertexBuffer = 0,
         ElementBuffer,
-        LightsBuffer,
+        LightBuffer,
         BufferTypeMax
     };
 protected:
+    Graphene::Program *m_Program;
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
     Graphene::Camera * const m_DefaultCamera;
@@ -318,17 +335,16 @@ protected:
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
 public:
-    Scene();
+    Scene(Graphene::Program *m_Program);
     virtual ~Scene();
     virtual void resetCamera();
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
-    virtual void addLight(Graphene::Light *light);
+    virtual void addLight(const Graphene::Light &light);
     virtual void setAmbient(const Graphene::Color color);
-    virtual void draw() const;
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;
-    virtual size_t lightsCount() const;
+    virtual size_t lightCount() const;
     virtual unsigned int VBO() const;
     virtual unsigned int EBO() const;
     virtual size_t VBOsize() const;

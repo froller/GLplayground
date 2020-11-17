@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
     }
 
     /* Setting up logging */
-#if CMAKE_BUILD_TYPE == Debug
+#ifdef DEBUG
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 #else
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
@@ -88,7 +88,8 @@ int main(int argc, char ** argv)
     graphene->addModel(Graphene::SimpleObjects::Square());
     graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
 
-    graphene->scene()->addLight(new Graphene::Light::Omni({0, 2, -4}, {0.0, 0.5, 1.0}));
+    graphene->scene()->addLight(Graphene::Light::Omni({ -1, 2, -4 }, { 0.0, 0.5, 0.5 }));
+    graphene->scene()->addLight(Graphene::Light::Omni({  1, 2, -4 }, { 0.5, 0.0, 0.0 }));
     graphene->scene()->setAmbient({0.01, 0.01, 0.01});
 
 //    graphene->setCamera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
@@ -97,7 +98,7 @@ int main(int argc, char ** argv)
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     while (!SDL_QuitRequested()) {
-        if (graphene->run())
+        if (graphene->draw())
             SDL_Quit();
         SDL_GL_SwapWindow(window);
     }

@@ -1,8 +1,9 @@
 #include "graphene.h"
 
-Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
+Graphene::Scene::Scene(Graphene::Program *program) : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
     m_Camera = m_DefaultCamera;
+    m_Ambient = Color(0.f, 0.f, 0.f);
     
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
@@ -10,7 +11,7 @@ Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(
     glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightsBuffer]);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);
     //glMapNamedBuffer(m_Buffers[BufferType::LightsBuffer], GL_WRITE_ONLY);
     
     glEnable(GL_DEPTH_TEST);
@@ -43,9 +44,9 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
     m_Models.push_back(model);
 }
 
-void Graphene::Scene::addLight(Graphene::Light *light)
+void Graphene::Scene::addLight(const Graphene::Light &light)
 {
-    m_Lights.push_back(*light);
+    m_Lights.push_back(light);
 }
 
 void Graphene::Scene::setAmbient(const Graphene::Color color)
@@ -53,11 +54,6 @@ void Graphene::Scene::setAmbient(const Graphene::Color color)
     m_Ambient = color;
 }
 
-
-void Graphene::Scene::draw() const
-{
-
-}
 
 size_t Graphene::Scene::vertexCount() const
 {
@@ -75,7 +71,7 @@ size_t Graphene::Scene::elementCount() const
     return count;
 }
 
-size_t Graphene::Scene::lightsCount() const
+size_t Graphene::Scene::lightCount() const
 {
     return m_Lights.size();
 }
@@ -108,7 +104,7 @@ size_t Graphene::Scene::EBOsize() const
 
 size_t Graphene::Scene::lightsSize() const
 {
-    return lightsCount() * sizeof(LightSource);
+    return lightCount() * sizeof(LightSource);
 }
 
 size_t Graphene::Scene::VBOdata(void *vertexBuffer) const

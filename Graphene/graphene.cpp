@@ -12,47 +12,43 @@
 Graphene::Graphene()
 {
     m_Program = new Program();
-    m_Scene = new Scene();
+    m_Scene = new Scene(m_Program);
     m_ClearColor = { 0, 0, 0 };
 }
 
 Graphene::~Graphene()
 {
     delete m_Program;
+
+    if (m_VertexBuffer)
+        free(m_VertexBuffer);
+
+    if (m_ElementBuffer)
+        free(m_ElementBuffer);
+
+    if (m_LightBuffer)
+        free(m_LightBuffer);
 }
 
-int Graphene::run()
+int Graphene::draw()
 {
     clear();
 
     m_Program->use();
 
-    // Аллокация буферов
-    void *vertexBuffer = malloc(m_Scene->VBOsize());
-    void *elementBuffer = malloc(m_Scene->EBOsize());
-    
     // Заполнение буферов
-    m_Scene->VBOdata(vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Scene->vertexCount(), vertexBuffer, GL_STATIC_DRAW);
+    fillVertexBuffer();
+    fillElementBuffer();
+    fillLightBuffer();
 
-    m_Scene->EBOdata(elementBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Element) * m_Scene->elementCount(), elementBuffer, GL_STATIC_DRAW);
-    
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Scene->m_Buffers[Graphene::Scene::BufferType::LightBuffer], 0, m_LightBufferSize);
+
 // Это меняется только при изменении камеры
     m_Program->setUniform("MVP[0]", m_Scene->model());
-    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
-    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
-    m_Program->setUniform("cameraPos", m_Scene->camera()->m_Position);
 
 // Это должно быть перенесено в сцену
     m_Program->setUniform("ambientColor", m_Scene->m_Ambient);
 
-    size_t lightsBufferSize = m_Scene->lightsCount() * sizeof(LightSource);
-    void *lightsBuffer = malloc(lightsBufferSize);
-    m_Scene->lightsData(lightsBuffer);
-    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Scene->m_Buffers[Graphene::Scene::BufferType::LightsBuffer], 0, lightsBufferSize);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, lightsBufferSize, lightsBuffer, GL_STATIC_DRAW);
-    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightsCount()));
 
 //
 // Это должно выполняться на рендере каждого кадра
@@ -78,16 +74,11 @@ int Graphene::run()
 #else
     glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
 #endif // WIREFRAME
-
-    free(lightsBuffer);
-    
+ 
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
     
-    free(vertexBuffer);
-    free(elementBuffer);
-
     return 0;
 }
 
@@ -119,11 +110,21 @@ int Graphene::addShader(const ShaderType type, const std::filesystem::path &path
 void Graphene::setCamera(Graphene::Camera *camera) 
 {
     m_Scene->setCamera(camera);
+    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
+    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
+    m_Program->setUniform("cameraPos", m_Scene->camera()->m_Position);
+
 }
 
 void Graphene::addModel(const Graphene::Model &model)
 {
     m_Scene->addModel(model);
+}
+
+void Graphene::addLight(const Graphene::Light &light)
+{
+    m_Scene->addLight(light);
+    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
 }
 
 void Graphene::setClearColor(const Color color)
@@ -135,4 +136,47 @@ void Graphene::clear() const
 {
     glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Graphene::reAllocateVertexBuffer()
+{
+    size_t newSize = m_Scene->VBOsize();
+    if (newSize > m_VertexBufferSize)
+        m_VertexBuffer = realloc(m_VertexBuffer, newSize);
+}
+
+void Graphene::reAllocateElementBuffer()
+{
+    size_t newSize = m_Scene->EBOsize();
+    if (newSize > m_ElementBufferSize)
+        m_ElementBuffer = realloc(m_ElementBuffer, newSize);
+}
+
+void Graphene::reAllocateLightBuffer()
+{
+    size_t newSize = m_Scene->lightCount() * sizeof(LightSource);
+    if (newSize > m_LightBufferSize)
+        m_LightBuffer = realloc(m_LightBuffer, newSize);
+}
+
+void Graphene::fillVertexBuffer()
+{
+    reAllocateVertexBuffer();
+    m_Scene->VBOdata(m_VertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Scene->vertexCount(), m_VertexBuffer, GL_STATIC_DRAW);
+}
+
+void Graphene::fillElementBuffer()
+{
+    reAllocateElementBuffer();
+    m_Scene->EBOdata(m_ElementBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Element) * m_Scene->elementCount(), m_ElementBuffer, GL_STATIC_DRAW);
+}
+
+void Graphene::fillLightBuffer()
+{
+    reAllocateLightBuffer();
+    size_t lightsBufferSize = m_Scene->lightCount() * sizeof(LightSource);
+    m_Scene->lightsData(m_LightBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightSource) * m_Scene->lightCount(), m_LightBuffer, GL_STATIC_DRAW);
 }

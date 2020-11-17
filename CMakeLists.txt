@@ -27,7 +27,7 @@ if(WIN32)
     set(GLEW_INCLUDE_DIRS "build/packages/Glew_dynamic.2.0.0.0/build/native/include")
     set(GLM_INCLUDE_DIRS "build/packages/glm.0.9.9.800/build/native/include")
 
-    add_compile_definitions("USE_GLM")
+    set(glm_FOUND TRUE)
 else()
     # Finding dependencies
     find_package(SDL2 REQUIRED)
@@ -35,17 +35,20 @@ else()
     find_package(GLEW REQUIRED)
     find_package(glm REQUIRED)
 
-    if(${glm_FOUND})
-        add_compile_definitions("USE_GLM")
-    endif()
+endif()
+
+if(${glm_FOUND})
+    add_compile_definitions("WITH_GLM")
 endif()
 
 # Add global definitions
-add_definitions("-Wall")
+#add_compile_options("-Wall")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Add compiler flags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    add_compile_options(-Wno-write-strings)
+    add_compile_options(-Wno-write-strings -Pedantic)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -ggdb")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb")
 elseif(WIN32)
