@@ -69,7 +69,9 @@ int Graphene::draw()
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
     m_Program->setUniform("cameraPos", m_Scene->camera()->m_Position);
-    m_Program->setUniform("ambientColor", m_Scene->m_Ambient);
+    m_Program->setUniform("ambientColor", m_Scene->ambient());
+    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
+
 
 //
 // Это должно выполняться на рендере каждого кадра
@@ -132,9 +134,9 @@ int Graphene::addShader(const ShaderType type, const std::filesystem::path &path
     return 0;
 }
 
-void Graphene::setCamera(Graphene::Camera *camera) 
+void Graphene::camera(Graphene::Camera *camera) 
 {
-    m_Scene->setCamera(camera);
+    m_Scene->camera(camera);
 }
 
 void Graphene::addModel(const Graphene::Model &model)
@@ -145,7 +147,6 @@ void Graphene::addModel(const Graphene::Model &model)
 void Graphene::addLight(const Graphene::Light &light)
 {
     m_Scene->addLight(light);
-    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
 }
 
 void Graphene::setClearColor(const Color color)

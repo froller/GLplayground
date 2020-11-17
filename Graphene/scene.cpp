@@ -16,7 +16,12 @@ void Graphene::Scene::resetCamera()
     m_Camera = m_DefaultCamera;
 }
 
-void Graphene::Scene::setCamera(Graphene::Camera *camera)
+Graphene::Camera *Graphene::Scene::camera() const
+{
+    return m_Camera;
+}
+
+void Graphene::Scene::camera(Graphene::Camera *camera)
 {
     m_Camera = camera;
 }
@@ -31,12 +36,12 @@ void Graphene::Scene::addLight(const Graphene::Light &light)
     m_Lights.push_back(light);
 }
 
-Graphene::Color Graphene::Scene::getAmbient() const
+Graphene::Color Graphene::Scene::ambient() const
 {
     return m_Ambient;
 }
 
-void Graphene::Scene::setAmbient(const Graphene::Color color)
+void Graphene::Scene::ambient(const Graphene::Color color)
 {
     m_Ambient = color;
 }

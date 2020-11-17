@@ -111,7 +111,7 @@ public:
     virtual Graphene::Scene *scene() const;
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
-    virtual void setCamera(Graphene::Camera *camera);
+    virtual void camera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
     virtual void setClearColor(const Color color);
@@ -325,8 +325,6 @@ public:
 
 class Graphene::Scene
 {
-    friend Graphene; // FIXME это зло должно быть уничтожено
-    // сейчас используется для получения доступа к m_Ambient
 protected:
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
@@ -338,11 +336,12 @@ public:
     Scene();
     virtual ~Scene();
     virtual void resetCamera();
-    virtual void setCamera(Graphene::Camera *camera);
+    virtual Graphene::Camera *camera() const;
+    virtual void camera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
-    virtual Graphene::Color getAmbient() const;
-    virtual void setAmbient(const Graphene::Color color);
+    virtual Graphene::Color ambient() const;
+    virtual void ambient(const Graphene::Color color);
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;
     virtual size_t lightCount() const;

@@ -12,7 +12,7 @@ uniform uint lightsCount;
 layout (std430, binding = 0) buffer Lights {
     vec3 position;
     vec3 color;
-} lights[16];
+} lights[4];
 
 out vec3 fragmentColor;
 
