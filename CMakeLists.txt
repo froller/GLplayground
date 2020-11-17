@@ -48,7 +48,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Add compiler flags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    add_compile_options(-Wno-write-strings -Pedantic)
+    add_compile_options(-Wno-write-strings -pedantic)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -ggdb")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb")
 elseif(WIN32)

@@ -1,31 +1,13 @@
 #include "graphene.h"
 
-Graphene::Scene::Scene(Graphene::Program *program) : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
+Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
     m_Camera = m_DefaultCamera;
     m_Ambient = Color(0.f, 0.f, 0.f);
-    
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-    
-    glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);
-    //glMapNamedBuffer(m_Buffers[BufferType::LightsBuffer], GL_WRITE_ONLY);
-    
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    
-    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 Graphene::Scene::~Scene()
 {
-    //glUnmapNamedBuffer(m_Buffers[BufferType::LightsBuffer]);
-    glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
-    glDeleteVertexArrays(1, &m_VAO);
-    
     delete m_DefaultCamera;   
 }
 
@@ -47,6 +29,11 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
 void Graphene::Scene::addLight(const Graphene::Light &light)
 {
     m_Lights.push_back(light);
+}
+
+Graphene::Color Graphene::Scene::getAmbient() const
+{
+    return m_Ambient;
 }
 
 void Graphene::Scene::setAmbient(const Graphene::Color color)
@@ -74,16 +61,6 @@ size_t Graphene::Scene::elementCount() const
 size_t Graphene::Scene::lightCount() const
 {
     return m_Lights.size();
-}
-
-unsigned int Graphene::Scene::VBO() const
-{
-    return m_Buffers[BufferType::VertexBuffer];
-}
-
-unsigned int Graphene::Scene::EBO() const
-{
-    return m_Buffers[BufferType::ElementBuffer];
 }
 
 size_t Graphene::Scene::VBOsize() const

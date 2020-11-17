@@ -50,6 +50,13 @@ public:
         Invalid
     };
     
+    enum BufferType {
+        VertexBuffer = 0,
+        ElementBuffer,
+        LightBuffer,
+        BufferTypeMax
+    };
+    
     constexpr static unsigned int ElementSize = 3;
     
     typedef unsigned int Index;
@@ -90,6 +97,9 @@ protected:
     size_t m_ElementBufferSize = 0;
     size_t m_LightBufferSize = 0;
     
+    unsigned int m_VAO;
+    unsigned int m_Buffers[BufferTypeMax];
+    
 public:
     Graphene();
     Graphene(const Graphene &) = delete;
@@ -108,9 +118,9 @@ public:
     virtual void clear() const;
 
 protected:
-    virtual void reAllocateVertexBuffer();
-    virtual void reAllocateElementBuffer();
-    virtual void reAllocateLightBuffer();
+    virtual size_t reAllocateVertexBuffer();
+    virtual size_t reAllocateElementBuffer();
+    virtual size_t reAllocateLightBuffer();
     virtual void fillVertexBuffer();
     virtual void fillElementBuffer();
     virtual void fillLightBuffer();
@@ -318,35 +328,24 @@ class Graphene::Scene
     friend Graphene; // FIXME это зло должно быть уничтожено
     // сейчас используется для получения доступа к m_Ambient
 protected:
-    enum BufferType {
-        VertexBuffer = 0,
-        ElementBuffer,
-        LightBuffer,
-        BufferTypeMax
-    };
-protected:
-    Graphene::Program *m_Program;
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
     Graphene::Camera * const m_DefaultCamera;
     Graphene::Camera *m_Camera;
     Graphene::Color m_Ambient;
     
-    unsigned int m_VAO;
-    unsigned int m_Buffers[BufferTypeMax];
 public:
-    Scene(Graphene::Program *m_Program);
+    Scene();
     virtual ~Scene();
     virtual void resetCamera();
     virtual void setCamera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
+    virtual Graphene::Color getAmbient() const;
     virtual void setAmbient(const Graphene::Color color);
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;
     virtual size_t lightCount() const;
-    virtual unsigned int VBO() const;
-    virtual unsigned int EBO() const;
     virtual size_t VBOsize() const;
     virtual size_t EBOsize() const;
     virtual size_t lightsSize() const;
