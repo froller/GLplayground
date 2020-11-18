@@ -9,7 +9,17 @@
 
 class Graphene::Scene
 {
+public:
+    enum Aspect {
+        Geometry    = (uint16_t)1 << 0,
+        Light       = (uint16_t)1 << 1,
+        Camera      = (uint16_t)1 << 2,
+        Environment = (uint16_t)1 << 3,
+        All         = (uint16_t)-1
+    };
+    
 protected:
+    uint16_t m_Modified;
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
     Graphene::Camera * const m_DefaultCamera;
@@ -19,6 +29,8 @@ protected:
 public:
     Scene();
     virtual ~Scene();
+    virtual uint16_t modified() const;
+    virtual void depict(uint16_t field);
     virtual void resetCamera();
     virtual Graphene::Camera *camera() const;
     virtual void camera(Graphene::Camera *camera);
@@ -35,7 +47,6 @@ public:
     virtual size_t VBOdata(void *vertexBuffer) const;
     virtual size_t EBOdata(void *elementBuffer) const;
     virtual size_t lightsData(void *lightsBuffer) const;
-    virtual Graphene::Camera *camera();
     virtual fmat4 model() const;
 };
 

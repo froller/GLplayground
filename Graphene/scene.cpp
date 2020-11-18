@@ -4,6 +4,7 @@ Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(
 {
     m_Camera = m_DefaultCamera;
     m_Ambient = Color(0.f, 0.f, 0.f);
+    m_Modified = Aspect::All;
 }
 
 Graphene::Scene::~Scene()
@@ -11,9 +12,20 @@ Graphene::Scene::~Scene()
     delete m_DefaultCamera;   
 }
 
+uint16_t Graphene::Scene::modified() const
+{
+    return m_Modified;
+}
+
+void Graphene::Scene::depict(uint16_t field)
+{
+    m_Modified &= ~field;
+}
+
 void Graphene::Scene::resetCamera()
 {
     m_Camera = m_DefaultCamera;
+    m_Modified |= Aspect::Camera;
 }
 
 Graphene::Camera *Graphene::Scene::camera() const
@@ -24,16 +36,19 @@ Graphene::Camera *Graphene::Scene::camera() const
 void Graphene::Scene::camera(Graphene::Camera *camera)
 {
     m_Camera = camera;
+    m_Modified |=  Aspect::Camera;
 }
 
 void Graphene::Scene::addModel(const Graphene::Model &model)
 {
     m_Models.push_back(model);
+    m_Modified |=  Aspect::Geometry;
 }
 
 void Graphene::Scene::addLight(const Graphene::Light &light)
 {
     m_Lights.push_back(light);
+    m_Modified |=  Aspect::Light;
 }
 
 Graphene::Color Graphene::Scene::ambient() const
@@ -44,6 +59,7 @@ Graphene::Color Graphene::Scene::ambient() const
 void Graphene::Scene::ambient(const Graphene::Color color)
 {
     m_Ambient = color;
+    m_Modified |= Aspect::Environment;
 }
 
 size_t Graphene::Scene::vertexCount() const
@@ -121,11 +137,6 @@ size_t Graphene::Scene::lightsData(void* lightsBuffer) const
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
     return (char *)bufferTop - (char *)lightsBuffer;
-}
-
-Graphene::Camera *Graphene::Scene::camera()
-{
-    return m_Camera;
 }
 
 fmat4 Graphene::Scene::model() const

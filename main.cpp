@@ -98,11 +98,13 @@ int main(int argc, char ** argv)
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
+    graphene->start();
     while (!SDL_QuitRequested()) {
         if (graphene->draw())
             SDL_Quit();
         SDL_GL_SwapWindow(window);
     }
+    graphene->stop();
 
     /* Deinitialize everything */
     delete graphene;

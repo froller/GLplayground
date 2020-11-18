@@ -86,6 +86,8 @@ public:
     } LightSource;
     
 protected:
+    bool m_Started;
+    
     Program *m_Program;
     Scene *m_Scene;
     fvec3 m_ClearColor;
@@ -107,7 +109,9 @@ public:
     virtual ~Graphene();
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
+    virtual int start();
     virtual int draw();
+    virtual void stop();
     virtual Graphene::Scene *scene() const;
     virtual int addShader(const ShaderType type, const std::string &source);
     virtual int addShader(const ShaderType type, const std::filesystem::path &path);
@@ -124,6 +128,10 @@ protected:
     virtual void fillVertexBuffer();
     virtual void fillElementBuffer();
     virtual void fillLightBuffer();
+    virtual void onGeometryChanged();
+    virtual void onCameraChanged();
+    virtual void onLightChanged();
+    virtual void onEnvironmentChanged();
 };
 
 #include "shader.h"
