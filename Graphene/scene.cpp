@@ -17,9 +17,14 @@ uint16_t Graphene::Scene::modified() const
     return m_Modified;
 }
 
-void Graphene::Scene::depict(uint16_t field)
+void Graphene::Scene::touch(Graphene::Scene::Aspect aspect)
 {
-    m_Modified &= ~field;
+    m_Modified |= aspect;
+}
+
+void Graphene::Scene::depict(Graphene::Scene::Aspect aspect)
+{
+    m_Modified &= ~aspect;
 }
 
 void Graphene::Scene::resetCamera()

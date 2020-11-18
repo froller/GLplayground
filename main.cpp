@@ -93,13 +93,24 @@ int main(int argc, char ** argv)
     graphene->scene()->addLight(Graphene::Light::Omni({  1, 2, -4 }, { 0.5, 0.0, 0.0 }));
     graphene->scene()->ambient({0.01, 0.01, 0.01});
 
-//    graphene->camera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
     graphene->camera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     graphene->start();
     while (!SDL_QuitRequested()) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_MOUSEMOTION:
+                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
+                graphene->scene()->camera()->orbit(fvec3(event.motion.xrel, event.motion.yrel, 0) / 100.f);
+                graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                break;
+            };
+        }
         if (graphene->draw())
             SDL_Quit();
         SDL_GL_SwapWindow(window);

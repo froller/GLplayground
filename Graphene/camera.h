@@ -20,6 +20,9 @@ public:
     virtual ~Camera() = default;
     virtual fmat4 view() const = 0;
     virtual fmat4 projection() const;
+    virtual fvec3 position() const;
+    virtual void position(const fvec3 position);
+    virtual void orbit(const fvec3 angle);
 };
 
 /*******************************************************************************

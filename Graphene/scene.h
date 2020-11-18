@@ -15,7 +15,7 @@ public:
         Light       = (uint16_t)1 << 1,
         Camera      = (uint16_t)1 << 2,
         Environment = (uint16_t)1 << 3,
-        All         = (uint16_t)-1
+        All         = (uint16_t)15
     };
     
 protected:
@@ -30,7 +30,8 @@ public:
     Scene();
     virtual ~Scene();
     virtual uint16_t modified() const;
-    virtual void depict(uint16_t field);
+    virtual void touch(Graphene::Scene::Aspect aspect);
+    virtual void depict(Graphene::Scene::Aspect aspect);
     virtual void resetCamera();
     virtual Graphene::Camera *camera() const;
     virtual void camera(Graphene::Camera *camera);

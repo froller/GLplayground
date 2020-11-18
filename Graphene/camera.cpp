@@ -6,6 +6,24 @@ fmat4 Graphene::Camera::projection() const
     return glm::perspectiveFov(m_FOV, 1.f, 1.f / m_AspectRatio, 0.1f, 100.f);
 }
 
+fvec3 Graphene::Camera::position() const
+{
+    return m_Position;
+}
+
+void Graphene::Camera::position(const fvec3 position)
+{
+    m_Position = position;
+}
+
+void Graphene::Camera::orbit(const fvec3 angle)
+{
+    glm::fmat4 transY = glm::rotate(glm::mat4(1.f), angle.y, glm::fvec3(1, 0, 0));
+    glm::fmat4 transX = glm::rotate(glm::mat4(1.f), angle.x, glm::fvec3(0, 1, 0));
+//    glm::fmat4 transX(1.f);
+    m_Position = glm::fvec3(transX * transY * glm::fvec4(m_Position, 0));
+}
+
 /*******************************************************************************
  * 
  * Targeted
