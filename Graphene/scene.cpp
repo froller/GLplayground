@@ -46,7 +46,6 @@ void Graphene::Scene::ambient(const Graphene::Color color)
     m_Ambient = color;
 }
 
-
 size_t Graphene::Scene::vertexCount() const
 {
     size_t count = 0;

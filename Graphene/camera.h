@@ -1,7 +1,26 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "graphene.h"
+/*******************************************************************************
+ * 
+ * Graphene::Camera
+ * 
+ ******************************************************************************/
+
+class Graphene::Camera : public Graphene::Object
+{
+public:
+    class Free;
+    class Targeted;
+public:
+    float m_AspectRatio;
+    float m_FOV;
+public:
+    Camera() = default;
+    virtual ~Camera() = default;
+    virtual fmat4 view() const = 0;
+    virtual fmat4 projection() const;
+};
 
 /*******************************************************************************
  * 

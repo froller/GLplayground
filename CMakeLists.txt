@@ -60,11 +60,13 @@ set(SOURCES
     main.cpp
     Graphene/graphene.h
     Graphene/graphene_types.h
-    Graphene/simpleobjects.h
-    Graphene/camera.h
     Graphene/graphene.cpp
+    Graphene/shader.h
     Graphene/shader.cpp
+    Graphene/program.h
     Graphene/program.cpp
+    Graphene/object.h
+    Graphene/model.h
     Graphene/model.cpp
     Graphene/simpleobjects.h
     Graphene/simpleobjects.cpp
@@ -72,6 +74,7 @@ set(SOURCES
     Graphene/camera.cpp
     Graphene/light.h
     Graphene/light.cpp
+    Graphene/scene.h
     Graphene/scene.cpp
 )
 set(SHADERS
