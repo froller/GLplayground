@@ -3,60 +3,63 @@
 Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
     m_Camera = m_DefaultCamera;
-    
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-    
-    glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);  
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightsBuffer]);
-    //glMapNamedBuffer(m_Buffers[BufferType::LightsBuffer], GL_WRITE_ONLY);
-    
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    
-    glEnable(GL_FRAMEBUFFER_SRGB);
+    m_Ambient = Color(0.f, 0.f, 0.f);
+    m_Modified = Aspect::All;
 }
 
 Graphene::Scene::~Scene()
 {
-    //glUnmapNamedBuffer(m_Buffers[BufferType::LightsBuffer]);
-    glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
-    glDeleteVertexArrays(1, &m_VAO);
-    
     delete m_DefaultCamera;   
+}
+
+uint16_t Graphene::Scene::modified() const
+{
+    return m_Modified;
+}
+
+void Graphene::Scene::depict(uint16_t field)
+{
+    m_Modified &= ~field;
 }
 
 void Graphene::Scene::resetCamera()
 {
     m_Camera = m_DefaultCamera;
+    m_Modified |= Aspect::Camera;
 }
 
-void Graphene::Scene::setCamera(Graphene::Camera *camera)
+Graphene::Camera *Graphene::Scene::camera() const
+{
+    return m_Camera;
+}
+
+void Graphene::Scene::camera(Graphene::Camera *camera)
 {
     m_Camera = camera;
+    m_Modified |=  Aspect::Camera;
 }
 
 void Graphene::Scene::addModel(const Graphene::Model &model)
 {
     m_Models.push_back(model);
+    m_Modified |=  Aspect::Geometry;
 }
 
-void Graphene::Scene::addLight(Graphene::Light *light)
+void Graphene::Scene::addLight(const Graphene::Light &light)
 {
-    m_Lights.push_back(*light);
+    m_Lights.push_back(light);
+    m_Modified |=  Aspect::Light;
 }
 
-void Graphene::Scene::setAmbient(const Graphene::Color color)
+Graphene::Color Graphene::Scene::ambient() const
+{
+    return m_Ambient;
+}
+
+void Graphene::Scene::ambient(const Graphene::Color color)
 {
     m_Ambient = color;
-}
-
-
-void Graphene::Scene::draw() const
-{
-
+    m_Modified |= Aspect::Environment;
 }
 
 size_t Graphene::Scene::vertexCount() const
@@ -75,19 +78,9 @@ size_t Graphene::Scene::elementCount() const
     return count;
 }
 
-size_t Graphene::Scene::lightsCount() const
+size_t Graphene::Scene::lightCount() const
 {
     return m_Lights.size();
-}
-
-unsigned int Graphene::Scene::VBO() const
-{
-    return m_Buffers[BufferType::VertexBuffer];
-}
-
-unsigned int Graphene::Scene::EBO() const
-{
-    return m_Buffers[BufferType::ElementBuffer];
 }
 
 size_t Graphene::Scene::VBOsize() const
@@ -108,7 +101,7 @@ size_t Graphene::Scene::EBOsize() const
 
 size_t Graphene::Scene::lightsSize() const
 {
-    return lightsCount() * sizeof(LightSource);
+    return lightCount() * sizeof(LightSource);
 }
 
 size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
@@ -144,11 +137,6 @@ size_t Graphene::Scene::lightsData(void* lightsBuffer) const
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
     return (char *)bufferTop - (char *)lightsBuffer;
-}
-
-Graphene::Camera *Graphene::Scene::camera()
-{
-    return m_Camera;
 }
 
 fmat4 Graphene::Scene::model() const

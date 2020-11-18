@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
     }
 
     /* Setting up logging */
-#if CMAKE_BUILD_TYPE == Debug
+#ifdef DEBUG
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 #else
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
@@ -84,23 +84,27 @@ int main(int argc, char ** argv)
     graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
     graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
     
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
     graphene->addModel(Graphene::SimpleObjects::Square());
     graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
 
-    graphene->scene()->addLight(new Graphene::Light::Omni({0, 2, -4}, {0.0, 0.5, 1.0}));
-    graphene->scene()->setAmbient({0.01, 0.01, 0.01});
+    graphene->scene()->addLight(Graphene::Light::Omni({ -1, 2, -4 }, { 0.0, 0.5, 0.5 }));
+    graphene->scene()->addLight(Graphene::Light::Omni({  1, 2, -4 }, { 0.5, 0.0, 0.0 }));
+    graphene->scene()->ambient({0.01, 0.01, 0.01});
 
-//    graphene->setCamera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
-    graphene->setCamera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
+//    graphene->camera(new Graphene::Camera::Targeted({.75, .75, 2}, {0, 0, 0}, 1.25, M_PI_4));
+    graphene->camera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
+    graphene->start();
     while (!SDL_QuitRequested()) {
-        if (graphene->run())
+        if (graphene->draw())
             SDL_Quit();
         SDL_GL_SwapWindow(window);
     }
+    graphene->stop();
 
     /* Deinitialize everything */
     delete graphene;
