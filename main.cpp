@@ -3,6 +3,7 @@
 
 #ifdef _WIN32
 #   include <Windows.h>
+#   define __builtin_trap __debugbreak
 #endif // _WIN32
 
 #define WINDOW_WIDTH 800
@@ -143,7 +144,10 @@ int main(int argc, char ** argv)
             };
         }
         if (graphene->draw())
-            SDL_Quit();
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Draw failed");
+            __builtin_trap();
+        }
         SDL_GL_SwapWindow(window);
     }
     graphene->stop();
