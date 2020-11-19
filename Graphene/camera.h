@@ -23,6 +23,7 @@ public:
     virtual fvec3 position() const;
     virtual void position(const fvec3 position);
     virtual void orbit(const fvec3 angle);
+    virtual void dolly(const float offset);
 };
 
 /*******************************************************************************

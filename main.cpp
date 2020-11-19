@@ -105,9 +105,38 @@ int main(int argc, char ** argv)
             switch (event.type)
             {
             case SDL_MOUSEMOTION:
-                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
-                graphene->scene()->camera()->orbit(fvec3(event.motion.xrel, event.motion.yrel, 0) / 100.f);
-                graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
+                if (event.motion.state & SDL_BUTTON_LMASK)
+                {
+                    graphene->scene()->camera()->orbit(fvec3(-event.motion.xrel, -event.motion.yrel, 0) / 100.f);
+                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                }
+                break;
+            case SDL_MOUSEWHEEL:
+                if (event.wheel.y)
+                {
+                    graphene->scene()->camera()->dolly(event.wheel.y / 10.f);
+                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                }
+                break;
+            case SDL_KEYDOWN:
+                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u %s", event.key.keysym.scancode, event.key.state == SDL_PRESSED ? "pressed" : "released");
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                        SDL_Event quitEvent;
+                        quitEvent.type = SDL_QUIT;
+                        SDL_PushEvent(&quitEvent); // FIXME потенциально опасно пихать указатель на объект со стека
+                        break;
+                    case SDLK_SPACE:
+                        // сбросить камеру
+                        break;
+                }
+            case SDL_KEYUP:
+                //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u %s", event.key.keysym.scancode, event.key.state == SDL_PRESSED ? "pressed" : "released");
+                break;
+            case SDL_QUIT:
+                SDL_Quit();
                 break;
             };
         }
