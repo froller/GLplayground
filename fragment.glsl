@@ -23,8 +23,8 @@ out vec3 fragmentColor;
 
 void main()
 {
-    vec3 diffuse;
-    vec3 specular;
+    vec3 diffuse = vec3(0);
+    vec3 specular = vec3(0);
     for (uint i = 0; i < lightsCount; ++i)
     {
         vec3 lightingDirection = normalize(lights.light[i].position - position);
