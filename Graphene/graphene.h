@@ -119,6 +119,8 @@ public:
     virtual void addLight(const Graphene::Light &light);
     virtual void setClearColor(const Color color);
     virtual void clear() const;
+    virtual bool cull() const;
+    virtual void cull(const bool enable);
 
 protected:
     virtual size_t reAllocateVertexBuffer();

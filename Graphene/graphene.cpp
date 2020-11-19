@@ -26,8 +26,12 @@ Graphene::Graphene()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     
-    // Настройки фрембуфера
+    // Настройки фреймбуфера
     glEnable(GL_FRAMEBUFFER_SRGB);
+    
+    // Куллинг
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 }
 
 Graphene::~Graphene()
@@ -175,6 +179,21 @@ void Graphene::clear() const
     glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+bool Graphene::cull() const
+{
+    return glIsEnabled(GL_CULL_FACE);
+}
+
+void Graphene::cull(const bool enable)
+{
+    if (enable)
+        glEnable(GL_CULL_FACE);
+    else
+        glDisable(GL_CULL_FACE);
+}
+
+
 
 /*****************************************************************************/
 
