@@ -81,8 +81,7 @@ public:
         char padding0[sizeof(float)] = { 0 };
     public:
         Color color;
-    private:
-        char padding1[sizeof(float)] = { 0 };
+        float attenuation;
     } LightSource;
     
 protected:

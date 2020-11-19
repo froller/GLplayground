@@ -16,7 +16,18 @@ size_t Graphene::Light::lightData(void *lightBuffer) const
     LightSource *tmp = (LightSource *)lightBuffer;
     tmp->position = m_Position;
     tmp->color = m_Color;
+    tmp->attenuation = m_Attenuation;
     return sizeof(LightSource);
+}
+
+float Graphene::Light::attenuation() const
+{
+    return m_Attenuation;
+}
+
+void Graphene::Light::attenuation(const float distance)
+{
+    m_Attenuation = distance;
 }
 
 /*******************************************************************************

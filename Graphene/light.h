@@ -13,12 +13,15 @@ public:
     class Omni;
 public:
     fvec3 m_Color;
+    float m_Attenuation = -1.f;
 public:
     Light() = default;
     virtual ~Light() = default;
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
     virtual size_t lightData(void *lightBuffer) const;
+    virtual float attenuation() const;
+    virtual void attenuation(const float distance);
 };
 
 /*******************************************************************************
