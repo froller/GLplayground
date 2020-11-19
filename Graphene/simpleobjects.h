@@ -64,7 +64,8 @@ public:
 
 class Graphene::SimpleObjects::Cube : public Graphene::Model
 {
-    Cube() = default;
+public:
+    Cube();
     virtual ~Cube() = default;
 };
 
