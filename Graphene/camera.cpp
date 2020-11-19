@@ -19,14 +19,14 @@ void Graphene::Camera::position(const fvec3 position)
 void Graphene::Camera::orbit(const fvec3 angle)
 {
     glm::fmat4 transY = glm::rotate(glm::mat4(1.f), angle.y, glm::fvec3(1, 0, 0));
-    glm::fmat4 transX = glm::rotate(glm::mat4(1.f), angle.x, glm::fvec3(0, 1, 0));
+    glm::fmat4 transX = glm::rotate(transY, angle.x, glm::fvec3(0, 1, 0));
     m_Position = glm::fvec3(transX * transY * glm::fvec4(m_Position, 0));
     m_Rotation = glm::fvec3(-transX * -transY * glm::fvec4(m_Rotation, 0));
 }
 
 void Graphene::Camera::dolly(const float offset)
 {
-    m_Position += m_Position * offset / 10.f;
+    m_Position += m_Position * offset / 5.f;
 }
 
 
