@@ -100,7 +100,9 @@ int main(int argc, char ** argv)
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     graphene->start();
-    while (!SDL_QuitRequested()) {
+    
+    bool quit = false;
+    while (!quit) {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -122,7 +124,6 @@ int main(int argc, char ** argv)
                 }
                 break;
             case SDL_KEYDOWN:
-                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u pressed", event.key.keysym.scancode);
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_ESCAPE:
@@ -133,13 +134,15 @@ int main(int argc, char ** argv)
                     case SDLK_SPACE:
                         // сбросить камеру
                         break;
+                        }
+                        break;
+                    default:
+                        SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %s pressed (scancode: %u)", SDL_GetKeyName(event.key.keysym.sym), event.key.keysym.scancode);
                 }
                 break;
-            case SDL_KEYUP:
-                //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u %s", event.key.keysym.scancode, event.key.state == SDL_PRESSED ? "pressed" : "released");
-                break;
             case SDL_QUIT:
-                SDL_Quit();
+                SDL_LogDebug(SDL_LOG_CATEGORY_SYSTEM, "Quit requested");
+                quit = true;
                 break;
             };
         }
