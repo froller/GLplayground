@@ -9,11 +9,15 @@ uniform vec3 cameraPosition;
 uniform vec3 ambientColor;
 uniform uint lightsCount;
 
-layout (std430, binding = 0) buffer Lights {
+struct lightSource {
     vec3 position;
     vec3 color;
     float attenuation;
-} lights[4];
+};
+
+layout (std430, binding = 0) buffer Lights {
+    lightSource light[];
+} lights;
 
 out vec3 fragmentColor;
 
@@ -23,13 +27,13 @@ void main()
     vec3 specular;
     for (uint i = 0; i < lightsCount; ++i)
     {
-        vec3 lightingDirection = normalize(lights[i].position - position);
-        float lightingDistance = length(lights[i].position - position);
+        vec3 lightingDirection = normalize(lights.light[i].position - position);
+        float lightingDistance = length(lights.light[i].position - position);
         vec3 viewDirection = normalize(cameraPosition - position);
         vec3 bisect = normalize(lightingDirection + viewDirection);
 
         //vec3 dimmedColor = lights[i].color;
-        vec3 dimmedColor = lights[i].color * pow(clamp((lights[i].attenuation - length(lightingDistance)) / lights[i].attenuation, 0.f, 1.f), 2);
+        vec3 dimmedColor = lights.light[i].color * pow(clamp((lights.light[i].attenuation - length(lightingDistance)) / lights.light[i].attenuation, 0.f, 1.f), 2);
 
         diffuse = diffuse + dot(normalize(normal), lightingDirection) * dimmedColor;
         specular = specular + 0.5 * pow(max(dot(normalize(normal), bisect), 0.0), 64) * dimmedColor;
