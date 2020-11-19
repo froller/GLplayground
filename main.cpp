@@ -89,8 +89,8 @@ int main(int argc, char ** argv)
     graphene->addModel(Graphene::SimpleObjects::Square());
     graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
 
-    graphene->scene()->addLight(Graphene::Light::Omni({ -1, 2, -4 }, { 0.0, 0.5, 0.5 }));
-    graphene->scene()->addLight(Graphene::Light::Omni({  1, 2, -4 }, { 0.5, 0.0, 0.0 }));
+    graphene->scene()->addLight(Graphene::Light::Omni({ -1, 2, -4 }, { 0.0, 0.5, 0.5 }, 10.f));
+    graphene->scene()->addLight(Graphene::Light::Omni({  1, 2, -4 }, { 0.5, 0.0, 0.0 }, 10.f));
     graphene->scene()->ambient({0.01, 0.01, 0.01});
 
     graphene->camera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
@@ -120,7 +120,7 @@ int main(int argc, char ** argv)
                 }
                 break;
             case SDL_KEYDOWN:
-                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u %s", event.key.keysym.scancode, event.key.state == SDL_PRESSED ? "pressed" : "released");
+                SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u pressed", event.key.keysym.scancode);
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_ESCAPE:
@@ -132,6 +132,7 @@ int main(int argc, char ** argv)
                         // сбросить камеру
                         break;
                 }
+                break;
             case SDL_KEYUP:
                 //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %u %s", event.key.keysym.scancode, event.key.state == SDL_PRESSED ? "pressed" : "released");
                 break;

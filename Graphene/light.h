@@ -33,7 +33,7 @@ public:
 class Graphene::Light::Omni : public Graphene::Light
 {
 public:
-    Omni(const fvec3 position, const Graphene::Color color);
+    Omni(const fvec3 position, const Graphene::Color color = { 0.5, 0.5, 0.5 }, const float attenuation = -1.f);
 };
 
 #endif // __LIGHT_H__

@@ -248,7 +248,7 @@ void Graphene::onCameraChanged()
     m_Program->setUniform("MVP[0]", m_Scene->model());
     m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
     m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
-    m_Program->setUniform("cameraPos", m_Scene->camera()->m_Position);
+    m_Program->setUniform("cameraPosition", m_Scene->camera()->m_Position);
     m_Scene->depict(Scene::Aspect::Camera);
 }
 

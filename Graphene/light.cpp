@@ -36,9 +36,10 @@ void Graphene::Light::attenuation(const float distance)
  * 
  ******************************************************************************/
 
-Graphene::Light::Omni::Omni(const fvec3 position, const Graphene::Color color)
+Graphene::Light::Omni::Omni(const fvec3 position, const Graphene::Color color, const float attenuation)
 {
     m_Position = position;
     m_Color = color;
+    m_Attenuation = attenuation;
 }
 
