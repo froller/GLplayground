@@ -134,11 +134,18 @@ int main(int argc, char ** argv)
                     case SDLK_SPACE:
                         // сбросить камеру
                         break;
-                    case SDLK_c:
+                    case SDLK_2:
                         {
                             bool cull = !graphene->cull();
                             graphene->cull(cull);
                             SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
+                        }
+                        break;
+                    case SDLK_c:
+                        {
+                            bool gc = !graphene->gammaCorrection();
+                            graphene->gammaCorrection(gc);
+                            SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Gamma correction %s", gc ? "enabled" : "disabled");
                         }
                         break;
                     default:

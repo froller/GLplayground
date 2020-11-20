@@ -193,20 +193,20 @@ void Graphene::cull(const bool enable)
         glDisable(GL_CULL_FACE);
 }
 
+bool Graphene::gammaCorrection() const
+{
+    return glIsEnabled(GL_FRAMEBUFFER_SRGB);
+}
 
+void Graphene::gammaCorrection(const bool enable)
+{
+    if (enable)
+        glEnable(GL_FRAMEBUFFER_SRGB);
+    else
+        glDisable(GL_FRAMEBUFFER_SRGB);
+}
 
 /*****************************************************************************/
-
-size_t Graphene::reAllocateVertexBuffer()
-{
-    size_t newSize = m_Scene->VBOsize();
-    if (newSize > m_VertexBufferSize)
-    {
-        m_VertexBuffer = realloc(m_VertexBuffer, newSize);
-        m_VertexBufferSize = newSize;
-    }
-    return m_VertexBufferSize;
-}
 
 size_t Graphene::reAllocateElementBuffer()
 {
@@ -217,6 +217,17 @@ size_t Graphene::reAllocateElementBuffer()
         m_ElementBufferSize = newSize;
     }
     return m_ElementBufferSize;
+}
+
+size_t Graphene::reAllocateVertexBuffer()
+{
+    size_t newSize = m_Scene->VBOsize();
+    if (newSize > m_VertexBufferSize)
+    {
+        m_VertexBuffer = realloc(m_VertexBuffer, newSize);
+        m_VertexBufferSize = newSize;
+    }
+    return m_VertexBufferSize;
 }
 
 size_t Graphene::reAllocateLightBuffer()
