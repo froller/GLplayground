@@ -33,11 +33,11 @@ void main()
         vec3 viewDirection = normalize(cameraPosition - position);
         vec3 bisect = normalize(lightingDirection + viewDirection);
 
-        //vec3 dimmedColor = lights[i].color;
+        //vec3 dimmedColor = lights.light[i].color;
         vec3 dimmedColor = lights.light[i].color * pow(clamp((lights.light[i].attenuation - length(lightingDistance)) / lights.light[i].attenuation, 0.f, 1.f), 2);
 
-        diffuse = diffuse + dot(normalize(normal), lightingDirection) * dimmedColor;
-        specular = specular + 0.5 * pow(max(dot(normalize(normal), bisect), 0.0), 64) * dimmedColor;
+        diffuse = diffuse + max(dot(normalize(normal), lightingDirection), 0.0) * dimmedColor;
+        specular = specular + pow(max(dot(normalize(normal), bisect), 0.0), 64) * dimmedColor;
     }
     fragmentColor = specular + diffuse + ambientColor;
 }
