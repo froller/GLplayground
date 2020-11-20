@@ -11,6 +11,7 @@ uniform uint lightsCount;
 
 struct lightSource {
     vec3 position;
+    float reserved0;
     vec3 color;
     float attenuation;
 };
