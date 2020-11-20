@@ -86,6 +86,7 @@ public:
     
 protected:
     bool m_Started;
+    bool m_Wireframe = false;
     
     Program *m_Program;
     Scene *m_Scene;
@@ -123,6 +124,8 @@ public:
     virtual void cull(const bool enable);
     virtual bool gammaCorrection() const;
     virtual void gammaCorrection(const bool enable);
+    virtual bool wireframe() const;
+    virtual void wireframe(const bool enable);
 
 protected:
     virtual size_t reAllocateVertexBuffer();

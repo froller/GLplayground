@@ -148,6 +148,13 @@ int main(int argc, char ** argv)
                             SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Gamma correction %s", gc ? "enabled" : "disabled");
                         }
                         break;
+                    case SDLK_w:
+                        {
+                            bool wf = !graphene->wireframe();
+                            graphene->wireframe(wf);
+                            SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "%s rendering", wf ? "Wireframe" : "Shaded");
+                        }
+                        break;
                     default:
                         SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %s pressed (scancode: %u)", SDL_GetKeyName(event.key.keysym.sym), event.key.keysym.scancode);
                 }
