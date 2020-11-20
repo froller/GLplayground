@@ -15,7 +15,7 @@ public:
     fvec3 m_Color;
     float m_Attenuation = -1.f;
 public:
-    Light() = default;
+    Light(const fvec3 position, const Graphene::Color color = { 0.5, 0.5, 0.5 }, const float attenuation = -1.f) : Object(position), m_Color(color), m_Attenuation(attenuation) {};
     virtual ~Light() = default;
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
@@ -33,7 +33,7 @@ public:
 class Graphene::Light::Omni : public Graphene::Light
 {
 public:
-    Omni(const fvec3 position, const Graphene::Color color = { 0.5, 0.5, 0.5 }, const float attenuation = -1.f);
+    Omni(const fvec3 position, const Graphene::Color color = { 0.5, 0.5, 0.5 }, const float attenuation = -1.f) : Light(position, color, attenuation) {}
 };
 
 #endif // __LIGHT_H__

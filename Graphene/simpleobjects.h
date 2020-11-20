@@ -26,7 +26,7 @@ public:
 class Graphene::SimpleObjects::Triangle : public Graphene::Model
 {
 public:
-    Triangle();
+    Triangle(const fvec3 position = { 0, 0, 0 }, const fvec3 rotation = { 0, 0, 0 }, const fvec3 scale = { 1, 1, 1 });
     virtual ~Triangle() = default;
 };
 
@@ -39,7 +39,7 @@ public:
 class Graphene::SimpleObjects::Square : public Graphene::Model
 {
 public:
-    Square();
+    Square(const fvec3 position = {0, 0, 0}, const fvec3 rotation = {0, 0, 0}, const fvec3 scale = {1, 1, 1});
     virtual ~Square() = default;
 };
 
@@ -52,7 +52,7 @@ public:
 class Graphene::SimpleObjects::Tetrahedron : public Graphene::Model
 {
 public:
-    Tetrahedron();
+    Tetrahedron(const fvec3 position = {0, 0, 0}, const fvec3 rotation = {0, 0, 0}, const fvec3 scale = {1, 1, 1});
     virtual ~Tetrahedron() = default;
 };
 
@@ -65,7 +65,7 @@ public:
 class Graphene::SimpleObjects::Cube : public Graphene::Model
 {
 public:
-    Cube();
+    Cube(const fvec3 position = { 0, 0, 0 }, const fvec3 rotation = { 0, 0, 0 }, const fvec3 scale = { 1, 1, 1 });
     virtual ~Cube() = default;
 };
 

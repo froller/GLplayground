@@ -15,7 +15,7 @@ public:
     fvec3 m_Scale;
     
 public:
-    Object() = default;
+    Object(const fvec3 position = { 0, 0, 0 }, const fvec3 rotation = { 0, 0, 0 }, const fvec3 scale = { 1, 1, 1 }) : m_Position(position), m_Rotation(rotation), m_Scale(scale) {};
     virtual ~Object() = default;
 };
 
