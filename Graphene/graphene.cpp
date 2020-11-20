@@ -108,13 +108,11 @@ int Graphene::draw()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);
     glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[BufferType::LightBuffer], 0, m_LightBufferSize);
 
-    
-#ifdef WIREFRAME
-    for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
-        glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
-#else
-    glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
-#endif // WIREFRAME
+    if (m_Wireframe)
+        for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
+            glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
+    else
+        glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
  
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
@@ -204,6 +202,16 @@ void Graphene::gammaCorrection(const bool enable)
         glEnable(GL_FRAMEBUFFER_SRGB);
     else
         glDisable(GL_FRAMEBUFFER_SRGB);
+}
+
+bool Graphene::wireframe() const
+{
+    return m_Wireframe;
+}
+
+void Graphene::wireframe(const bool enable)
+{
+    m_Wireframe = enable;
 }
 
 /*****************************************************************************/
