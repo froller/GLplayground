@@ -2,11 +2,6 @@
 #include <array>
 #include <algorithm>
 
-inline bool Graphene::Vertex::operator==(const Graphene::Vertex &that)
-{
-    return position == that.position && color == that.color;
-}
-
 void Graphene::Model::addPrimitive(const Vertex a, const Vertex b, const Vertex c)
 {
     addPrimitive({a, b, c});

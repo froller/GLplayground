@@ -102,6 +102,14 @@ int Graphene::draw()
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
+    // Текстурные координаты
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
+    // ID сетки
+    glEnableVertexAttribArray(4);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
     // Примитивы
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
     // Источники света
@@ -114,6 +122,8 @@ int Graphene::draw()
     else
         glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
  
+    glDisableVertexAttribArray(4);
+    glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
