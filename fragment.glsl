@@ -4,6 +4,7 @@ struct Vertex {
     vec3 position;
     vec3 normal;
     vec3 color;
+    vec2 UV;
 };
 
 struct LightSource {
@@ -14,6 +15,7 @@ struct LightSource {
 };
 
 in Vertex vertex;
+in flat uint meshId;
 
 uniform mat4 MVP[3];
 uniform vec3 cameraPosition;
