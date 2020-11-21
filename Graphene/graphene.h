@@ -54,6 +54,7 @@ public:
         VertexBuffer = 0,
         ElementBuffer,
         LightBuffer,
+        UniformBuffer,
         BufferTypeMax
     };
     
@@ -104,9 +105,11 @@ protected:
     void *m_VertexBuffer = nullptr;
     void *m_ElementBuffer = nullptr;
     void *m_LightBuffer = nullptr;
+    void *m_UniformBuffer = nullptr;
     size_t m_VertexBufferSize = 0;
     size_t m_ElementBufferSize = 0;
     size_t m_LightBufferSize = 0;
+    size_t m_UniformBufferSize = 0;
     
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
@@ -140,9 +143,11 @@ protected:
     virtual size_t reAllocateVertexBuffer();
     virtual size_t reAllocateElementBuffer();
     virtual size_t reAllocateLightBuffer();
+    virtual size_t reAllocateUniformBuffer();
     virtual void fillVertexBuffer();
     virtual void fillElementBuffer();
     virtual void fillLightBuffer();
+    virtual void fillUniformBuffer();
     virtual void onGeometryChanged();
     virtual void onCameraChanged();
     virtual void onLightChanged();

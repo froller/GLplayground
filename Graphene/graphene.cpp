@@ -19,7 +19,7 @@ Graphene::Graphene()
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
     
-    // Создание VBO и SSBO
+    // Создание буферов
     glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
 
     // Использование буфера глубины
@@ -44,7 +44,7 @@ Graphene::~Graphene()
     if (m_LightBuffer)
         free(m_LightBuffer);
 
-    // Удаление VBO и SSBO
+    // Удаление буферов
     glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
     
     // Удаление VAO
@@ -259,6 +259,17 @@ size_t Graphene::reAllocateLightBuffer()
     return m_LightBufferSize;
 }
 
+size_t Graphene::reAllocateUniformBuffer()
+{
+    size_t newSize = m_Scene->UBOsize();
+    if (newSize > m_UniformBufferSize)
+    {
+        m_UniformBuffer = realloc(m_UniformBuffer, newSize);
+        m_UniformBufferSize = newSize;
+    }
+    return m_UniformBufferSize;
+}
+
 void Graphene::fillVertexBuffer()
 {
     reAllocateVertexBuffer();
@@ -278,9 +289,17 @@ void Graphene::fillElementBuffer()
 void Graphene::fillLightBuffer()
 {
     reAllocateLightBuffer();
-    m_Scene->lightsData(m_LightBuffer);
+    m_Scene->SSBOdata(m_LightBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);   
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightSource) * m_Scene->lightCount(), m_LightBuffer, GL_STATIC_DRAW);
+}
+
+void Graphene::fillUniformBuffer()
+{
+    reAllocateUniformBuffer();
+    m_Scene->UBOdata(m_UniformBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
+    // ...
 }
 
 void Graphene::onGeometryChanged()
@@ -288,6 +307,7 @@ void Graphene::onGeometryChanged()
     // Заполнение буферов
     fillVertexBuffer();
     fillElementBuffer();
+    fillUniformBuffer();
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 

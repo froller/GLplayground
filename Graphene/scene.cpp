@@ -88,6 +88,11 @@ size_t Graphene::Scene::lightCount() const
     return m_Lights.size();
 }
 
+size_t Graphene::Scene::modelCount() const
+{
+    return m_Models.size();
+}
+
 size_t Graphene::Scene::VBOsize() const
 {
     size_t vboSize = 0;
@@ -104,7 +109,16 @@ size_t Graphene::Scene::EBOsize() const
     return eboSize;
 }
 
-size_t Graphene::Scene::lightsSize() const
+size_t Graphene::Scene::UBOsize() const
+{
+    size_t uboSize = sizeof(fmat4) * 3; // World + View + Projection
+    uboSize += sizeof(fvec3) * 2; // camera position + ambien light
+    uboSize += sizeof(uint) * 1; // lights count;
+    uboSize += sizeof(fmat4) * modelCount(); // Model matrices
+    return uboSize;
+}
+
+size_t Graphene::Scene::SSBOsize() const
 {
     return lightCount() * sizeof(LightSource);
 }
@@ -115,6 +129,7 @@ size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
         size_t modelBufferSize = model->VBOdata(bufferTop);
+        // FIXME заполнять meshId
         bufferTop = (char *)bufferTop + modelBufferSize;
     }
     return (char *)bufferTop - (char *)vertexBuffer;
@@ -133,7 +148,7 @@ size_t Graphene::Scene::EBOdata(void *elementBuffer) const
     return (char *)bufferTop - (char *)elementBuffer;
 }
 
-size_t Graphene::Scene::lightsData(void* lightsBuffer) const
+size_t Graphene::Scene::SSBOdata(void* lightsBuffer) const
 {
     void *bufferTop = lightsBuffer;
     for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
@@ -142,6 +157,13 @@ size_t Graphene::Scene::lightsData(void* lightsBuffer) const
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
     return (char *)bufferTop - (char *)lightsBuffer;
+}
+
+size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
+{
+    void *bufferTop = uniformBuffer;
+    
+    return (char *)bufferTop - (char *)uniformBuffer;
 }
 
 fmat4 Graphene::Scene::model() const

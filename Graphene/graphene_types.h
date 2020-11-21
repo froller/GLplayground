@@ -8,6 +8,7 @@
 typedef glm::fvec2 fvec2;
 typedef glm::fvec3 fvec3;
 typedef glm::fmat4 fmat4;
+typedef glm::uint uint;
 
 #else
 

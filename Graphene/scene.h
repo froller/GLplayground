@@ -42,12 +42,15 @@ public:
     virtual size_t vertexCount() const;
     virtual size_t elementCount() const;
     virtual size_t lightCount() const;
+    virtual size_t modelCount() const;
     virtual size_t VBOsize() const;
     virtual size_t EBOsize() const;
-    virtual size_t lightsSize() const;
+    virtual size_t UBOsize() const;
+    virtual size_t SSBOsize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
     virtual size_t EBOdata(void *elementBuffer) const;
-    virtual size_t lightsData(void *lightsBuffer) const;
+    virtual size_t UBOdata(void *unformBuffer) const;
+    virtual size_t SSBOdata(void *lightsBuffer) const;
     virtual fmat4 model() const;
 };
 
