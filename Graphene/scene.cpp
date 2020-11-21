@@ -162,7 +162,7 @@ size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
 {
     void *bufferTop = uniformBuffer;
     CameraMatrices *cameraMatrices = (CameraMatrices *)bufferTop;
-    cameraMatrices->world = fmat4(1);
+    cameraMatrices->world = fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
     cameraMatrices->view = m_Camera->view();
     cameraMatrices->projection = m_Camera->projection();
     cameraMatrices->position = m_Camera->position();
