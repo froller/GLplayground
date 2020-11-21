@@ -17,10 +17,15 @@ struct LightSource {
 in Vertex vertex;
 in flat uint meshId;
 
-uniform mat4 MVP[3];
-uniform vec3 cameraPosition;
 uniform vec3 ambientColor;
 uniform uint lightsCount;
+
+layout (std140, binding = 0) uniform CameraMatrices {
+    mat4 world;
+    mat4 view;
+    mat4 projection;
+    vec3 position;
+} cameraMatrices;
 
 layout (std430, binding = 0) buffer Lights {
     LightSource light[];
@@ -36,7 +41,7 @@ void main()
     {
         vec3 lightingDirection = normalize(lights.light[i].position - vertex.position);
         float lightingDistance = length(lights.light[i].position - vertex.position);
-        vec3 viewDirection = normalize(cameraPosition - vertex.position);
+        vec3 viewDirection = normalize(cameraMatrices.position - vertex.position);
         vec3 bisect = normalize(lightingDirection + viewDirection);
 
         //vec3 dimmedColor = lights.light[i].color;

@@ -40,7 +40,8 @@ public:
     class SimpleObjects;
     class Scene;
 
-    enum ShaderType {
+    enum ShaderType
+    {
         GeometryShader,
         VertexShader,
         TesselationControlShader,
@@ -50,7 +51,8 @@ public:
         Invalid
     };
     
-    enum BufferType {
+    enum BufferType
+    {
         VertexBuffer = 0,
         ElementBuffer,
         LightBuffer,
@@ -93,7 +95,23 @@ public:
         Color color;
         float attenuation;
     } LightSource;
-    
+
+    typedef struct CameraMatrices
+    {
+    public:
+        fmat4 world;
+        fmat4 view;
+        fmat4 projection;
+        fvec3 position;
+    private:
+        char padding0[sizeof(float)] = { 0 };
+    } CameraMatrices;
+
+    typedef struct ModelMatrices
+    {
+        fmat4 model;
+    } ModelMatrices;
+
 protected:
     bool m_Started;
     bool m_Wireframe = false;

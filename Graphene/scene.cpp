@@ -111,16 +111,15 @@ size_t Graphene::Scene::EBOsize() const
 
 size_t Graphene::Scene::UBOsize() const
 {
-    size_t uboSize = sizeof(fmat4) * 3; // World + View + Projection
-    uboSize += sizeof(fvec3) * 2; // camera position + ambien light
-    uboSize += sizeof(uint) * 1; // lights count;
-    uboSize += sizeof(fmat4) * modelCount(); // Model matrices
-    return uboSize;
+    return sizeof(CameraMatrices);
 }
 
 size_t Graphene::Scene::SSBOsize() const
 {
-    return lightCount() * sizeof(LightSource);
+    return sizeof(unsigned int)
+        + lightCount() * sizeof(LightSource)
+        + sizeof(unsigned int)
+        + modelCount() * sizeof(ModelMatrices);
 }
 
 size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
@@ -162,11 +161,17 @@ size_t Graphene::Scene::SSBOdata(void* lightsBuffer) const
 size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
 {
     void *bufferTop = uniformBuffer;
-    
+    CameraMatrices *cameraMatrices = (CameraMatrices *)bufferTop;
+    cameraMatrices->world = fmat4(1);
+    cameraMatrices->view = m_Camera->view();
+    cameraMatrices->projection = m_Camera->projection();
+    cameraMatrices->position = m_Camera->position();
+    bufferTop = (char *)bufferTop + sizeof(CameraMatrices);
+    // ...
     return (char *)bufferTop - (char *)uniformBuffer;
 }
 
 fmat4 Graphene::Scene::model() const
 {
-    return fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
+    return fmat4(1);
 }

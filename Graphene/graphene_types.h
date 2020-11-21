@@ -11,12 +11,7 @@ typedef glm::fmat4 fmat4;
 typedef glm::uint uint;
 
 #else
-
-typedef struct {float x; float y} fvec2;
-typedef struct {float x; float y; float z} fvec3;
-typedef struct {float x; float y; float z; float w} fvec4;
-typedef struct {fvec4 x; fvec4 y; fvec4 z; fvec4 w} fmat4;
-
+#   error GLM is required at this time
 #endif // WITH_GLM
 
 #endif // __GRAPHENE_TYPES_H__
