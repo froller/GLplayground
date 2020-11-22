@@ -21,20 +21,22 @@ layout(std140, binding = 0) uniform CameraMatrices {
 } cameraMatrices;
 
 layout(std430, binding = 1) buffer Models {
+    uint count;
+    float reserved0;
     mat4 model[];
 } models;
 
 out Vertex vertex;
-out flat uint meshIdOut;
+out flat uint vertexMeshId;
 
 //uniform mat4 MVP[3];
 
 void main()
 {
-    gl_Position = cameraMatrices.projection * cameraMatrices.view * cameraMatrices.world * vec4(position, 1);
+    vertexMeshId = meshId;
     vertex.position = position;
     vertex.normal = normal;
     vertex.color = color;
     vertex.UV = UV;
-    meshIdOut = meshId;
+    gl_Position = cameraMatrices.projection * cameraMatrices.view * cameraMatrices.world * models.model[vertexMeshId] * vec4(position, 1);
 }

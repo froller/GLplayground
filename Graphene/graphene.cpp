@@ -111,7 +111,7 @@ int Graphene::draw()
     // ID сетки
     glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
+    glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
     // Примитивы
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
     // Источники света

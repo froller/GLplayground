@@ -15,7 +15,7 @@ struct LightSource {
 };
 
 in Vertex vertex;
-in flat uint meshId;
+in flat uint vertexMeshId;
 
 layout (std140, binding = 0) uniform CameraMatrices {
     mat4 world;
