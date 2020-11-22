@@ -66,6 +66,7 @@ set(SOURCES
     Graphene/program.h
     Graphene/program.cpp
     Graphene/object.h
+    Graphene/object.cpp
     Graphene/model.h
     Graphene/model.cpp
     Graphene/simpleobjects.h
