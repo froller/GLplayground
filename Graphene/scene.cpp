@@ -147,15 +147,20 @@ size_t Graphene::Scene::EBOdata(void *elementBuffer) const
     return (char *)bufferTop - (char *)elementBuffer;
 }
 
-size_t Graphene::Scene::SSBOdata(void* lightsBuffer) const
+size_t Graphene::Scene::SSBOdata(void* storageBuffer) const
 {
-    void *bufferTop = lightsBuffer;
+    void *bufferTop = storageBuffer;
     for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
     {
         light->lightData(bufferTop);
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
-    return (char *)bufferTop - (char *)lightsBuffer;
+    for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
+    {
+        model->SSBOdata(bufferTop);
+        bufferTop = (char *)bufferTop + sizeof(ModelMatrices);
+    }
+    return (char *)bufferTop - (char *)storageBuffer;
 }
 
 size_t Graphene::Scene::UBOdata(void *uniformBuffer) const

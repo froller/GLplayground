@@ -5,7 +5,7 @@
 #define VERTEX(x,y,z,nx,ny,nz,r,g,b) m_Vertices.push_back({fvec3(x, y, z), fvec3(nx, ny, nz), fvec3(r, g, b)})
 #define ELEMENT(a,b,c) m_Primitives.push_back({a, b, c})
 
-Graphene::SimpleObjects::Triangle::Triangle(const fvec3 position, const fvec3 rotation, const fvec3 scale) : Model(position, rotation, scale)
+Graphene::SimpleObjects::Triangle::Triangle(const fvec3 position, const fvec4 rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     VERTEX( 0.f,  1.f / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.f, 1.f, 0.f);
     VERTEX(-0.5, -0.5 / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.f, 1.f, 0.f);
@@ -13,7 +13,7 @@ Graphene::SimpleObjects::Triangle::Triangle(const fvec3 position, const fvec3 ro
     ELEMENT(0, 1, 2);
 }
 
-Graphene::SimpleObjects::Square::Square(const fvec3 position, const fvec3 rotation, const fvec3 scale) : Model(position, rotation, scale)
+Graphene::SimpleObjects::Square::Square(const fvec3 position, const fvec4 rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     VERTEX(-0.5, -0.5, 0.f,   0.f, 0.f, -1.f,   1.f, 1.f, 1.f);
     VERTEX(-0.5,  0.5, 0.f,   0.f, 0.f, -1.f,   1.f, 1.f, 1.f);
@@ -23,22 +23,7 @@ Graphene::SimpleObjects::Square::Square(const fvec3 position, const fvec3 rotati
     ELEMENT(0, 2, 3);
 }
 
-/*
-Graphene::SimpleObjects::Tetrahedron::Tetrahedron()
-{
-    VERTEX( 0.f,  sqrtf(6.f) / -12.f,  1.f / sqrtf(3.f),    0.f,  sqrtf(6.f) / -12.f,  1.f / sqrtf(3.f),   0.f, 1.f, 1.f); // передний
-    VERTEX(-0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),   -0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),   0.f, 1.f, 1.f); // левый
-    VERTEX( 0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),    0.5,  sqrtf(6.f) / -12.f, -0.5 / sqrtf(3.f),   0.f, 1.f, 1.f); // правый
-    VERTEX( 0.f,  1.f / sqrtf(3.f),   -0.f,                 0.f,  1.f / sqrtf(3.f),   -0.f,                0.f, 1.f, 1.f); // верхний
-
-    ELEMENT(0, 1, 2);
-    ELEMENT(0, 3, 1);
-    ELEMENT(2, 3, 0);
-    ELEMENT(1, 3, 2);
-}
-*/
-
-Graphene::SimpleObjects::Tetrahedron::Tetrahedron(const fvec3 position, const fvec3 rotation, const fvec3 scale) : Model(position, rotation, scale)
+Graphene::SimpleObjects::Tetrahedron::Tetrahedron(const fvec3 position, const fvec4 rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                1.f, 0.f, 0.f); // передний
     VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                1.f, 0.f, 0.f); // левый
@@ -62,7 +47,7 @@ Graphene::SimpleObjects::Tetrahedron::Tetrahedron(const fvec3 position, const fv
     ELEMENT(9, 10, 11);
 }
 
-Graphene::SimpleObjects::Cube::Cube(const fvec3 position, const fvec3 rotation, const fvec3 scale) : Model(position, rotation, scale)
+Graphene::SimpleObjects::Cube::Cube(const fvec3 position, const fvec4 rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     // передняя
     VERTEX(-0.5, -0.5, -0.5,    0.f,  0.f, -1.f,   1.f, 1.f, 1.f); // л н п  0

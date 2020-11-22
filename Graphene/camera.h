@@ -16,8 +16,8 @@ public:
     float m_AspectRatio;
     float m_FOV;
 public:
-    Camera(const fvec3 position = {0, 0, 2}, const fvec3 direction = {0, 0, 1}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
-        : Object(position, direction), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
+    Camera(const fvec3 position = {0, 0, 2}, const fvec4 rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
+        : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
     virtual ~Camera() = default;
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
@@ -36,8 +36,7 @@ public:
 class Graphene::Camera::Targeted : public Graphene::Camera
 {
 public:
-    Targeted(const fvec3 position = {0, 0, 2}, const fvec3 target = {0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
-        : Camera(position, target - position, aspectRatio, FOV) {};
+    Targeted(const fvec3 position = {0, 0, 2}, const fvec3 target = {0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4);
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
 };
