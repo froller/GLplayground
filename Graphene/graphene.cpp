@@ -41,8 +41,8 @@ Graphene::~Graphene()
         free(m_VertexBuffer);
     if (m_ElementBuffer)
         free(m_ElementBuffer);
-    if (m_LightBuffer)
-        free(m_LightBuffer);
+    if (m_StorageBuffer)
+        free(m_StorageBuffer);
     if (m_UniformBuffer)
         free(m_UniformBuffer);
 
@@ -99,7 +99,7 @@ int Graphene::draw()
     // Нормали
     glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
     // Цвета
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
@@ -115,9 +115,13 @@ int Graphene::draw()
     // Примитивы
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
     // Источники света
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);
-    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[BufferType::LightBuffer], 0, m_LightBufferSize);
-
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[BufferType::StorageBuffer], 0, m_Scene->lightRangeSize());
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_Buffers[BufferType::StorageBuffer], m_Scene->lightRangeSize(), m_Scene->modelRangeSize());
+    // Матрицы кмеры
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
+    
     if (m_Wireframe)
         for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
             glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
@@ -252,16 +256,16 @@ size_t Graphene::reAllocateVertexBuffer()
     return m_VertexBufferSize;
 }
 
-size_t Graphene::reAllocateLightBuffer()
+size_t Graphene::reAllocateStorageBuffer()
 {
     size_t newSize = m_Scene->SSBOsize();
-    if (newSize > m_LightBufferSize)
+    if (newSize > m_StorageBufferSize)
     {
-        void *ptr = realloc(m_LightBuffer, newSize);
-        m_LightBuffer = ptr;
-        m_LightBufferSize = newSize;
+        void *ptr = realloc(m_StorageBuffer, newSize);
+        m_StorageBuffer = ptr;
+        m_StorageBufferSize = newSize;
     }
-    return m_LightBufferSize;
+    return m_StorageBufferSize;
 }
 
 size_t Graphene::reAllocateUniformBuffer()
@@ -281,7 +285,7 @@ void Graphene::fillVertexBuffer()
     reAllocateVertexBuffer();
     m_Scene->VBOdata(m_VertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);   
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_Scene->vertexCount(), m_VertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
 void Graphene::fillElementBuffer()
@@ -289,15 +293,15 @@ void Graphene::fillElementBuffer()
     reAllocateElementBuffer();
     m_Scene->EBOdata(m_ElementBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);   
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Element) * m_Scene->elementCount(), m_ElementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::fillLightBuffer()
+void Graphene::fillStorageBuffer()
 {
-    reAllocateLightBuffer();
-    m_Scene->SSBOdata(m_LightBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);   
-    glBufferData(GL_SHADER_STORAGE_BUFFER, m_Scene->SSBOsize(), m_LightBuffer, GL_STATIC_DRAW);
+    reAllocateStorageBuffer();
+    m_Scene->SSBOdata(m_StorageBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);   
+    glBufferData(GL_SHADER_STORAGE_BUFFER, m_Scene->SSBOsize(), m_StorageBuffer, GL_STATIC_DRAW);
 }
 
 void Graphene::fillUniformBuffer()
@@ -306,7 +310,6 @@ void Graphene::fillUniformBuffer()
     m_Scene->UBOdata(m_UniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraMatrices), m_UniformBuffer, GL_STATIC_DRAW);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
 }
 
 void Graphene::onGeometryChanged()
@@ -326,13 +329,12 @@ void Graphene::onCameraChanged()
 
 void Graphene::onLightChanged()
 {
-    fillLightBuffer();   
-//    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
+    fillStorageBuffer();   
     m_Scene->depict(Scene::Aspect::Light);
 }
 
 void Graphene::onEnvironmentChanged()
 {
-    m_Program->setUniform("ambientColor", m_Scene->ambient());
+    fillStorageBuffer();   
     m_Scene->depict(Scene::Aspect::Environment);
 }

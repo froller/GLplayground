@@ -71,7 +71,6 @@ size_t Graphene::Model::EBOdata(void *elementBuffer, Index offset) const
 size_t Graphene::Model::SSBOdata(void *storageBuffer) const
 {
     const size_t s = SSBOsize();
-    void *bufferTop = storageBuffer;
-    // FIXME заполнить матрицу трансформации и запихать в буфер
+    *(fmat4 *)storageBuffer = glm::fmat4(1); //transform();
     return s;
 }
