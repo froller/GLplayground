@@ -116,9 +116,11 @@ size_t Graphene::Scene::UBOsize() const
 
 size_t Graphene::Scene::SSBOsize() const
 {
-    return sizeof(unsigned int)
+    return
+        sizeof(float) * 4   // vec3 + 1 float padding
+        + sizeof(float) * 4 // uint + 3 float padding
         + lightCount() * sizeof(LightSource)
-        + sizeof(unsigned int)
+        + sizeof(float) * 4 // uint + 3 float padding
         + modelCount() * sizeof(ModelMatrices);
 }
 
@@ -150,11 +152,17 @@ size_t Graphene::Scene::EBOdata(void *elementBuffer) const
 size_t Graphene::Scene::SSBOdata(void* storageBuffer) const
 {
     void *bufferTop = storageBuffer;
+    *(fvec3 *)bufferTop = m_Ambient;
+    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
+    *(unsigned int *)bufferTop = m_Lights.size();
+    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
     for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
     {
         light->lightData(bufferTop);
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
+    *(unsigned int *)bufferTop = m_Models.size();
+    bufferTop = (char *)bufferTop + sizeof(float) * 2; // std430 выравнивает по vec4
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
         model->SSBOdata(bufferTop);

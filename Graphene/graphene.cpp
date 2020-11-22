@@ -43,6 +43,8 @@ Graphene::~Graphene()
         free(m_ElementBuffer);
     if (m_LightBuffer)
         free(m_LightBuffer);
+    if (m_UniformBuffer)
+        free(m_UniformBuffer);
 
     // Удаление буферов
     glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
@@ -231,7 +233,8 @@ size_t Graphene::reAllocateElementBuffer()
     size_t newSize = m_Scene->EBOsize();
     if (newSize > m_ElementBufferSize)
     {
-        m_ElementBuffer = realloc(m_ElementBuffer, newSize);
+        void *ptr = realloc(m_ElementBuffer, newSize);
+        m_ElementBuffer = ptr;
         m_ElementBufferSize = newSize;
     }
     return m_ElementBufferSize;
@@ -242,7 +245,8 @@ size_t Graphene::reAllocateVertexBuffer()
     size_t newSize = m_Scene->VBOsize();
     if (newSize > m_VertexBufferSize)
     {
-        m_VertexBuffer = realloc(m_VertexBuffer, newSize);
+        void *ptr = realloc(m_VertexBuffer, newSize);
+        m_VertexBuffer = ptr;
         m_VertexBufferSize = newSize;
     }
     return m_VertexBufferSize;
@@ -250,10 +254,11 @@ size_t Graphene::reAllocateVertexBuffer()
 
 size_t Graphene::reAllocateLightBuffer()
 {
-    size_t newSize = m_Scene->lightCount() * sizeof(LightSource);
+    size_t newSize = m_Scene->SSBOsize();
     if (newSize > m_LightBufferSize)
     {
-        m_LightBuffer = realloc(m_LightBuffer, newSize);
+        void *ptr = realloc(m_LightBuffer, newSize);
+        m_LightBuffer = ptr;
         m_LightBufferSize = newSize;
     }
     return m_LightBufferSize;
@@ -264,7 +269,8 @@ size_t Graphene::reAllocateUniformBuffer()
     size_t newSize = m_Scene->UBOsize();
     if (newSize > m_UniformBufferSize)
     {
-        m_UniformBuffer = realloc(m_UniformBuffer, newSize);
+        void *ptr = realloc(m_UniformBuffer, newSize);
+        m_UniformBuffer = ptr;
         m_UniformBufferSize = newSize;
     }
     return m_UniformBufferSize;
@@ -291,7 +297,7 @@ void Graphene::fillLightBuffer()
     reAllocateLightBuffer();
     m_Scene->SSBOdata(m_LightBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::LightBuffer]);   
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightSource) * m_Scene->lightCount(), m_LightBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, m_Scene->SSBOsize(), m_LightBuffer, GL_STATIC_DRAW);
 }
 
 void Graphene::fillUniformBuffer()
@@ -314,10 +320,6 @@ void Graphene::onGeometryChanged()
 
 void Graphene::onCameraChanged()
 {
-//    m_Program->setUniform("MVP[0]", m_Scene->model());
-//    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
-//    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
-//    m_Program->setUniform("cameraPosition", m_Scene->camera()->m_Position);
     fillUniformBuffer();
     m_Scene->depict(Scene::Aspect::Camera);
 }
@@ -325,7 +327,7 @@ void Graphene::onCameraChanged()
 void Graphene::onLightChanged()
 {
     fillLightBuffer();   
-    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
+//    m_Program->setUniform("lightsCount", static_cast<unsigned int>(m_Scene->lightCount()));
     m_Scene->depict(Scene::Aspect::Light);
 }
 

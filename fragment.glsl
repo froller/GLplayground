@@ -17,9 +17,6 @@ struct LightSource {
 in Vertex vertex;
 in flat uint meshId;
 
-uniform vec3 ambientColor;
-uniform uint lightsCount;
-
 layout (std140, binding = 0) uniform CameraMatrices {
     mat4 world;
     mat4 view;
@@ -28,6 +25,10 @@ layout (std140, binding = 0) uniform CameraMatrices {
 } cameraMatrices;
 
 layout (std430, binding = 0) buffer Lights {
+    vec3 ambient;
+    float reserved0;
+    uint count;
+    float reserved1;
     LightSource light[];
 } lights;
 
@@ -37,7 +38,7 @@ void main()
 {
     vec3 diffuse = vec3(0);
     vec3 specular = vec3(0);
-    for (uint i = 0; i < lightsCount; ++i)
+    for (uint i = 0; i < lights.count; ++i)
     {
         vec3 lightingDirection = normalize(lights.light[i].position - vertex.position);
         float lightingDistance = length(lights.light[i].position - vertex.position);
@@ -50,5 +51,5 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular + diffuse + ambientColor;
+    fragmentColor = specular + diffuse + lights.ambient;
 }
