@@ -299,7 +299,8 @@ void Graphene::fillUniformBuffer()
     reAllocateUniformBuffer();
     m_Scene->UBOdata(m_UniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
-    // ...
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraMatrices), m_UniformBuffer, GL_STATIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
 }
 
 void Graphene::onGeometryChanged()
@@ -307,16 +308,17 @@ void Graphene::onGeometryChanged()
     // Заполнение буферов
     fillVertexBuffer();
     fillElementBuffer();
-    fillUniformBuffer();
+//    fillUniformBuffer();
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 
 void Graphene::onCameraChanged()
 {
-    m_Program->setUniform("MVP[0]", m_Scene->model());
-    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
-    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
-    m_Program->setUniform("cameraPosition", m_Scene->camera()->m_Position);
+//    m_Program->setUniform("MVP[0]", m_Scene->model());
+//    m_Program->setUniform("MVP[1]", m_Scene->camera()->view());
+//    m_Program->setUniform("MVP[2]", m_Scene->camera()->projection());
+//    m_Program->setUniform("cameraPosition", m_Scene->camera()->m_Position);
+    fillUniformBuffer();
     m_Scene->depict(Scene::Aspect::Camera);
 }
 

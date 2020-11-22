@@ -43,6 +43,11 @@ size_t Graphene::Model::EBOsize() const
     return m_Primitives.size() * sizeof(Element);
 }
 
+size_t Graphene::Model::SSBOsize() const
+{
+    return sizeof(fmat4);
+}
+
 size_t Graphene::Model::VBOdata(void *vertexBuffer) const
 {
     const size_t s = VBOsize();
@@ -60,5 +65,13 @@ size_t Graphene::Model::EBOdata(void *elementBuffer, Index offset) const
             (*(Element *)bufferTop)[j] = (*i)[j] + offset;
         bufferTop = (Element *)bufferTop + 1;
     }
+    return s;
+}
+
+size_t Graphene::Model::SSBOdata(void *storageBuffer) const
+{
+    const size_t s = SSBOsize();
+    void *bufferTop = storageBuffer;
+    // FIXME заполнить матрицу трансформации и запихать в буфер
     return s;
 }
