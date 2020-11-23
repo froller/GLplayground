@@ -5,7 +5,7 @@
 
 fmat4 Graphene::Camera::view() const
 {
-    return glm::quatLookAt(m_Position, m_Rotation);
+    return glm::mat4_cast(m_Rotation);
 }
 
 fmat4 Graphene::Camera::projection() const
@@ -15,10 +15,9 @@ fmat4 Graphene::Camera::projection() const
 
 void Graphene::Camera::orbit(const fvec3 angle)
 {
-    glm::fmat4 transY = glm::rotate(glm::mat4(), angle.y, {1, 0, 0});
-    glm::fmat4 transX = glm::rotate(glm::mat4(), angle.x, {0, 1, 0});
-    m_Position = glm::fvec3(transX * transY * glm::fvec4(m_Position, 0));
-    //m_Rotation = glm::fvec4(-transX * -transY * m_Rotation); // FIXME поворот через кватернион
+    // Orbit для свободной камеры выглядит бесполезным, т.к. вращает ее вокруг центра мира
+    m_Rotation = glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0));
+    m_Position = glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)) * m_Position;
 }
 
 void Graphene::Camera::dolly(const float offset)
@@ -41,25 +40,28 @@ Graphene::Camera::Targeted::Targeted (const fvec3 position, const fvec3 target, 
 
 fmat4 Graphene::Camera::Targeted::view() const
 {
-    fmat4 view = glm::lookAt(m_Position, m_Target, {0, 1, 0}); // FIXME добавить правильное вращение
+    fmat4 view = glm::lookAt(m_Position, m_Target, m_Head); // FIXME добавить правильное вращение "головы"
     return view;
 }
 
 void Graphene::Camera::Targeted::rotation(const fquat rotation)
 {
     // Для направленной камеры вращение осуществляется через вращение вокруг цели
+    // фактически rotation и orbit - это одно и то же
+    m_Rotation = rotation;
     fvec3 eye = m_Position - m_Target;
-    eye = glm::fvec3(glm::mat4_cast(rotation) * fvec4(eye, 0));
+    eye = glm::mat4_cast(m_Rotation) * fvec4(eye, 0);
+    m_Position = m_Target + eye;
 }
 
 void Graphene::Camera::Targeted::rotation (const float angle)
 {
+    // Для вращение без изменения положения и цели остается только одна степень свободы
+    // вращение вокруг оптической оси камеры
     m_Rotation = glm::angleAxis(angle, m_Target - m_Position);
 }
 
-void Graphene::Camera::Targeted::orbit (const fvec3 angle)
+void Graphene::Camera::Targeted::orbit(const fvec3 angle)
 {
-    glm::fmat4 transY = glm::rotate(glm::mat4(1), angle.y, {1, 0, 0});
-    glm::fmat4 transX = glm::rotate(transY, angle.x, {0, 1, 0});
-    m_Position = glm::fvec3(transX * transY * glm::fvec4(m_Position, 0)); 
+    rotation(glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)));
 }
