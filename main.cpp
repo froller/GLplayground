@@ -88,8 +88,15 @@ int main(int argc, char ** argv)
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
 //    graphene->addModel(Graphene::SimpleObjects::Square());
-    graphene->addModel(Graphene::SimpleObjects::Tetrahedron({ 1, 0, 0 }));
-    graphene->addModel(Graphene::SimpleObjects::Cube({ -1, 0, 0 }));
+    graphene->addModel(Graphene::SimpleObjects::Tetrahedron(
+        { 0.5, -0.25 / sqrt(3), 0 },
+        fquat({0, -M_PI_2, 0})
+    ));
+    graphene->addModel(Graphene::SimpleObjects::Cube(
+        { -0.5, 0, 0 },
+        { 0, 0, 0, 1 },
+        { 0.7, 0.7, 0.7 }
+    ));
 
     graphene->scene()->addLight(Graphene::Light::Omni({  4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
     graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));
