@@ -1,20 +1,42 @@
 #version 460 core
 
-layout(location = 0) in vec3 vertexPosition;
-layout(location = 1) in vec3 vertexNormal;
-layout(location = 2) in vec3 vertexColor;
+struct Vertex {
+    vec3 position;
+    vec3 normal;
+    vec3 color;
+    vec2 UV;
+};
 
-//out vec2 UV;
-out vec3 position;
-out vec3 normal;
-out vec3 color;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec3 color;
+layout(location = 3) in vec2 UV;
+layout(location = 4) in uint meshId;
 
-uniform mat4 MVP[3];
+layout(std140, binding = 0) uniform CameraMatrices {
+    mat4 world;
+    mat4 view;
+    mat4 projection;
+    vec3 position;
+} cameraMatrices;
+
+layout(std430, binding = 1) buffer Models {
+    uint count;
+    float reserved0;
+    mat4 model[];
+} models;
+
+out Vertex vertex;
+out flat uint vertexMeshId;
+
+//uniform mat4 MVP[3];
 
 void main()
 {
-    gl_Position = MVP[2] * MVP[1] * MVP[0] * vec4(vertexPosition, 1);
-    position = vertexPosition;
-    normal = vertexNormal;
-    color = vertexColor;
+    vertexMeshId = meshId;
+    vertex.position = position;
+    vertex.normal = normal;
+    vertex.color = color;
+    vertex.UV = UV;
+    gl_Position = cameraMatrices.projection * cameraMatrices.view * cameraMatrices.world * models.model[vertexMeshId] * vec4(position, 1);
 }

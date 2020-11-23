@@ -2,11 +2,6 @@
 #include <array>
 #include <algorithm>
 
-inline bool Graphene::Vertex::operator==(const Graphene::Vertex &that)
-{
-    return position == that.position && color == that.color;
-}
-
 void Graphene::Model::addPrimitive(const Vertex a, const Vertex b, const Vertex c)
 {
     addPrimitive({a, b, c});
@@ -48,6 +43,11 @@ size_t Graphene::Model::EBOsize() const
     return m_Primitives.size() * sizeof(Element);
 }
 
+size_t Graphene::Model::SSBOsize() const
+{
+    return sizeof(fmat4);
+}
+
 size_t Graphene::Model::VBOdata(void *vertexBuffer) const
 {
     const size_t s = VBOsize();
@@ -65,5 +65,12 @@ size_t Graphene::Model::EBOdata(void *elementBuffer, Index offset) const
             (*(Element *)bufferTop)[j] = (*i)[j] + offset;
         bufferTop = (Element *)bufferTop + 1;
     }
+    return s;
+}
+
+size_t Graphene::Model::SSBOdata(void *storageBuffer) const
+{
+    const size_t s = SSBOsize();
+    *(fmat4 *)storageBuffer = transform();
     return s;
 }

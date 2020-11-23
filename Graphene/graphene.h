@@ -40,7 +40,8 @@ public:
     class SimpleObjects;
     class Scene;
 
-    enum ShaderType {
+    enum ShaderType
+    {
         GeometryShader,
         VertexShader,
         TesselationControlShader,
@@ -50,10 +51,12 @@ public:
         Invalid
     };
     
-    enum BufferType {
+    enum BufferType
+    {
         VertexBuffer = 0,
         ElementBuffer,
-        LightBuffer,
+        StorageBuffer,
+        UniformBuffer,
         BufferTypeMax
     };
     
@@ -70,7 +73,16 @@ public:
         fvec3 position;
         fvec3 normal;
         Color color;       
-        inline bool operator==(const struct Vertex &that);
+        fvec2 UV;
+        uint meshId = 0;
+        inline bool operator==(const struct Vertex &that)
+        {
+            return position == that.position
+                && normal == that.normal
+                && color == that.color
+                && UV == that.UV
+                && meshId == that.meshId;
+        }
     } Vertex;
 
     typedef struct LightSource
@@ -83,7 +95,23 @@ public:
         Color color;
         float attenuation;
     } LightSource;
-    
+
+    typedef struct CameraMatrices
+    {
+    public:
+        fmat4 world;
+        fmat4 view;
+        fmat4 projection;
+        fvec3 position;
+    private:
+        char padding0[sizeof(float)] = { 0 };
+    } CameraMatrices;
+
+    typedef struct ModelMatrices
+    {
+        fmat4 model;
+    } ModelMatrices;
+
 protected:
     bool m_Started;
     bool m_Wireframe = false;
@@ -94,10 +122,12 @@ protected:
 
     void *m_VertexBuffer = nullptr;
     void *m_ElementBuffer = nullptr;
-    void *m_LightBuffer = nullptr;
+    void *m_StorageBuffer = nullptr;
+    void *m_UniformBuffer = nullptr;
     size_t m_VertexBufferSize = 0;
     size_t m_ElementBufferSize = 0;
-    size_t m_LightBufferSize = 0;
+    size_t m_StorageBufferSize = 0;
+    size_t m_UniformBufferSize = 0;
     
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
@@ -130,10 +160,12 @@ public:
 protected:
     virtual size_t reAllocateVertexBuffer();
     virtual size_t reAllocateElementBuffer();
-    virtual size_t reAllocateLightBuffer();
+    virtual size_t reAllocateStorageBuffer();
+    virtual size_t reAllocateUniformBuffer();
     virtual void fillVertexBuffer();
     virtual void fillElementBuffer();
-    virtual void fillLightBuffer();
+    virtual void fillStorageBuffer();
+    virtual void fillUniformBuffer();
     virtual void onGeometryChanged();
     virtual void onCameraChanged();
     virtual void onLightChanged();

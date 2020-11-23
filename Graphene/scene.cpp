@@ -88,6 +88,11 @@ size_t Graphene::Scene::lightCount() const
     return m_Lights.size();
 }
 
+size_t Graphene::Scene::modelCount() const
+{
+    return m_Models.size();
+}
+
 size_t Graphene::Scene::VBOsize() const
 {
     size_t vboSize = 0;
@@ -104,18 +109,52 @@ size_t Graphene::Scene::EBOsize() const
     return eboSize;
 }
 
-size_t Graphene::Scene::lightsSize() const
+size_t Graphene::Scene::UBOsize() const
 {
-    return lightCount() * sizeof(LightSource);
+    return sizeof(CameraMatrices);
+}
+
+size_t Graphene::Scene::SSBOsize() const
+{
+    return lightRangeSize() + modelRangeSize();
+}
+
+size_t Graphene::Scene::lightRangeSize() const
+{
+    const size_t align = 64;
+    size_t lightRangeSize =
+        sizeof(float) * 4   // vec3 + 1 float padding
+        + sizeof(float) * 4 // uint + 3 float padding
+        + lightCount() * sizeof(LightSource);
+    // Выравнивание
+    if (lightRangeSize % align)
+        lightRangeSize = (lightRangeSize / align + 1) * align;
+    return lightRangeSize;
+}
+
+size_t Graphene::Scene::modelRangeSize() const
+{
+    const size_t align = 64;
+    size_t modelRangeSize =
+        + sizeof(float) * 4 // uint + 3 float padding
+        + modelCount() * sizeof(ModelMatrices);
+    // Выравнивание
+    if (modelRangeSize % align)
+        modelRangeSize = (modelRangeSize / align + 1) * align;
+    return modelRangeSize;
 }
 
 size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
 {
+    unsigned int meshId = 0;
     void *bufferTop = vertexBuffer;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
         size_t modelBufferSize = model->VBOdata(bufferTop);
+        for (size_t i = 0; i < model->m_Vertices.size(); ++i)
+            *(unsigned int *)((char *)bufferTop + sizeof(Vertex) * i + offsetof(Vertex, meshId)) = meshId;
         bufferTop = (char *)bufferTop + modelBufferSize;
+        ++meshId;
     }
     return (char *)bufferTop - (char *)vertexBuffer;
 }
@@ -133,18 +172,56 @@ size_t Graphene::Scene::EBOdata(void *elementBuffer) const
     return (char *)bufferTop - (char *)elementBuffer;
 }
 
-size_t Graphene::Scene::lightsData(void* lightsBuffer) const
+size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
 {
-    void *bufferTop = lightsBuffer;
+    void *bufferTop = uniformBuffer;
+    CameraMatrices *cameraMatrices = (CameraMatrices *)bufferTop;
+    cameraMatrices->world = fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
+    cameraMatrices->view = m_Camera->view();
+    cameraMatrices->projection = m_Camera->projection();
+    cameraMatrices->position = m_Camera->position();
+    bufferTop = (char *)bufferTop + sizeof(CameraMatrices);
+    // ...
+    return (char *)bufferTop - (char *)uniformBuffer;
+}
+
+size_t Graphene::Scene::SSBOdata(void* storageBuffer) const
+{
+    void *bufferTop = storageBuffer;
+    bufferTop = (char *)bufferTop + lightRangeData(bufferTop);
+    bufferTop = (char *)bufferTop + modelRangeData(bufferTop);
+    return (char *)bufferTop - (char *)storageBuffer;
+}
+
+size_t Graphene::Scene::lightRangeData(void* storageBuffer) const
+{
+    void *bufferTop = storageBuffer;
+    *(fvec3 *)bufferTop = m_Ambient;
+    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
+    *(unsigned int *)bufferTop = m_Lights.size();
+    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
     for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
     {
         light->lightData(bufferTop);
         bufferTop = (char *)bufferTop + sizeof(LightSource);
     }
-    return (char *)bufferTop - (char *)lightsBuffer;
+    return lightRangeSize();
+}
+
+size_t Graphene::Scene::modelRangeData(void* storageBuffer) const
+{
+    void *bufferTop = storageBuffer;
+    *(unsigned int *)bufferTop = m_Models.size();
+    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
+    for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
+    {
+        model->SSBOdata(bufferTop);
+        bufferTop = (char *)bufferTop + sizeof(ModelMatrices);
+    }
+    return modelRangeSize();
 }
 
 fmat4 Graphene::Scene::model() const
 {
-    return fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
+    return fmat4(1);
 }

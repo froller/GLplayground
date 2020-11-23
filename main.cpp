@@ -88,12 +88,19 @@ int main(int argc, char ** argv)
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
 //    graphene->addModel(Graphene::SimpleObjects::Square());
-    graphene->addModel(Graphene::SimpleObjects::Tetrahedron());
-    graphene->addModel(Graphene::SimpleObjects::Cube());
+    graphene->addModel(Graphene::SimpleObjects::Tetrahedron(
+        { 0.5, -0.25 / sqrt(3), 0 },
+        fquat({0, -M_PI_2, 0})
+    ));
+    graphene->addModel(Graphene::SimpleObjects::Cube(
+        { -0.5, 0, 0 },
+        { 0, 0, 0, 1 },
+        { 0.7, 0.7, 0.7 }
+    ));
 
-    graphene->scene()->addLight(Graphene::Light::Omni({ -1, 2, -4 }, { 0.0, 0.5, 0.5 }, 20.f));
-    graphene->scene()->addLight(Graphene::Light::Omni({  1, -2, 4 }, { 0.5, 0.0, 0.0 }, 20.f));
-    graphene->scene()->ambient({0.01, 0.01, 0.01});
+    graphene->scene()->addLight(Graphene::Light::Omni({  4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
+    graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));
+    graphene->scene()->ambient({0.1, 0.1, 0.1});
 
     graphene->camera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
     
