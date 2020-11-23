@@ -1,12 +1,13 @@
 #include "graphene.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 fmat4 Graphene::Object::transform() const
 {
-    fmat4 tm = fmat4(1);
-    tm = glm::scale(tm, m_Scale);
-    tm = glm::rotate(tm, m_Rotation.w, glm::fvec3(m_Rotation.x, m_Rotation.y, m_Rotation.z));
-    tm = glm::translate(tm, m_Position);
+    glm::fmat4 tm = glm::fmat4(1);
+    tm = glm::scale(glm::fmat4(1), m_Scale) * tm;
+    tm = glm::mat4_cast(m_Rotation) * tm;
+    tm = glm::translate(glm::fmat4(1), m_Position) * tm;
     return tm;
 }
