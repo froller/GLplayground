@@ -34,8 +34,8 @@ out flat uint vertexMeshId;
 void main()
 {
     vertexMeshId = meshId;
-    vertex.position = position;
-    vertex.normal = normal;
+    vertex.position = vec4(models.model[vertexMeshId] * vec4(position, 0)).xyz;
+    vertex.normal = normalize(vec4(models.model[vertexMeshId] * vec4(normal, 0)).xyz);
     vertex.color = color;
     vertex.UV = UV;
     gl_Position = cameraMatrices.projection * cameraMatrices.view * cameraMatrices.world * models.model[vertexMeshId] * vec4(position, 1);
