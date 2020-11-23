@@ -71,6 +71,6 @@ size_t Graphene::Model::EBOdata(void *elementBuffer, Index offset) const
 size_t Graphene::Model::SSBOdata(void *storageBuffer) const
 {
     const size_t s = SSBOsize();
-    *(fmat4 *)storageBuffer = glm::fmat4(1); //transform();
+    *(fmat4 *)storageBuffer = transform();
     return s;
 }

@@ -22,12 +22,12 @@ void Graphene::Camera::position(const fvec3 position)
     m_Position = position;
 }
 
-fvec4 Graphene::Camera::rotation() const
+fquat Graphene::Camera::rotation() const
 {
     return m_Rotation;
 }
 
-void Graphene::Camera::rotation(const fvec4 rotation)
+void Graphene::Camera::rotation(const fquat rotation)
 {
     m_Rotation = rotation;
 }
@@ -37,7 +37,7 @@ void Graphene::Camera::orbit(const fvec3 angle)
     glm::fmat4 transY = glm::rotate(glm::mat4(), angle.y, {1, 0, 0});
     glm::fmat4 transX = glm::rotate(glm::mat4(), angle.x, {0, 1, 0});
     m_Position = glm::fvec3(transX * transY * glm::fvec4(m_Position, 0));
-    m_Rotation = glm::fvec4(-transX * -transY * m_Rotation);
+    //m_Rotation = glm::fvec4(-transX * -transY * m_Rotation); // FIXME поворот через кватернион
 }
 
 void Graphene::Camera::dolly(const float offset)
@@ -55,7 +55,7 @@ void Graphene::Camera::dolly(const float offset)
 Graphene::Camera::Targeted::Targeted (const fvec3 position, const fvec3 target, const float aspectRatio, const float FOV)
         : Camera(position, {0, 0, 0, 0}, aspectRatio, FOV), m_Target(target)
 {
-    m_Rotation = glm::fvec4(glm::normalize(target - position), 0);
+    //m_Rotation = glm::fvec4(glm::normalize(target - position), 0); // FIXME поворот через кватернион
 }
 
 fmat4 Graphene::Camera::Targeted::view() const
@@ -64,9 +64,9 @@ fmat4 Graphene::Camera::Targeted::view() const
     return view;
 }
 
-void Graphene::Camera::Targeted::rotation (const fvec4 rotation)
+void Graphene::Camera::Targeted::rotation (const fquat rotation)
 {
-    m_Rotation = glm::rotate(glm::fmat4(), rotation.w, m_Target - m_Position) * m_Rotation;
+    //m_Rotation = glm::rotate(glm::fmat4(), rotation.w, m_Target - m_Position) * m_Rotation; // FIXME поворот через кватернион
 }
 
 void Graphene::Camera::Targeted::orbit (const fvec3 angle)

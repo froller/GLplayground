@@ -4,12 +4,14 @@
 #ifdef WITH_GLM
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 typedef glm::fvec2 fvec2;
 typedef glm::fvec3 fvec3;
 typedef glm::fvec4 fvec4;
 typedef glm::fmat4 fmat4;
 typedef glm::uint uint;
+typedef glm::fquat fquat;
 
 #else
 #   error GLM is required at this time

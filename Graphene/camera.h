@@ -16,15 +16,15 @@ public:
     float m_AspectRatio;
     float m_FOV;
 public:
-    Camera(const fvec3 position = {0, 0, 2}, const fvec4 rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
+    Camera(const fvec3 position = {0, 0, 2}, const fquat rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
         : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
     virtual ~Camera() = default;
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
     virtual fvec3 position() const;
     virtual void position(const fvec3 position);
-    virtual fvec4 rotation() const;
-    virtual void rotation(const fvec4 rotation);
+    virtual fquat rotation() const;
+    virtual void rotation(const fquat rotation);
     virtual void orbit(const fvec3 angle);
     virtual void dolly(const float offset);
 };
@@ -43,7 +43,7 @@ public:
     Targeted(const fvec3 position = {0, 0, 2}, const fvec3 target = {0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4);
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
-    virtual void rotation(const fvec4 rotation) override;
+    virtual void rotation(const fquat rotation) override;
     virtual void orbit(const fvec3 angle) override;
 };
 

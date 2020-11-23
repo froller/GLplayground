@@ -13,7 +13,7 @@ public:
     std::vector<Vertex> m_Vertices;
     std::vector<std::array<unsigned int, 3>> m_Primitives;
 public:
-    Model(const fvec3 position = { 0, 0, 0}, const fvec4 rotation = { 0, 0, 0, 0 }, const fvec3 scale = { 1, 1, 1 }) : Object(position, rotation, scale) {};
+    Model(const fvec3 position = { 0, 0, 0}, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }) : Object(position, rotation, scale) {};
     virtual ~Model() = default;
     //virtual load(cont std::filesystem::path &path);
     virtual void addPrimitive(const Vertex a, const Vertex b, const Vertex c);
