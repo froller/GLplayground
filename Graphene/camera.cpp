@@ -5,7 +5,7 @@
 
 fmat4 Graphene::Camera::view() const
 {
-    return glm::mat4_cast(m_Rotation);
+    return glm::lookAt(m_Position, glm::fvec3(m_Rotation * glm::fvec4(s_Base, 0)) * -1.f, m_Head);
 }
 
 fmat4 Graphene::Camera::projection() const
@@ -15,9 +15,8 @@ fmat4 Graphene::Camera::projection() const
 
 void Graphene::Camera::orbit(const fvec3 angle)
 {
-    // Orbit для свободной камеры выглядит бесполезным, т.к. вращает ее вокруг центра мира
-    m_Rotation = glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0));
-    m_Position = glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)) * m_Position;
+    // Orbit для свободной камеры выглядит бесполезным
+    rotation(glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)));
 }
 
 void Graphene::Camera::dolly(const float offset)
@@ -40,8 +39,7 @@ Graphene::Camera::Targeted::Targeted (const fvec3 position, const fvec3 target, 
 
 fmat4 Graphene::Camera::Targeted::view() const
 {
-    fmat4 view = glm::lookAt(m_Position, m_Target, m_Head); // FIXME добавить правильное вращение "головы"
-    return view;
+    return glm::lookAt(m_Position, m_Target, m_Head); // FIXME добавить правильное вращение "головы"
 }
 
 void Graphene::Camera::Targeted::rotation(const fquat rotation)
@@ -49,9 +47,9 @@ void Graphene::Camera::Targeted::rotation(const fquat rotation)
     // Для направленной камеры вращение осуществляется через вращение вокруг цели
     // фактически rotation и orbit - это одно и то же
     m_Rotation = rotation;
-    fvec3 eye = m_Position - m_Target;
-    eye = glm::mat4_cast(m_Rotation) * fvec4(eye, 0);
-    m_Position = m_Target + eye;
+    float distance = glm::length(m_Target - m_Position);
+    fvec3 direction = m_Rotation * glm::fvec4(s_Base, 0);
+    m_Position = m_Target + direction / glm::length(direction) * distance;
 }
 
 void Graphene::Camera::Targeted::rotation (const float angle)
@@ -63,7 +61,12 @@ void Graphene::Camera::Targeted::rotation (const float angle)
 
 void Graphene::Camera::Targeted::orbit(const fvec3 angle)
 {
-    rotation(glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)));
+    //SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Orbitting to %+f° %+f°", angle.x, angle.y);
+    rotation(
+        glm::angleAxis(angle.y, glm::fvec3(1, 0, 0))
+        * glm::angleAxis(angle.x, glm::fvec3(glm::fvec4(0, 1, 0, 0)))
+        * m_Rotation
+    );
 }
 
 void Graphene::Camera::Targeted::dolly(const float offset)
