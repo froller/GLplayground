@@ -102,7 +102,14 @@ int main(int argc, char ** argv)
     graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));
     graphene->scene()->ambient({0.1, 0.1, 0.1});
 
-    graphene->camera(new Graphene::Camera::Targeted({0, 2, 2}, {0, 0, 0}, 1.25, M_PI_4));
+    Graphene::Camera *camera[4] = {
+        new Graphene::Camera::Targeted({ 0, 0, 2 }, { 0, 0, 0 }),
+        new Graphene::Camera::Targeted({ 0.5, 0, 2}, { 0.5, 0, 0 }),
+        new Graphene::Camera({ 0, 0, 2 }, { 0, 0, 0, 1 }),
+        new Graphene::Camera({ 0.5, 0, 2 }, { 0, 0, 0, 1 })
+    };
+
+    graphene->camera(camera[0]);
     
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
@@ -141,14 +148,30 @@ int main(int argc, char ** argv)
                     case SDLK_SPACE:
                         // сбросить камеру
                         break;
+                    case SDLK_1:
+                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 1");
+                        graphene->camera(camera[0]);
+                        break;
                     case SDLK_2:
+                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 2");
+                        graphene->camera(camera[1]);
+                        break;
+                    case SDLK_3:
+                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 1");
+                        graphene->camera(camera[2]);
+                        break;
+                    case SDLK_4:
+                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 2");
+                        graphene->camera(camera[3]);
+                        break;
+                    case SDLK_c:
                         {
                             bool cull = !graphene->cull();
                             graphene->cull(cull);
                             SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
                         }
                         break;
-                    case SDLK_c:
+                    case SDLK_g:
                         {
                             bool gc = !graphene->gammaCorrection();
                             graphene->gammaCorrection(gc);
