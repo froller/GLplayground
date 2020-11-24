@@ -12,9 +12,11 @@ class Graphene::Camera : public Graphene::Object
 public:
     class Free;
     class Targeted;
-public:
+protected:
     float m_AspectRatio;
     float m_FOV;
+    fvec3 m_Head = { 0, 1, 0 };
+    static constexpr fvec3 s_Base = glm::fvec3( 0, 0, 1 );
 public:
     Camera(const fvec3 position = {0, 0, 2}, const fquat rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
         : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
