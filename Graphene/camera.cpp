@@ -65,3 +65,10 @@ void Graphene::Camera::Targeted::orbit(const fvec3 angle)
 {
     rotation(glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)));
 }
+
+void Graphene::Camera::Targeted::dolly(const float offset)
+{
+    glm::fvec3 directrion = m_Position - m_Target;
+    if (glm::length(directrion) > 0.1 || offset > 0) // Здесь бы неплохо было использовать минимальную и максимальную дальность отрисовки
+        m_Position += glm::normalize(directrion) * offset;
+}

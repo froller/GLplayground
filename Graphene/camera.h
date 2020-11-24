@@ -15,6 +15,8 @@ public:
     float m_AspectRatio;
     float m_FOV;
     fvec3 m_Head = { 0, 1, 0 };
+protected:
+    static constexpr fvec3 s_Base = glm::fvec3( 0, 0, 1 );
 public:
     Camera(const fvec3 position = {0, 0, 2}, const fquat rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
         : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
@@ -42,6 +44,7 @@ public:
     virtual void rotation(const fquat);
     virtual void rotation(const float angle);
     virtual void orbit(const fvec3 angle) override;
+    virtual void dolly(const float offset) override;
 };
 
 #endif // __CAMERA_H__
