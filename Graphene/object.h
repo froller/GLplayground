@@ -9,7 +9,7 @@
 
 class Graphene::Object
 {
-public:
+protected:
     fvec3 m_Position;
     fquat m_Rotation;
     fvec3 m_Scale;
