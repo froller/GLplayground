@@ -35,7 +35,7 @@ void Graphene::Camera::dolly(const float offset)
 Graphene::Camera::Targeted::Targeted (const fvec3 position, const fvec3 target, const float aspectRatio, const float FOV)
         : Camera(position, {0, 0, 0, 0}, aspectRatio, FOV), m_Target(target)
 {
-    m_Rotation = glm::angleAxis(glm::angle(m_Target, m_Position), glm::cross(m_Target, m_Position));
+    m_Rotation = glm::quatLookAt(m_Target - m_Position, m_Head);
 }
 
 fmat4 Graphene::Camera::Targeted::view() const
