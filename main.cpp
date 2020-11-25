@@ -88,11 +88,11 @@ int main(int argc, char ** argv)
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
 //    graphene->addModel(Graphene::SimpleObjects::Square());
-    graphene->addModel(Graphene::SimpleObjects::Tetrahedron(
+    graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
         { 0.5, -0.25 / sqrt(3), 0 },
         fquat({0, -M_PI_2, 0})
     ));
-    graphene->addModel(Graphene::SimpleObjects::Cube(
+    graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         { -0.5, 0, 0 },
         { 0, 0, 0, 1 },
         { 0.7, 0.7, 0.7 }
@@ -126,7 +126,10 @@ int main(int argc, char ** argv)
                 //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
                 if (event.motion.state & SDL_BUTTON_LMASK)
                 {
-                    graphene->scene()->camera()->orbit(fvec3(-event.motion.xrel, -event.motion.yrel, 0) / 100.f);
+                    if (graphene->scene()->camera()->Type == Graphene::CameraType::Free)
+                        graphene->scene()->camera()->orbit(fvec3(-event.motion.xrel, -event.motion.yrel, 0) / 100.f);
+                    else if (graphene->scene()->camera()->Type == Graphene::CameraType::Targeted)
+                        graphene->scene()->camera()->orbit(fvec3(-event.motion.xrel, -event.motion.yrel, 0) / 100.f);
                     graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
                 }
                 break;

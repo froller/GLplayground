@@ -16,7 +16,9 @@ fmat4 Graphene::Camera::projection() const
 void Graphene::Camera::orbit(const fvec3 angle)
 {
     // Orbit для свободной камеры выглядит бесполезным
-    rotation(glm::angleAxis(angle.y, glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)));
+    rotation(glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)) * m_Rotation);
+    glm::fvec3 axis = m_Rotation * glm::fvec4(1, 0, 0, 0);
+    rotation(glm::angleAxis(angle.y, axis) * m_Rotation);
 }
 
 void Graphene::Camera::dolly(const float offset)

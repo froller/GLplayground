@@ -11,6 +11,9 @@ class Graphene::Camera : public Graphene::Object
 {
 public:
     class Targeted;
+    
+public:
+    const enum Graphene::CameraType Type = Graphene::CameraType::Free;
 protected:
     float m_AspectRatio;
     float m_FOV;
@@ -34,6 +37,8 @@ public:
 
 class Graphene::Camera::Targeted : public Graphene::Camera
 {
+public:
+    const enum Graphene::CameraType Type = Graphene::CameraType::Targeted;
 protected:
     fvec3 m_Target;
 public:
