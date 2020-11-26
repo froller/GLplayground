@@ -2,6 +2,8 @@
 #define __GRAPHENE_H__
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
