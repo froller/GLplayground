@@ -15,15 +15,22 @@ fmat4 Graphene::Camera::projection() const
 
 void Graphene::Camera::orbit(const fvec3 angle)
 {
-    // Orbit для свободной камеры выглядит бесполезным
-    rotation(glm::angleAxis(angle.x, glm::fvec3(0, 1, 0)) * m_Rotation);
-    glm::fvec3 axis = m_Rotation * glm::fvec4(1, 0, 0, 0);
-    rotation(glm::angleAxis(angle.y, axis) * m_Rotation);
+    // Вектор направления из кватерниона вращения (поворот нормы Z текущим кватернионом вращения камеры)
+    glm::fvec3 direction = m_Rotation * glm::fvec4(0, 0, -1, 0);
+    // Поворот вектора направления вокруг вертикальной оси
+    direction = glm::rotate(direction, angle.y, m_Head);
+    // Горизонтальная ось (норма X равернутая в координаты камеры и повернутая вокруг вертикальной оси)
+    glm::fvec3 xaxis = glm::rotate(m_Rotation * glm::fvec4(1, 0, 0, 0), angle.y, m_Head);
+    // Поворот вектора направления вокруг горизонтальной оси
+    direction = glm::rotate(glm::fvec4(direction, 0), angle.x, xaxis);
+    // Финальный кватернион вращения камеры из направления
+    rotation(glm::quatLookAt(direction, m_Head));
 }
 
 void Graphene::Camera::dolly(const float offset)
 {
-    m_Position += m_Position * offset / 5.f; // FIXME: это будет работать криво при камере смотрящей не в 0
+    glm::fvec3 direction = m_Rotation * glm::fvec4(0, 0, -1, 0);
+    position(m_Position + direction * offset / 5.f);
 }
 
 
@@ -61,19 +68,3 @@ void Graphene::Camera::Targeted::rotation (const float angle)
     m_Rotation = glm::angleAxis(angle, m_Target - m_Position);
 }
 
-void Graphene::Camera::Targeted::orbit(const fvec3 angle)
-{
-    //SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Orbitting to %+f° %+f°", angle.x, angle.y);
-    rotation(
-        glm::angleAxis(angle.y, glm::fvec3(1, 0, 0))
-        * glm::angleAxis(angle.x, glm::fvec3(glm::fvec4(0, 1, 0, 0)))
-        * m_Rotation
-    );
-}
-
-void Graphene::Camera::Targeted::dolly(const float offset)
-{
-    glm::fvec3 directrion = m_Position - m_Target;
-    if (glm::length(directrion) > 0.1 || offset > 0) // Здесь бы неплохо было использовать минимальную и максимальную дальность отрисовки
-        m_Position += glm::normalize(directrion) * offset;
-}

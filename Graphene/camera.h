@@ -47,8 +47,6 @@ public:
     virtual fmat4 view() const override;
     virtual void rotation(const fquat rotation) override;
     virtual void rotation(const float angle);
-    virtual void orbit(const fvec3 angle) override;
-    virtual void dolly(const float offset) override;
 };
 
 #endif // __CAMERA_H__
