@@ -26,7 +26,12 @@ void Graphene::Camera::rotate(const fvec3 angle)
 void Graphene::Camera::dolly(const float offset)
 {
     glm::fvec3 direction = m_Rotation * s_Base;
-    position(m_Position + direction * offset / 5.f);
+    position(m_Position + direction * offset);
+}
+
+void Graphene::Camera::zoom(const float angle)
+{
+    m_FOV = m_FOV + angle;
 }
 
 

@@ -28,6 +28,7 @@ public:
     virtual void orbit(const fvec3 angle);
     virtual void rotate(const fvec3 angle);
     virtual void dolly(const float offset);
+    virtual void zoom(const float angle);
 };
 
 /*******************************************************************************

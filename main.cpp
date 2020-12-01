@@ -116,10 +116,12 @@ int main(int argc, char ** argv)
     graphene->start();
     
     bool quit = false;
+    unsigned int modifiers = 0;
     while (!quit) {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            const unsigned char *keyboardState = SDL_GetKeyboardState(nullptr);
             switch (event.type)
             {
             case SDL_MOUSEMOTION:
@@ -134,10 +136,21 @@ int main(int argc, char ** argv)
                 }
                 break;
             case SDL_MOUSEWHEEL:
-                if (event.wheel.y)
+                if (keyboardState[SDL_SCANCODE_LCTRL] || keyboardState[SDL_SCANCODE_RCTRL])
                 {
-                    graphene->scene()->camera()->dolly(event.wheel.y / 10.f);
-                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                    if (event.wheel.y)
+                    {
+                        graphene->scene()->camera()->zoom(event.wheel.y / 20.f);
+                        graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                    }
+                }
+                else 
+                {
+                    if (event.wheel.y)
+                    {
+                        graphene->scene()->camera()->dolly(event.wheel.y / 10.f);
+                        graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                    }
                 }
                 break;
             case SDL_KEYDOWN:
