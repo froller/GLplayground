@@ -51,5 +51,5 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular + diffuse + lights.ambient;
+    fragmentColor = specular + (diffuse + lights.ambient) * vertex.color;
 }
