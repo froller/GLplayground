@@ -2,6 +2,8 @@
 #define __GRAPHENE_H__
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -59,7 +61,13 @@ public:
         UniformBuffer,
         BufferTypeMax
     };
-    
+
+    enum CameraType
+    {
+        Free = 0,
+        Targeted
+    };
+      
     constexpr static unsigned int ElementSize = 3;
     
     typedef unsigned int Index;

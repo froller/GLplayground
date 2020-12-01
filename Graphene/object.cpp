@@ -30,6 +30,10 @@ fquat Graphene::Object::rotation() const
 void Graphene::Object::rotation(const fquat rotation)
 {
     m_Rotation = rotation;
+#ifdef DEBUG
+    glm::fvec3 e = glm::eulerAngles(m_Rotation) / (float)M_PI * 180.f;
+    SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "Object %p rotation %+f\u00B0 %+f\u00B0 %+f\u00B0", this, e.x, e.y, e.z);
+#endif
 }
 
 fvec3 Graphene::Object::scale() const

@@ -10,8 +10,9 @@
 class Graphene::Camera : public Graphene::Object
 {
 public:
-    class Free;
     class Targeted;
+    
+    const enum Graphene::CameraType Type = Graphene::CameraType::Free;
 protected:
     float m_AspectRatio;
     float m_FOV;
@@ -23,12 +24,10 @@ public:
     virtual ~Camera() = default;
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
-    virtual fvec3 position() const;
-    virtual void position(const fvec3 position);
-    virtual fquat rotation() const;
-    virtual void rotation(const fquat rotation);
     virtual void orbit(const fvec3 angle);
+    virtual void rotate(const fvec3 angle);
     virtual void dolly(const float offset);
+    virtual void zoom(const float angle);
 };
 
 /*******************************************************************************
@@ -39,6 +38,8 @@ public:
 
 class Graphene::Camera::Targeted : public Graphene::Camera
 {
+public:
+    const enum Graphene::CameraType Type = Graphene::CameraType::Targeted;
 protected:
     fvec3 m_Target;
 public:
@@ -46,7 +47,8 @@ public:
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
     virtual void rotation(const fquat rotation) override;
-    virtual void orbit(const fvec3 angle) override;
+    virtual void orbit(const fvec3 angle);
+    virtual void rotate(const fvec3 angle);
 };
 
 #endif // __CAMERA_H__
