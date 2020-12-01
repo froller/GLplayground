@@ -81,6 +81,7 @@ set(SOURCES
 set(SHADERS
     fragment.glsl
     vertex.glsl
+    tesscontrol.glsl
 )
 
 if (WIN32)
@@ -95,7 +96,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLU
 target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
-set_source_files_properties(fragment.glsl vertex.glsl
+set_source_files_properties(fragment.glsl vertex.glsl tesscontrol.glsl
     PROPERTIES
     LANGUAGE glsl
     VS_COPY_TO_OUT_DIR Always

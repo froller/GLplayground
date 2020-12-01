@@ -83,6 +83,7 @@ int main(int argc, char ** argv)
     
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
     graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
+    graphene->addShader(Graphene::TesselationControlShader, std::filesystem::path("../tesscontrol.glsl"));
     graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
     
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
