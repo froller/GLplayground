@@ -64,7 +64,7 @@ void Graphene::Camera::Targeted::orbit(const fvec3 angle)
     // Поворот вектора направления вокруг вертикальной оси
     direction = glm::rotate(direction, angle.y, m_Head);
     // Горизонтальная ось (норма X развернутая в координаты камеры и повернутая вокруг вертикальной оси)
-    glm::fvec3 xaxis = glm::rotate(m_Rotation * glm::fvec4(1, 0, 0, 0), angle.y, m_Head);
+    glm::fvec3 xaxis = glm::rotate(m_Rotation * glm::fvec3(1, 0, 0), angle.y, m_Head);
     // Поворот вектора направления вокруг горизонтальной оси
     direction = glm::rotate(glm::fvec4(direction, 0), angle.x, xaxis);
     // Финальный кватернион вращения камеры из направления
