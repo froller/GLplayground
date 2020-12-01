@@ -5,7 +5,7 @@
 
 fmat4 Graphene::Camera::view() const
 {
-    return glm::lookAt(m_Position, m_Rotation * s_Base, m_Head);
+    return glm::lookAt(m_Position, m_Position - m_Rotation * s_Base, m_Head);
 }
 
 fmat4 Graphene::Camera::projection() const
