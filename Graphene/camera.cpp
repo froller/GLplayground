@@ -31,7 +31,8 @@ void Graphene::Camera::dolly(const float offset)
 
 void Graphene::Camera::zoom(const float angle)
 {
-    m_FOV = m_FOV + angle;
+    if (m_FOV > -angle && m_FOV < M_PI - angle)
+        m_FOV = m_FOV + angle;
 }
 
 
