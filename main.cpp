@@ -127,7 +127,7 @@ int main(int argc, char ** argv)
                 if (event.motion.state & SDL_BUTTON_LMASK)
                 {
                     if (graphene->scene()->camera()->Type == Graphene::CameraType::Free)
-                        graphene->scene()->camera()->orbit(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
+                        graphene->scene()->camera()->rotate(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
                     else if (graphene->scene()->camera()->Type == Graphene::CameraType::Targeted)
                         graphene->scene()->camera()->orbit(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
                     graphene->scene()->touch(Graphene::Scene::Aspect::Camera);

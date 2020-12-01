@@ -5,7 +5,7 @@
 
 fmat4 Graphene::Camera::view() const
 {
-    return glm::lookAt(m_Position, glm::fvec3(m_Rotation * glm::fvec4(s_Base, 0)) * -1.f, m_Head);
+    return glm::lookAt(m_Position, m_Rotation * s_Base, m_Head);
 }
 
 fmat4 Graphene::Camera::projection() const
@@ -15,29 +15,17 @@ fmat4 Graphene::Camera::projection() const
 
 void Graphene::Camera::orbit(const fvec3 angle)
 {
-    // Вектор направления из кватерниона вращения (поворот нормы Z текущим кватернионом вращения камеры)
-    glm::fvec3 direction = m_Rotation * glm::fvec4(0, 0, -1, 0);
-    // Поворот вектора направления вокруг вертикальной оси
-    direction = glm::rotate(direction, angle.y, m_Head);
-    // Горизонтальная ось (норма X равернутая в координаты камеры и повернутая вокруг вертикальной оси)
-    glm::fvec3 xaxis = glm::rotate(m_Rotation * glm::fvec4(1, 0, 0, 0), angle.y, m_Head);
-    // Поворот вектора направления вокруг горизонтальной оси
-    direction = glm::rotate(glm::fvec4(direction, 0), angle.x, xaxis);
-    // Финальный кватернион вращения камеры из направления
-    rotation(glm::quatLookAt(direction, m_Head));
+    rotate(angle);
+}
 
-#ifdef DEBUG
-    glm::fvec3 e = glm::eulerAngles(m_Rotation) / (float)M_PI * 180.f;
-    SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "Direction %+.2f  %+.2f  %+.2f\n       Rotation %+.2f\u00B0 %+.2f\u00B0 %+.2f\u00B0",
-        direction.x, direction.y, direction.z,
-        e.x, e.y, e.z
-        );
-#endif
+void Graphene::Camera::rotate(const fvec3 angle)
+{
+    rotation(glm::angleAxis(angle.x, glm::angleAxis(angle.y, m_Head) * glm::fvec3(1, 0, 0)) * glm::angleAxis(angle.y, m_Head) * m_Rotation);
 }
 
 void Graphene::Camera::dolly(const float offset)
 {
-    glm::fvec3 direction = m_Rotation * glm::fvec4(0, 0, -1, 0);
+    glm::fvec3 direction = m_Rotation * s_Base;
     position(m_Position + direction * offset / 5.f);
 }
 
@@ -63,23 +51,16 @@ void Graphene::Camera::Targeted::rotation(const fquat rotation)
 {
     // Для направленной камеры вращение осуществляется через вращение вокруг цели
     // фактически rotation и orbit - это одно и то же
-    m_Rotation = rotation;
+    Graphene::Camera::rotation(rotation);
     float distance = glm::length(m_Target - m_Position);
-    fvec3 direction = m_Rotation * glm::fvec4(s_Base, 0);
+    glm::fvec3 direction = m_Rotation * s_Base;
     m_Position = m_Target + direction / glm::length(direction) * distance;
-}
-
-void Graphene::Camera::Targeted::rotation (const float angle)
-{
-    // Для вращение без изменения положения и цели остается только одна степень свободы
-    // вращение вокруг оптической оси камеры
-    m_Rotation = glm::angleAxis(angle, m_Target - m_Position);
 }
 
 void Graphene::Camera::Targeted::orbit(const fvec3 angle)
 {
     // Вектор направления из кватерниона вращения (поворот нормы Z текущим кватернионом вращения камеры)
-    glm::fvec3 direction = m_Rotation * glm::fvec4(0, 0, -1, 0);
+    glm::fvec3 direction = m_Rotation * s_Base;
     // Поворот вектора направления вокруг вертикальной оси
     direction = glm::rotate(direction, angle.y, m_Head);
     // Горизонтальная ось (норма X развернутая в координаты камеры и повернутая вокруг вертикальной оси)
@@ -87,5 +68,10 @@ void Graphene::Camera::Targeted::orbit(const fvec3 angle)
     // Поворот вектора направления вокруг горизонтальной оси
     direction = glm::rotate(glm::fvec4(direction, 0), angle.x, xaxis);
     // Финальный кватернион вращения камеры из направления
-    rotation(glm::quatLookAt(direction, m_Head));
+    rotation(glm::quatLookAt(-direction, m_Head));
+}
+
+void Graphene::Camera::Targeted::rotate(const fvec3 angle)
+{
+    orbit(angle);
 }

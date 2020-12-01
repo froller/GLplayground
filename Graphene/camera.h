@@ -26,6 +26,7 @@ public:
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
     virtual void orbit(const fvec3 angle);
+    virtual void rotate(const fvec3 angle);
     virtual void dolly(const float offset);
 };
 
@@ -46,8 +47,8 @@ public:
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
     virtual void rotation(const fquat rotation) override;
-    virtual void rotation(const float angle);
     virtual void orbit(const fvec3 angle);
+    virtual void rotate(const fvec3 angle);
 };
 
 #endif // __CAMERA_H__
