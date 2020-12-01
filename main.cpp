@@ -97,6 +97,11 @@ int main(int argc, char ** argv)
         { 0, 0, 0, 1 },
         { 0.7, 0.7, 0.7 }
     ));
+    graphene->scene()->addModel(Graphene::SimpleObjects::Sphere(
+        { 0, 0.5, 0 },
+        { 0, 0, 0, 1 },
+        { 0.7, 0.7, 0.7 }
+    ));
 
     graphene->scene()->addLight(Graphene::Light::Omni({  4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
     graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));

@@ -77,7 +77,8 @@ public:
 
 class Graphene::SimpleObjects::Sphere : public Graphene::Model
 {
-    Sphere() = default;
+public:
+    Sphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 });
     virtual ~Sphere() = default;
 };
 

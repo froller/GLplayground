@@ -98,6 +98,24 @@ Graphene::SimpleObjects::Cube::Cube(const fvec3 position, const fquat rotation, 
     ELEMENT(21, 22, 23);
 }
 
+
+Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
+{
+    VERTEX(sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) /  2.f, sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) /  2.f, 0.9, 0.5, 0.f); // л з 0
+    VERTEX(sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) /  2.f, sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) /  2.f, 0.9, 0.5, 0.f); // п з 1
+    VERTEX(sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) / -2.f, sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) / -2.f, 0.9, 0.5, 0.f); // п п 2
+    VERTEX(sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) / -2.f, sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) / -2.f, 0.9, 0.5, 0.f); // л п 3
+    VERTEX(0.f, sqrtf(2.f) /  2.f, 0.f, 0.f, sqrtf(2.f) /  2.f, 0.f, 0.9, 0.5, 0.0); // в 4
+    VERTEX(0.f, sqrtf(2.f) / -2.f, 0.f, 0.f, sqrtf(2.f) / -2.f, 0.f, 0.9, 0.5, 0.0); // н 5
+    ELEMENT(1, 0, 4);
+    ELEMENT(2, 1, 4);
+    ELEMENT(3, 2, 4);
+    ELEMENT(0, 3, 4);
+    ELEMENT(0, 1, 5);
+    ELEMENT(1, 2, 5);
+    ELEMENT(2, 3, 5);
+    ELEMENT(3, 0, 5);
+}
 #undef ELEMENT
 #undef VERTEX
 
