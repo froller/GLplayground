@@ -78,7 +78,7 @@ public:
 class Graphene::SimpleObjects::Sphere : public Graphene::Model
 {
 protected:
-    static constexpr unsigned int s_Segments = 4;
+    static constexpr unsigned int s_Segments = 8;
 public:
     Sphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 });
     virtual ~Sphere() = default;

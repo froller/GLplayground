@@ -128,7 +128,7 @@ Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotati
     for (int lat = 0; lat <= s_Segments / 2; ++lat)   // Проходим половину параллелей (вторая половина идентична, с точностью до знака Y)
     {
         // Число меридианов (вершин) на данной широте
-        int meridians = 2 * s_Segments / (int)std::pow(2, 2 * lat);  // Число меридианов
+        int meridians = 2 * s_Segments / (int)std::pow(2, lat);  // Число меридианов
         float meridianStep = 2.f * M_PI / meridians;  // Угол между меридианами
         float meridianOffset = 0.f;  // Смещение "нулевого" меридиана
 
@@ -181,7 +181,7 @@ Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotati
                 currentIdxC -= (int)vertices.size() + i - 1;
             int currentIdxR = (int)vertexAcc - (int)vertices.size() + i + 1; // правый
             if (currentIdxR >= vertexAcc) // закольцовывание
-                currentIdxR -= (int)vertices.size() + i;
+                currentIdxR -= (int)vertices.size();
 
             m_Primitives.push_back({ (unsigned int)lowerIdxL, (unsigned int)lowerIdxC, (unsigned int)currentIdxC });
             m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxC });
