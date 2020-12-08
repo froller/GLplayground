@@ -146,8 +146,9 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
                 * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
                 * glm::fvec3(1, 0, 0);  // Норма X
 
-            // Вершина северного полушария
-            Vertex vertex = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
+            // Вершина
+            //Vertex vertex = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
+            Vertex vertex = { vertexCoords, vertexCoords, { 0.9, 0.f, 0.5 } };
             vertices.push_back(vertex);
             m_Vertices.push_back(vertex); // Добавляем вершину в вертексный буфер
             ++vertexAcc;
