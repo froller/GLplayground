@@ -94,16 +94,17 @@ int main(int argc, char **argv)
 
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
         { 0.87, -0.25 / sqrt(3), 0.5 },
-        fquat({0, -M_PI_2, 0})
+//        fquat({0, -M_PI_2, 0})
+        fquat({ 0, 0, 0 })
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         { -0.87, 0, 0.5 },
-        { 0, 0, 0, 1 },
+        fquat({ 0, 0, 0 }),
         { 0.7, 0.7, 0.7 }
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         { 0.0, 0.0, -1.f },
-        glm::angleAxis(0.f, glm::fvec3(1, 0, 0)),
+        fquat({ 0, 0, 0 }),
         { 0.5, 0.5, 0.5 }
     ));
 
@@ -126,6 +127,7 @@ int main(int argc, char **argv)
     graphene->start();
     
     bool quit = false;
+    bool fly = false;
     unsigned int modifiers = 0;
     while (!quit) {
         SDL_Event event;
@@ -134,6 +136,23 @@ int main(int argc, char **argv)
             const unsigned char *keyboardState = SDL_GetKeyboardState(nullptr);
             switch (event.type)
             {
+            case SDL_WINDOWEVENT:
+                switch (event.window.event)
+                {
+                case SDL_WINDOWEVENT_RESIZED:
+                    SDL_LogInfo(
+                        SDL_LOG_CATEGORY_INPUT,
+                        "Window %d resized to %dx%d",
+                        event.window.windowID,
+                        event.window.data1,
+                        event.window.data2
+                    );
+                    // Здесь баг: размер изображения зависит от высоты, но не от ширины
+                    graphene()->scene()->camera()->FOV(float(event.window.data1) / float(event.window.data2));
+                    glViewport(0, 0, event.window.data1, event.window.data2);
+                    break;
+                }
+                break;
             case SDL_MOUSEMOTION:
                 //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
                 if (event.motion.state & SDL_BUTTON_LMASK)
@@ -197,6 +216,12 @@ int main(int argc, char **argv)
                             SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
                         }
                         break;
+                    case SDLK_f:
+                        {
+                            fly = !fly;
+                            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Fly mode %s", fly ? "ON" : "OFF");
+                        }
+                        break;
                     case SDLK_g:
                         {
                             bool gc = !graphene->gammaCorrection();
@@ -220,6 +245,19 @@ int main(int argc, char **argv)
                 quit = true;
                 break;
             };
+        }
+        if (fly)
+        {
+            fvec3 step(0.f, 0.005, 0.f);
+            fvec3 euler = graphene->scene()->camera()->euler();
+            if ((euler + step).x > M_PI_2)
+                step.x = -step.x;
+            //if ((euler + step).y > M_PI_4)
+            //    step.y = -step.y;
+            //if ((euler + step).z > M_PI_4)
+            //    step.z = -step.z;
+            graphene->scene()->camera()->orbit(step);
+            graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
         }
         if (graphene->draw())
         {
