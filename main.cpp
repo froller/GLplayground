@@ -14,9 +14,9 @@
 #ifdef _WIN32
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #else
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 #endif
-{    
+{
     /* Initializing SDL */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Initializing SDL");
     if (SDL_Init(SDL_INIT_VIDEO))
@@ -31,7 +31,7 @@ int main(int argc, char ** argv)
 #else
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 #endif
-    
+
     /* Setting up OpenGL */
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -43,13 +43,13 @@ int main(int argc, char ** argv)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
-   
+
     /* Window */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Creating window");
     SDL_Window *window = SDL_CreateWindow("GLplayground",
-                                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                            WINDOW_WIDTH, WINDOW_HEIGHT,
-                                            SDL_WINDOW_OPENGL);
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        WINDOW_WIDTH, WINDOW_HEIGHT,
+        SDL_WINDOW_OPENGL);
     if (!window)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Couldn't create window: %s", SDL_GetError());
@@ -73,40 +73,38 @@ int main(int argc, char ** argv)
 #ifndef __APPLE__
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing GLEW");
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
+    if (glewInit() != GLEW_OK)
+    {
         SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Failed to init GLEW!");
         exit(3);
     }
 #endif
-    
+
     /* Initializing Graphene */
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing Graphene");  
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing Graphene");
     Graphene *graphene = new Graphene;
-    
+
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
     graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
     graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
-    
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
-//    graphene->addModel(Graphene::SimpleObjects::Triangle());
-//    graphene->addModel(Graphene::SimpleObjects::Square());
 
-/*
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
+    //    graphene->addModel(Graphene::SimpleObjects::Triangle());
+    //    graphene->addModel(Graphene::SimpleObjects::Square());
+
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
-        { 0.5, -0.25 / sqrt(3), 0 },
+        { 0.87, -0.25 / sqrt(3), 0.5 },
         fquat({0, -M_PI_2, 0})
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
-        { -0.5, 0, 0 },
+        { -0.87, 0, 0.5 },
         { 0, 0, 0, 1 },
         { 0.7, 0.7, 0.7 }
     ));
-*/
-
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
-        { 0.0, 0.0, 0.0 },
-        { 0, 1, 0, 0},
-        { 0.56789, 0.56789, 0.56789 }
+        { 0.0, 0.0, -1.f },
+        glm::angleAxis(0.f, glm::fvec3(1, 0, 0)),
+        { 0.5, 0.5, 0.5 }
     ));
 
 

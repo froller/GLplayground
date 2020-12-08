@@ -121,85 +121,11 @@ Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotati
 #include <glm/gtc/quaternion.hpp>
 #include <glm/ext/quaternion_exponential.hpp>
 
-Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
-{
-    int vertexAcc = 0;
-    std::vector<Vertex> lowerVertices;
-    for (int lat = 0; lat <= s_Segments / 2; ++lat)   // Проходим половину параллелей (вторая половина идентична, с точностью до знака Y)
-    {
-        // Число меридианов (вершин) на данной широте
-        int meridians = 2 * s_Segments / (int)std::pow(2, lat);  // Число меридианов
-        float meridianStep = 2.f * M_PI / meridians;  // Угол между меридианами
-        float meridianOffset = 0.f;  // Смещение "нулевого" меридиана
-
-        // Создание вершин параллели
-        std::vector<Vertex> vertices;
-        for (int lon = 0; lon < meridians; ++lon)  // Проходим все меридианы
-        {
-            // Нормаль азимута
-            glm::fvec3 nor =
-                glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0)) // Азимут
-                * glm::fvec3(0, 0, 1);  // Норма Z
-            // Координаты вершины
-            glm::fvec3 vertexCoords =
-                glm::angleAxis((float)M_PI / s_Segments * lat, nor)   // Угол места
-                * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
-                * glm::fvec3(1, 0, 0);  // Норма X
-
-            if (lat == s_Segments / 2)  // полюс
-            {
-                vertexCoords = glm::fvec3(0, 1, 0);
-                ++lon;
-            }
-
-            // Вершина северного полушария
-            Vertex vertexN = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
-            vertices.push_back(vertexN);
-            m_Vertices.push_back(vertexN); // Добавляем вершину в вертексный буфер
-            ++vertexAcc;
-/*
-            // Пересчет координат для южного полушания
-            vertexCoords = glm::fmat3({1, 0, 0}, {0, -1, 0}, {0, 0, 1}) * vertexCoords;
-            // Вершина южного полушария
-            Vertex vertexS = {vertexCoords, vertexCoords, vertexCoords};
-*/
-            
-        }
-        
-        // Связывание вершин параллели с вершинами нижних широт
-        for (int i = 0; i < lowerVertices.size() / 2U; ++i)
-        {
-            int lowerIdxC = vertexAcc - (int)vertices.size() - (int)lowerVertices.size() + 2 * i;    // текущий
-            int lowerIdxR = vertexAcc - (int)vertices.size() - (int)lowerVertices.size() + 2 * i + 1;    // правый
-            int lowerIdxL = vertexAcc - (int)vertices.size() - (int)lowerVertices.size() + 2 * i - 1;    // левый
-            if (lowerIdxL < vertexAcc - (int)vertices.size() - (int)lowerVertices.size()) // закольцовывание
-                lowerIdxL += (int)lowerVertices.size();
-            if (lowerIdxR >= vertexAcc - (int)vertices.size()) // закольцовывание
-                lowerIdxR -= (int)lowerVertices.size();
-            int currentIdxC = (int)vertexAcc - (int)vertices.size() + i; // текущий
-            if (currentIdxC >= vertexAcc) // закольцовывание
-                currentIdxC -= (int)vertices.size() + i - 1;
-            int currentIdxR = (int)vertexAcc - (int)vertices.size() + i + 1; // правый
-            if (currentIdxR >= vertexAcc) // закольцовывание
-                currentIdxR -= (int)vertices.size();
-
-            m_Primitives.push_back({ (unsigned int)lowerIdxL, (unsigned int)lowerIdxC, (unsigned int)currentIdxC });
-            m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxC });
-            if (currentIdxC != currentIdxR)
-                m_Primitives.push_back({ (unsigned int)currentIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxR });
-        }
-
-        lowerVertices = vertices;
-    }
-    
-    
-}
-
 Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     int vertexAcc = 0;
     std::vector<Vertex> lowerVertices;
-    for (int lat = 0; lat <= s_Segments / 2; ++lat)   // Проходим половину параллелей (вторая половина идентична, с точностью до знака Y)
+    for (int lat = -(int)s_Segments / 2; lat <= (int)s_Segments / 2; ++lat)   // Проходим половину параллелей (вторая половина идентична, с точностью до знака Y)
     {
         // Число меридианов (вершин) на данной широте
         int meridians = 2 * s_Segments;  // Число меридианов
@@ -216,26 +142,28 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
                 * glm::fvec3(0, 0, 1);  // Норма Z
             // Координаты вершины
             glm::fvec3 vertexCoords =
-                glm::angleAxis((float)M_PI / s_Segments * lat, nor)   // Угол места
+                glm::angleAxis((float)M_PI / s_Segments * -lat, nor)   // Угол места
                 * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
                 * glm::fvec3(1, 0, 0);  // Норма X
 
             // Вершина северного полушария
-            Vertex vertexN = {vertexCoords, vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
-            vertices.push_back(vertexN);
-            m_Vertices.push_back(vertexN); // Добавляем вершину в вертексный буфер
+            Vertex vertex = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
+            vertices.push_back(vertex);
+            m_Vertices.push_back(vertex); // Добавляем вершину в вертексный буфер
             ++vertexAcc;
 
-            if (lat == s_Segments / 2)  // полюс
+            if (abs(lat) == s_Segments / 2)  // полюс
                 break;
         }
         
         // Связывание вершин параллели с вершинами нижних широт
-        for (int lon = 0; lon < lowerVertices.size(); ++lon)
+        for (int lon = 0; lon < std::max(vertices.size(), lowerVertices.size()) && lowerVertices.size() > 0; ++lon)
         {
             int lowerIdxC = vertexAcc - vertices.size() - lowerVertices.size() + lon;    // текущий
+            while (lowerIdxC >= vertexAcc - vertices.size()) // закольцовывание
+                lowerIdxC -= lowerVertices.size();
             int lowerIdxR = lowerIdxC + 1;  // правый
-            if (lowerIdxR >= vertexAcc - vertices.size()) // закольцовывание
+            while (lowerIdxR >= vertexAcc - vertices.size()) // закольцовывание
                 lowerIdxR -= lowerVertices.size();
             int currentIdxC = (int)vertexAcc - vertices.size() + lon; // текущий
             while (currentIdxC >= vertexAcc) // закольцовывание
@@ -246,7 +174,8 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
 
             if (currentIdxR != currentIdxC)
                 m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)currentIdxR, (unsigned int)currentIdxC });
-            m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxR });
+            if (lowerIdxR != lowerIdxC)
+                m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxR });
         }
 
         lowerVertices = vertices;
