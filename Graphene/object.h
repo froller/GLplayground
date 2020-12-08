@@ -22,6 +22,7 @@ public:
     virtual void position(const fvec3 position);
     virtual fquat rotation() const;
     virtual void rotation(const fquat rotation);
+    virtual fvec3 euler() const;
     virtual fvec3 scale() const;
     virtual void scale(const fvec3 scale);
     virtual fmat4 transform() const;
