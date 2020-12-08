@@ -15,6 +15,7 @@ public:
     class Tetrahedron;
     class Cube;
     class Sphere;
+    class UVSphere;
 };
 
 /*******************************************************************************
@@ -82,6 +83,21 @@ protected:
 public:
     Sphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 });
     virtual ~Sphere() = default;
+};
+
+/*******************************************************************************
+ * 
+ * Graphene::SimpleObjects::UVSphere
+ * 
+ ******************************************************************************/
+
+class Graphene::SimpleObjects::UVSphere : public Graphene::Model
+{
+protected:
+    static constexpr unsigned int s_Segments = 4;
+public:
+    UVSphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 });
+    virtual ~UVSphere() = default;
 };
 
 #endif // __SIMPLEOBJECTS_H__

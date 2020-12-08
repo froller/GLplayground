@@ -146,7 +146,7 @@ Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotati
                 * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
                 * glm::fvec3(1, 0, 0);  // Норма X
 
-            if (meridians < 3)  // полюс
+            if (lat == s_Segments / 2)  // полюс
             {
                 vertexCoords = glm::fvec3(0, 1, 0);
                 ++lon;
@@ -194,6 +194,67 @@ Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotati
     
     
 }
+
+Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
+{
+    int vertexAcc = 0;
+    std::vector<Vertex> lowerVertices;
+    for (int lat = 0; lat <= s_Segments / 2; ++lat)   // Проходим половину параллелей (вторая половина идентична, с точностью до знака Y)
+    {
+        // Число меридианов (вершин) на данной широте
+        int meridians = 2 * s_Segments;  // Число меридианов
+        float meridianStep = 2.f * M_PI / meridians;  // Угол между меридианами
+        float meridianOffset = 0.f;  // Смещение "нулевого" меридиана
+
+        // Создание вершин параллели
+        std::vector<Vertex> vertices;
+        for (int lon = 0; lon < meridians; ++lon)  // Проходим все меридианы
+        {
+            // Нормаль азимута
+            glm::fvec3 nor =
+                glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0)) // Азимут
+                * glm::fvec3(0, 0, 1);  // Норма Z
+            // Координаты вершины
+            glm::fvec3 vertexCoords =
+                glm::angleAxis((float)M_PI / s_Segments * lat, nor)   // Угол места
+                * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
+                * glm::fvec3(1, 0, 0);  // Норма X
+
+            // Вершина северного полушария
+            Vertex vertexN = {vertexCoords, vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
+            vertices.push_back(vertexN);
+            m_Vertices.push_back(vertexN); // Добавляем вершину в вертексный буфер
+            ++vertexAcc;
+
+            if (lat == s_Segments / 2)  // полюс
+                break;
+        }
+        
+        // Связывание вершин параллели с вершинами нижних широт
+        for (int lon = 0; lon < lowerVertices.size(); ++lon)
+        {
+            int lowerIdxC = vertexAcc - vertices.size() - lowerVertices.size() + lon;    // текущий
+            int lowerIdxR = lowerIdxC + 1;  // правый
+            if (lowerIdxR >= vertexAcc - vertices.size()) // закольцовывание
+                lowerIdxR -= lowerVertices.size();
+            int currentIdxC = (int)vertexAcc - vertices.size() + lon; // текущий
+            while (currentIdxC >= vertexAcc) // закольцовывание
+                currentIdxC -= vertices.size();
+            int currentIdxR = currentIdxC + 1; // правый
+            while (currentIdxR >= vertexAcc) // закольцовывание
+                currentIdxR -= vertices.size();
+
+            if (currentIdxR != currentIdxC)
+                m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)currentIdxR, (unsigned int)currentIdxC });
+            m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)lowerIdxR, (unsigned int)currentIdxR });
+        }
+
+        lowerVertices = vertices;
+    }
+    
+    
+}
+
 
 
 #undef ELEMENT

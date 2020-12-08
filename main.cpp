@@ -9,6 +9,8 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+#include <glm/gtc/quaternion.hpp>
+
 #ifdef _WIN32
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #else
@@ -89,6 +91,7 @@ int main(int argc, char ** argv)
 //    graphene->addModel(Graphene::SimpleObjects::Triangle());
 //    graphene->addModel(Graphene::SimpleObjects::Square());
 
+/*
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
         { 0.5, -0.25 / sqrt(3), 0 },
         fquat({0, -M_PI_2, 0})
@@ -98,11 +101,12 @@ int main(int argc, char ** argv)
         { 0, 0, 0, 1 },
         { 0.7, 0.7, 0.7 }
     ));
+*/
 
-    graphene->scene()->addModel(Graphene::SimpleObjects::Sphere(
-        { 0, 0.0, 0 },
-        { 0, 0, 0, 1 },
-        { 1, 1, 1 }
+    graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
+        { 0.0, 0.0, 0.0 },
+        { 0, 1, 0, 0},
+        { 0.56789, 0.56789, 0.56789 }
     ));
 
 
