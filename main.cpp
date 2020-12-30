@@ -148,7 +148,7 @@ int main(int argc, char **argv)
                         event.window.data2
                     );
                     // Здесь баг: размер изображения зависит от высоты, но не от ширины
-                    graphene()->scene()->camera()->FOV(float(event.window.data1) / float(event.window.data2));
+                    graphene->scene()->camera()->FOV(float(event.window.data1) / float(event.window.data2));
                     glViewport(0, 0, event.window.data1, event.window.data2);
                     break;
                 }

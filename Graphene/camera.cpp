@@ -13,6 +13,16 @@ fmat4 Graphene::Camera::projection() const
     return glm::perspectiveFov(m_FOV, 1.f, 1.f / m_AspectRatio, 0.1f, 100.f);
 }
 
+float Graphene::Camera::FOV() const
+{
+    return m_FOV;
+}
+
+void Graphene::Camera::FOV(const float angle)
+{
+    m_FOV = angle;
+}
+
 void Graphene::Camera::orbit(const fvec3 angle)
 {
     rotate(angle);
