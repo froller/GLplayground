@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     SDL_Window *window = SDL_CreateWindow("GLplayground",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         WINDOW_WIDTH, WINDOW_HEIGHT,
-        SDL_WINDOW_OPENGL);
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window)
     {
         SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "Couldn't create window: %s", SDL_GetError());
@@ -148,8 +148,9 @@ int main(int argc, char **argv)
                         event.window.data2
                     );
                     // Здесь баг: размер изображения зависит от высоты, но не от ширины
-                    graphene->scene()->camera()->FOV(float(event.window.data1) / float(event.window.data2));
                     glViewport(0, 0, event.window.data1, event.window.data2);
+                    graphene->scene()->camera()->aspectRatio(float(event.window.data1) / float(event.window.data2));
+                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
                     break;
                 }
                 break;

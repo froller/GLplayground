@@ -3,6 +3,26 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
+float Graphene::Camera::aspectRatio() const
+{
+    return m_AspectRatio;
+}
+
+void Graphene::Camera::aspectRatio(const float aspectRatio)
+{
+    m_AspectRatio = aspectRatio;
+}
+
+float Graphene::Camera::FOV() const
+{
+    return m_FOV;
+}
+
+void Graphene::Camera::FOV(const float fov)
+{
+    m_FOV = fov;
+}
+
 fmat4 Graphene::Camera::view() const
 {
     return glm::lookAt(m_Position, m_Position - m_Rotation * s_Base, m_Head);
