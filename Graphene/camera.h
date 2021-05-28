@@ -25,11 +25,9 @@ public:
     virtual float aspectRatio() const;
     virtual void aspectRatio(const float aspectRatio);
     virtual float FOV() const;
-    virtual void FOV(const float fov);
+    virtual void FOV(const float angle);
     virtual fmat4 view() const;
     virtual fmat4 projection() const;
-    virtual float FOV() const;
-    virtual void FOV(const float angle);
     virtual void orbit(const fvec3 angle);
     virtual void rotate(const fvec3 angle);
     virtual void dolly(const float offset);
