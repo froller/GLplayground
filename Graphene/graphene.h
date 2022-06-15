@@ -35,6 +35,7 @@ class Graphene
 public:
     class Shader;
     class Program;
+    class Material;
     class Object;
     class Model;
     class Camera;
@@ -124,7 +125,6 @@ protected:
     bool m_Started;
     bool m_Wireframe = false;
     
-    Program *m_Program;
     Scene *m_Scene;
     fvec3 m_ClearColor;
 
@@ -151,8 +151,6 @@ public:
     virtual int draw();
     virtual void stop();
     virtual Graphene::Scene *scene() const;
-    virtual int addShader(const ShaderType type, const std::string &source);
-    virtual int addShader(const ShaderType type, const std::filesystem::path &path);
     virtual void camera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
@@ -174,14 +172,18 @@ protected:
     virtual void fillElementBuffer();
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
+    virtual void useMaterials();
     virtual void onGeometryChanged();
     virtual void onCameraChanged();
     virtual void onLightChanged();
     virtual void onEnvironmentChanged();
+    virtual void onShaderChanged();
 };
 
 #include "shader.h"
 #include "program.h"
+
+#include "material.h"
 
 #include "object.h"
 #include "model.h"

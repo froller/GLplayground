@@ -11,7 +11,6 @@
 
 Graphene::Graphene()
 {
-    m_Program = new Program();
     m_Scene = new Scene();
     m_ClearColor = { 0, 0, 0 };
     
@@ -54,18 +53,12 @@ Graphene::~Graphene()
 
     // Удаление сцены
     delete m_Scene;
-    
-    // Удаление шейдеров
-    delete m_Program;
 }
 
 int Graphene::start()
 {
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Starting Graphene");
 
-    // Подключение шейдера
-    m_Program->use();    
-       
     m_Started = true;
     return 0;
 }
@@ -86,6 +79,8 @@ int Graphene::draw()
         onCameraChanged();
     if (m_Scene->modified() & Scene::Aspect::Environment)
         onEnvironmentChanged();
+    if (m_Scene->modified() & Scene::Aspect::Shaders)
+        onShaderChanged();
 
     clear();
     
@@ -146,26 +141,6 @@ void Graphene::stop()
 Graphene::Scene *Graphene::scene() const
 {
     return m_Scene;   
-}
-
-int Graphene::addShader(const ShaderType type, const std::string &source)
-{
-    Shader shader(type);
-    shader.setSource(source);
-    m_Program->addShader(shader);
-    return 0;
-}
-
-int Graphene::addShader(const ShaderType type, const std::filesystem::path &path)
-{
-    Shader shader(type);
-    if (shader.loadSource(path))
-    {
-        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error loading shader source: %s\n", shader.log());
-        return -1;
-    }
-    m_Program->addShader(shader);
-    return 0;
 }
 
 void Graphene::camera(Graphene::Camera *camera) 
@@ -312,6 +287,13 @@ void Graphene::fillUniformBuffer()
     glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraMatrices), m_UniformBuffer, GL_STATIC_DRAW);
 }
 
+void Graphene::useMaterials()
+{
+    for (auto m = m_Scene->materials().begin(); m != m_Scene->materials().end(); ++m)
+        (*m)->m_Program.use();
+    m_Scene->depict(Scene::Aspect::Shaders);
+}
+
 void Graphene::onGeometryChanged()
 {
     // Заполнение буферов
@@ -337,4 +319,10 @@ void Graphene::onEnvironmentChanged()
 {
     fillStorageBuffer();   
     m_Scene->depict(Scene::Aspect::Environment);
+}
+
+void Graphene::onShaderChanged()
+{
+    useMaterials();
+    m_Scene->depict(Scene::Aspect::Shaders);
 }

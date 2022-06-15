@@ -77,6 +77,8 @@ set(SOURCES
     Graphene/light.cpp
     Graphene/scene.h
     Graphene/scene.cpp
+    Graphene/material.h
+    Graphene/material.cpp
 )
 set(SHADERS
     fragment.glsl

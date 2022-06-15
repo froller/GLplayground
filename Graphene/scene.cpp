@@ -44,9 +44,22 @@ void Graphene::Scene::camera(Graphene::Camera *camera)
     m_Modified |=  Aspect::Camera;
 }
 
+void Graphene::Scene::addMaterial(Graphene::Material *material)
+{
+    m_Materials.insert(material);
+    material->m_Program.use();
+    m_Modified |= Aspect::Shaders;
+}
+
+std::set<Graphene::Material *> &Graphene::Scene::materials()
+{
+    return m_Materials;
+}
+
 void Graphene::Scene::addModel(const Graphene::Model &model)
 {
     m_Models.push_back(model);
+    m_Materials.insert(model.material());
     m_Modified |=  Aspect::Geometry;
 }
 

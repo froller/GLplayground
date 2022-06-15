@@ -74,3 +74,13 @@ size_t Graphene::Model::SSBOdata(void *storageBuffer) const
     *(fmat4 *)storageBuffer = transform();
     return s;
 }
+
+void Graphene::Model::material(Graphene::Material *material)
+{
+    m_Material = material;
+}
+
+Graphene::Material *Graphene::Model::material() const
+{
+    return m_Material;
+}

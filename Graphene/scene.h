@@ -1,6 +1,8 @@
 #ifndef __SCENE_H__
 #define __SCENE_H__
 
+#include <set>
+
 /*******************************************************************************
  * 
  * Graphene::Scene
@@ -15,14 +17,16 @@ public:
         Light       = (uint16_t)1 << 1,
         Camera      = (uint16_t)1 << 2,
         Environment = (uint16_t)1 << 3,
-        All         = (uint16_t)15
+        Shaders     = (uint16_t)1 << 4,
+        All         = (uint16_t)31
     };
     
 protected:
     uint16_t m_Modified;
+    std::set<Graphene::Material *> m_Materials;
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
-    Graphene::Camera * const m_DefaultCamera;
+    Graphene::Camera *const m_DefaultCamera;
     Graphene::Camera *m_Camera;
     Graphene::Color m_Ambient;
     
@@ -35,6 +39,8 @@ public:
     virtual void resetCamera();
     virtual Graphene::Camera *camera() const;
     virtual void camera(Graphene::Camera *camera);
+    virtual void addMaterial(Graphene::Material *material);
+    virtual std::set<Graphene::Material *> &materials();
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
     virtual Graphene::Color ambient() const;

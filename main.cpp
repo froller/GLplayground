@@ -84,9 +84,14 @@ int main(int argc, char **argv)
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing Graphene");
     Graphene *graphene = new Graphene;
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
-    graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
-    graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating materials");
+    Graphene::Shader vertexShader(Graphene::VertexShader);
+    vertexShader.loadSource(std::filesystem::path("../vertex.glsl"));
+    Graphene::Shader fragmentShader(Graphene::FragmentShader);
+    fragmentShader.loadSource(std::filesystem::path("../fragment.glsl"));
+    Graphene::Material blinn;
+    blinn.addShader(vertexShader);
+    blinn.addShader(fragmentShader);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
@@ -94,18 +99,21 @@ int main(int argc, char **argv)
 
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
         { 0.87, -0.25 / sqrt(3), 0.5 },
-//        fquat({0, -M_PI_2, 0})
-        fquat({ 0, 0, 0 })
+        fquat({ 0, 0, 0 }), // fquat({0, -M_PI_2, 0})
+        { 1.f, 1.f, 1.f },
+        &blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         { -0.87, 0, 0.5 },
         fquat({ 0, 0, 0 }),
-        { 0.7, 0.7, 0.7 }
+        { 0.7, 0.7, 0.7 },
+        &blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         { 0.0, 0.0, -1.f },
         fquat({ 0, 0, 0 }),
-        { 0.5, 0.5, 0.5 }
+        { 0.5, 0.5, 0.5 },
+        &blinn
     ));
 
 
