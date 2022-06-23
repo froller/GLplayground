@@ -116,28 +116,30 @@ int main(int argc, char **argv)
         &blinn
     ));
 
-
-    graphene->scene()->addLight(Graphene::Light::Omni({  4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding lights");
+    graphene->scene()->addLight(Graphene::Light::Omni({ 4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
     graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));
-    graphene->scene()->ambient({0.1, 0.1, 0.1});
+    graphene->scene()->ambient({ 0.1, 0.1, 0.1 });
 
-    Graphene::Camera *camera[4] = {
-        new Graphene::Camera::Targeted({ 0, 0, 2 }, { 0, 0, 0 }),
-        new Graphene::Camera::Targeted({ 0.5, 0, 2}, { 0.5, 0, 0 }),
-        new Graphene::Camera({ 0, 0, 2 }, { 0, 0, 0, 1 }),
-        new Graphene::Camera({ 0.5, 0, 2 }, { 0, 0, 0, 1 })
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding cameras");
+    std::shared_ptr<Graphene::Camera> camera[4] = {
+        std::make_shared<Graphene::Camera::Targeted>({ 0, 0, 2 }, { 0, 0, 0 }),
+        std::make_shared<Graphene::Camera::Targeted>({ 0.5, 0, 2}, { 0.5, 0, 0 }),
+        std::make_shared<Graphene::Camera>({ 0, 0, 2 }, { 0, 0, 0, 1 }),
+        std::make_shared<Graphene::Camera>({ 0.5, 0, 2 }, { 0, 0, 0, 1 })
     };
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Setting default camera");
     graphene->camera(camera[0]);
-    
+
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
-    graphene->start();
-    
+
     bool quit = false;
     bool fly = false;
     unsigned int modifiers = 0;
-    while (!quit) {
+    while (!quit)
+    {
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -182,7 +184,7 @@ int main(int argc, char **argv)
                         graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
                     }
                 }
-                else 
+                else
                 {
                     if (event.wheel.y)
                     {
@@ -194,59 +196,59 @@ int main(int argc, char **argv)
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
-                    case SDLK_ESCAPE:
-                        SDL_Event quitEvent;
-                        quitEvent.type = SDL_QUIT;
-                        SDL_PushEvent(&quitEvent); // FIXME потенциально опасно пихать указатель на объект со стека
-                        break;
-                    case SDLK_SPACE:
-                        // сбросить камеру
-                        break;
-                    case SDLK_1:
-                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 1");
-                        graphene->camera(camera[0]);
-                        break;
-                    case SDLK_2:
-                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 2");
-                        graphene->camera(camera[1]);
-                        break;
-                    case SDLK_3:
-                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 1");
-                        graphene->camera(camera[2]);
-                        break;
-                    case SDLK_4:
-                        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 2");
-                        graphene->camera(camera[3]);
-                        break;
-                    case SDLK_c:
-                        {
-                            bool cull = !graphene->cull();
-                            graphene->cull(cull);
-                            SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
-                        }
-                        break;
-                    case SDLK_f:
-                        {
-                            fly = !fly;
-                            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Fly mode %s", fly ? "ON" : "OFF");
-                        }
-                        break;
-                    case SDLK_g:
-                        {
-                            bool gc = !graphene->gammaCorrection();
-                            graphene->gammaCorrection(gc);
-                            SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Gamma correction %s", gc ? "enabled" : "disabled");
-                        }
-                        break;
-                    case SDLK_w:
-                        {
-                            bool wf = !graphene->wireframe();
-                            graphene->wireframe(wf);
-                            SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "%s rendering", wf ? "Wireframe" : "Shaded");
-                        }
-                        break;
-                    default:
-                        SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %s pressed (scancode: %u)", SDL_GetKeyName(event.key.keysym.sym), event.key.keysym.scancode);
+                case SDLK_ESCAPE:
+                    SDL_Event quitEvent;
+                    quitEvent.type = SDL_QUIT;
+                    SDL_PushEvent(&quitEvent); // FIXME потенциально опасно пихать указатель на объект со стека
+                    break;
+                case SDLK_SPACE:
+                    // сбросить камеру
+                    break;
+                case SDLK_1:
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 1");
+                    graphene->camera(camera[0]);
+                    break;
+                case SDLK_2:
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 2");
+                    graphene->camera(camera[1]);
+                    break;
+                case SDLK_3:
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 1");
+                    graphene->camera(camera[2]);
+                    break;
+                case SDLK_4:
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 2");
+                    graphene->camera(camera[3]);
+                    break;
+                case SDLK_c:
+                {
+                    bool cull = !graphene->cull();
+                    graphene->cull(cull);
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
+                }
+                break;
+                case SDLK_f:
+                {
+                    fly = !fly;
+                    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Fly mode %s", fly ? "ON" : "OFF");
+                }
+                break;
+                case SDLK_g:
+                {
+                    bool gc = !graphene->gammaCorrection();
+                    graphene->gammaCorrection(gc);
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Gamma correction %s", gc ? "enabled" : "disabled");
+                }
+                break;
+                case SDLK_w:
+                {
+                    bool wf = !graphene->wireframe();
+                    graphene->wireframe(wf);
+                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "%s rendering", wf ? "Wireframe" : "Shaded");
+                }
+                break;
+                default:
+                    SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Key %s pressed (scancode: %u)", SDL_GetKeyName(event.key.keysym.sym), event.key.keysym.scancode);
                 }
                 break;
             case SDL_QUIT:
@@ -275,7 +277,6 @@ int main(int argc, char **argv)
         }
         SDL_GL_SwapWindow(window);
     }
-    graphene->stop();
 
     /* Deinitialize everything */
     delete graphene;

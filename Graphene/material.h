@@ -10,6 +10,9 @@
 class Graphene::Material
 {
 public:
+    class Blinn;
+
+public:
     Graphene::Program m_Program;
 
 public:

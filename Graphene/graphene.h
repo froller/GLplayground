@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <map>
 #include <array>
+#include <memory>
 
 #include <math.h>
 #ifdef _WIN32
@@ -35,6 +36,7 @@ class Graphene
 public:
     class Shader;
     class Program;
+    class Texture;
     class Material;
     class Object;
     class Model;
@@ -125,7 +127,7 @@ protected:
     bool m_Started;
     bool m_Wireframe = false;
     
-    Scene *m_Scene;
+    std::shared_ptr<Scene> m_Scene;
     fvec3 m_ClearColor;
 
     void *m_VertexBuffer = nullptr;
@@ -147,14 +149,12 @@ public:
     virtual ~Graphene();
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
-    virtual int start();
     virtual int draw();
-    virtual void stop();
-    virtual Graphene::Scene *scene() const;
-    virtual void camera(Graphene::Camera *camera);
+    virtual std::shared_ptr<Graphene::Scene> scene() const;
+    virtual void camera(std::shared_ptr<Graphene::Camera> camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
-    virtual void setClearColor(const Color color);
+    virtual void setClearColor(const Color &color);
     virtual void clear() const;
     virtual bool cull() const;
     virtual void cull(const bool enable);
@@ -184,6 +184,7 @@ protected:
 #include "program.h"
 
 #include "material.h"
+#include "blinn.h"
 
 #include "object.h"
 #include "model.h"

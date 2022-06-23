@@ -12,7 +12,7 @@ class Graphene::Model : public Graphene::Object
 public:
     std::vector<Vertex> m_Vertices;
     std::vector<std::array<unsigned int, 3>> m_Primitives;
-    Graphene::Material *m_Material;
+    std::shared_ptr<Graphene::Material> m_Material;
 
 public:
     Model(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr) : Object(position, rotation, scale), m_Material(material) {};
@@ -28,8 +28,8 @@ public:
     virtual size_t VBOdata(void *vertexBuffer) const;
     virtual size_t EBOdata(void *elementBuffer, Index offset) const;
     virtual size_t SSBOdata(void *storageBuffer) const;
-    virtual void material(Graphene::Material *material);
-    virtual Graphene::Material *material() const;
+    virtual void material(std::shared_ptr<Graphene::Material> &material);
+    virtual std::shared_ptr<Graphene::Material> material() const;
 };
 
 #endif // __MODEL_H__

@@ -50,27 +50,10 @@ Graphene::~Graphene()
     
     // Удаление VAO
     glDeleteVertexArrays(1, &m_VAO);
-
-    // Удаление сцены
-    delete m_Scene;
-}
-
-int Graphene::start()
-{
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Starting Graphene");
-
-    m_Started = true;
-    return 0;
 }
 
 int Graphene::draw()
 {
-    if (!m_Started)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Graphene not started yet");
-        return -1;
-    }
-    
     if (m_Scene->modified() & Scene::Aspect::Geometry)
         onGeometryChanged();
     if (m_Scene->modified() & Scene::Aspect::Light)
@@ -132,18 +115,12 @@ int Graphene::draw()
     return 0;
 }
 
-void Graphene::stop()
-{
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Stopping Graphene");
-    m_Started = false;
-}
-
-Graphene::Scene *Graphene::scene() const
+std::shared_ptr<Graphene::Scene> Graphene::scene() const
 {
     return m_Scene;   
 }
 
-void Graphene::camera(Graphene::Camera *camera) 
+void Graphene::camera(std::shared_ptr<Graphene::Camera> camera) 
 {
     m_Scene->camera(camera);
 }
@@ -158,7 +135,7 @@ void Graphene::addLight(const Graphene::Light &light)
     m_Scene->addLight(light);
 }
 
-void Graphene::setClearColor(const Color color)
+void Graphene::setClearColor(const Color &color)
 {
     m_ClearColor = color;
 }
@@ -291,7 +268,6 @@ void Graphene::useMaterials()
 {
     for (auto m = m_Scene->materials().begin(); m != m_Scene->materials().end(); ++m)
         (*m)->m_Program.use();
-    m_Scene->depict(Scene::Aspect::Shaders);
 }
 
 void Graphene::onGeometryChanged()

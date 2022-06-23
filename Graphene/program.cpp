@@ -1,9 +1,9 @@
 #include "graphene.h"
 
 /*******************************************************************************
- * 
+ *
  * Graphene::Program
- * 
+ *
  ******************************************************************************/
 
 Graphene::Program::Program()
@@ -82,21 +82,21 @@ int Graphene::Program::shaders() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ATTACHED_SHADERS, &rv);
-    return rv;   
+    return rv;
 }
 
 int Graphene::Program::attributes() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ACTIVE_ATTRIBUTES, &rv);
-    return rv;   
+    return rv;
 }
 
 int Graphene::Program::uniforms() const
 {
     GLint rv;
     glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORMS, &rv);
-    return rv;       
+    return rv;
 }
 
 int Graphene::Program::uniformMaxLen() const
@@ -106,7 +106,7 @@ int Graphene::Program::uniformMaxLen() const
     return rv;
 }
 
-unsigned int Graphene::Program::uniformIndex(const char* name) const
+unsigned int Graphene::Program::uniformIndex(const char *name) const
 {
     return glGetUniformLocation(m_Handle, name);
 }
@@ -124,29 +124,24 @@ unsigned int Graphene::Program::uniformType(const unsigned int index) const
 {
     unsigned int rv;
     glGetActiveUniform(m_Handle, index, 0, nullptr, nullptr, &rv, nullptr);
-    return rv;  
+    return rv;
 }
 
 int Graphene::Program::uniformSize(const unsigned int index) const
 {
     int rv;
     glGetActiveUniform(m_Handle, index, 0, nullptr, &rv, nullptr, nullptr);
-    return rv;     
+    return rv;
 }
 
-int Graphene::Program::setUniformBuffer(const unsigned int index, void *buffer) const
+int Graphene::Program::setUniformBuffer(const unsigned int /*index*/, void */*buffer*/) const
 {
-    (void)index;
-    (void)buffer;
-    
-    
-    
     return 0;
 }
 
 int Graphene::Program::setUniformBuffer(const char *name, void *buffer) const
 {
-        //const int index = glGetUniformBlockIndex(m_Handle, name);
+    //const int index = glGetUniformBlockIndex(m_Handle, name);
     const int index = glGetUniformBlockIndex(m_Handle, name);
     if (index < 0)
         return index;

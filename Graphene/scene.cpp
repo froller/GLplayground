@@ -1,6 +1,6 @@
 #include "graphene.h"
 
-Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
+Graphene::Scene::Scene() : m_DefaultCamera(std::make_shared<Graphene::Camera::Targeted>(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
 {
     m_Camera = m_DefaultCamera;
     m_Ambient = Color(0.f, 0.f, 0.f);
@@ -9,7 +9,7 @@ Graphene::Scene::Scene() : m_DefaultCamera(new Graphene::Camera::Targeted(fvec3(
 
 Graphene::Scene::~Scene()
 {
-    delete m_DefaultCamera;   
+    delete m_DefaultCamera;
 }
 
 uint16_t Graphene::Scene::modified() const
@@ -33,25 +33,25 @@ void Graphene::Scene::resetCamera()
     m_Modified |= Aspect::Camera;
 }
 
-Graphene::Camera *Graphene::Scene::camera() const
+std::shared_ptr<Graphene::Camera> Graphene::Scene::camera() const
 {
     return m_Camera;
 }
 
-void Graphene::Scene::camera(Graphene::Camera *camera)
+void Graphene::Scene::camera(std::shared_ptr<Graphene::Camera> &camera)
 {
     m_Camera = camera;
-    m_Modified |=  Aspect::Camera;
+    m_Modified |= Aspect::Camera;
 }
 
-void Graphene::Scene::addMaterial(Graphene::Material *material)
+void Graphene::Scene::addMaterial(std::shared_ptr<Graphene::Material> &material)
 {
     m_Materials.insert(material);
     material->m_Program.use();
     m_Modified |= Aspect::Shaders;
 }
 
-std::set<Graphene::Material *> &Graphene::Scene::materials()
+std::set<std::shared_ptr<Graphene::Material>> &Graphene::Scene::materials()
 {
     return m_Materials;
 }
@@ -60,13 +60,14 @@ void Graphene::Scene::addModel(const Graphene::Model &model)
 {
     m_Models.push_back(model);
     m_Materials.insert(model.material());
-    m_Modified |=  Aspect::Geometry;
+    m_Modified |= Aspect::Shaders;
+    m_Modified |= Aspect::Geometry;
 }
 
 void Graphene::Scene::addLight(const Graphene::Light &light)
 {
     m_Lights.push_back(light);
-    m_Modified |=  Aspect::Light;
+    m_Modified |= Aspect::Light;
 }
 
 Graphene::Color Graphene::Scene::ambient() const
@@ -149,7 +150,7 @@ size_t Graphene::Scene::modelRangeSize() const
 {
     const size_t align = 64;
     size_t modelRangeSize =
-        + sizeof(float) * 4 // uint + 3 float padding
+        +sizeof(float) * 4 // uint + 3 float padding
         + modelCount() * sizeof(ModelMatrices);
     // Выравнивание
     if (modelRangeSize % align)
@@ -189,7 +190,7 @@ size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
 {
     void *bufferTop = uniformBuffer;
     CameraMatrices *cameraMatrices = (CameraMatrices *)bufferTop;
-    cameraMatrices->world = fmat4({1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1});
+    cameraMatrices->world = fmat4({ 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, -1, 0 }, { 0, 0, 0, 1 });
     cameraMatrices->view = m_Camera->view();
     cameraMatrices->projection = m_Camera->projection();
     cameraMatrices->position = m_Camera->position();
@@ -198,7 +199,7 @@ size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
     return (char *)bufferTop - (char *)uniformBuffer;
 }
 
-size_t Graphene::Scene::SSBOdata(void* storageBuffer) const
+size_t Graphene::Scene::SSBOdata(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
     bufferTop = (char *)bufferTop + lightRangeData(bufferTop);
@@ -206,7 +207,7 @@ size_t Graphene::Scene::SSBOdata(void* storageBuffer) const
     return (char *)bufferTop - (char *)storageBuffer;
 }
 
-size_t Graphene::Scene::lightRangeData(void* storageBuffer) const
+size_t Graphene::Scene::lightRangeData(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
     *(fvec3 *)bufferTop = m_Ambient;
@@ -221,7 +222,7 @@ size_t Graphene::Scene::lightRangeData(void* storageBuffer) const
     return lightRangeSize();
 }
 
-size_t Graphene::Scene::modelRangeData(void* storageBuffer) const
+size_t Graphene::Scene::modelRangeData(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
     *(unsigned int *)bufferTop = m_Models.size();
