@@ -11,7 +11,7 @@
 
 Graphene::Graphene()
 {
-    m_Scene = new Scene();
+    m_Scene = std::make_shared<Scene>();
     m_ClearColor = { 0, 0, 0 };
     
     // Создание VAO

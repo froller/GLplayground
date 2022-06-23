@@ -11,8 +11,14 @@ class Graphene::Camera : public Graphene::Object
 {
 public:
     class Targeted;
+    enum class Type {
+        Free = 0,
+        Targeted
+    };
     
-    const enum Graphene::CameraType Type = Graphene::CameraType::Free;
+    constexpr static const Type s_CameraType = Type::Free;
+    constexpr static const Type type() { return s_CameraType; };
+    
 protected:
     float m_AspectRatio;
     float m_FOV;
@@ -43,7 +49,9 @@ public:
 class Graphene::Camera::Targeted : public Graphene::Camera
 {
 public:
-    const enum Graphene::CameraType Type = Graphene::CameraType::Targeted;
+    constexpr static const Type s_CameraType = Type::Targeted;
+    constexpr static const Type type() { return s_CameraType; };
+
 protected:
     fvec3 m_Target;
 public:
@@ -51,8 +59,8 @@ public:
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
     virtual void rotation(const fquat rotation) override;
-    virtual void orbit(const fvec3 angle);
-    virtual void rotate(const fvec3 angle);
+    virtual void orbit(const fvec3 angle) override;
+    virtual void rotate(const fvec3 angle) override;
 };
 
 #endif // __CAMERA_H__

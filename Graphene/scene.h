@@ -32,7 +32,7 @@ protected:
     
 public:
     Scene();
-    virtual ~Scene();
+    virtual ~Scene() = default;
     virtual uint16_t modified() const;
     virtual void touch(Graphene::Scene::Aspect aspect);
     virtual void depict(Graphene::Scene::Aspect aspect);

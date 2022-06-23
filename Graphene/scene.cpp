@@ -7,11 +7,6 @@ Graphene::Scene::Scene() : m_DefaultCamera(std::make_shared<Graphene::Camera::Ta
     m_Modified = Aspect::All;
 }
 
-Graphene::Scene::~Scene()
-{
-    delete m_DefaultCamera;
-}
-
 uint16_t Graphene::Scene::modified() const
 {
     return m_Modified;

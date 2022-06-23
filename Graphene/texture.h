@@ -6,6 +6,14 @@ class Graphene::Texture
 public:
     class Color;
     class Checker;
+    enum class Type {
+        None = 0,
+        Color,
+        Checker
+    };
+    
+    constexpr static const Type s_Type = Type::None;
+    constexpr static const Type type() { return s_Type; };
 
 public:
     Texture() = default;
@@ -23,6 +31,10 @@ protected:
 class Graphene::Texture::Color : public Graphene::Texture
 {
 public:
+    constexpr static const Type s_Type = Type::Color;
+    constexpr static const Type type() { return s_Type; };
+    
+public:
     Color(Graphene::Color &color);
     virtual ~Color() = default;
 
@@ -32,6 +44,10 @@ protected:
 
 class Graphene::Texture::Checker : public Graphene::Texture
 {
+public:
+    constexpr static const Type s_Type = Type::Checker;
+    constexpr static const Type type() { return s_Type; };
+
 public:
     Checker(Graphene::Color &color1, Graphene::Color &color2);
     virtual ~Checker() = default;

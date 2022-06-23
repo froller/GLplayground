@@ -64,12 +64,6 @@ public:
         UniformBuffer,
         BufferTypeMax
     };
-
-    enum CameraType
-    {
-        Free = 0,
-        Targeted
-    };
       
     constexpr static unsigned int ElementSize = 3;
     

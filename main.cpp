@@ -99,19 +99,19 @@ int main(int argc, char **argv)
 
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
         { 0.87, -0.25 / sqrt(3), 0.5 },
-        fquat({ 0, 0, 0 }), // fquat({0, -M_PI_2, 0})
+        fquat({ 0.f, 0.f, 0.f }), // fquat({0, -M_PI_2, 0})
         { 1.f, 1.f, 1.f },
         &blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         { -0.87, 0, 0.5 },
-        fquat({ 0, 0, 0 }),
+        fquat({ 0.f, 0.f, 0.f }),
         { 0.7, 0.7, 0.7 },
         &blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         { 0.0, 0.0, -1.f },
-        fquat({ 0, 0, 0 }),
+        fquat({ 0.f, 0.f, 0.f }),
         { 0.5, 0.5, 0.5 },
         &blinn
     ));
@@ -123,10 +123,10 @@ int main(int argc, char **argv)
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding cameras");
     std::shared_ptr<Graphene::Camera> camera[4] = {
-        std::make_shared<Graphene::Camera::Targeted>({ 0, 0, 2 }, { 0, 0, 0 }),
-        std::make_shared<Graphene::Camera::Targeted>({ 0.5, 0, 2}, { 0.5, 0, 0 }),
-        std::make_shared<Graphene::Camera>({ 0, 0, 2 }, { 0, 0, 0, 1 }),
-        std::make_shared<Graphene::Camera>({ 0.5, 0, 2 }, { 0, 0, 0, 1 })
+        std::make_shared<Graphene::Camera::Targeted, const fvec3, const fvec3>({ 0.f, 0.f, 2.f }, { 0.f, 0.f, 0.f }),
+        std::make_shared<Graphene::Camera::Targeted, const fvec3, const fvec3>({ 0.5, 0.f, 2.f }, { 0.5, 0.f, 0.f }),
+        std::make_shared<Graphene::Camera, const fvec3, const fquat>({ 0.f, 0.f, 2.f }, { 0.f, 0.f, 0.f, 1.f }),
+        std::make_shared<Graphene::Camera, const fvec3, const fquat>({ 0.5, 0.f, 2.f }, { 0.f, 0.f, 0.f, 1.f })
     };
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Setting default camera");
@@ -168,9 +168,9 @@ int main(int argc, char **argv)
                 //SDL_LogDebug(SDL_LOG_CATEGORY_INPUT, "Mouse moved by %+i %+i", event.motion.xrel, event.motion.yrel);
                 if (event.motion.state & SDL_BUTTON_LMASK)
                 {
-                    if (graphene->scene()->camera()->Type == Graphene::CameraType::Free)
+                    if (graphene->scene()->camera()->type() == Graphene::Camera::Type::Free)
                         graphene->scene()->camera()->rotate(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
-                    else if (graphene->scene()->camera()->Type == Graphene::CameraType::Targeted)
+                    else if (graphene->scene()->camera()->type() == Graphene::Camera::Type::Targeted)
                         graphene->scene()->camera()->orbit(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
                     graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
                 }
