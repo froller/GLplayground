@@ -3,7 +3,9 @@
 
 #ifdef _WIN32
 #   include <Windows.h>
-#   define __builtin_trap __debugbreak
+#   ifndef __builtin_trap
+#       define __builtin_trap __debugbreak
+#   endif // __builtin_trap
 #endif // _WIN32
 
 #define WINDOW_WIDTH 800
@@ -85,9 +87,12 @@ int main(int argc, char **argv)
     Graphene *graphene = new Graphene;
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Loading shaders");
-    graphene->addShader(Graphene::VertexShader, std::filesystem::path("../vertex.glsl"));
+    graphene->addShader(Graphene::VertexShader,   std::filesystem::path("../vertex.glsl"));
     graphene->addShader(Graphene::FragmentShader, std::filesystem::path("../fragment.glsl"));
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing OSD");
+    graphene->osd(new Graphene::OSD());
+    
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
     //    graphene->addModel(Graphene::SimpleObjects::Square());
@@ -125,6 +130,8 @@ int main(int argc, char **argv)
     /* Main loop */
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running event loop");
     graphene->start();
+    if (graphene->osd())
+        graphene->osd()->start();
     
     bool quit = false;
     bool fly = false;
@@ -262,11 +269,20 @@ int main(int argc, char **argv)
         }
         if (graphene->draw())
         {
-            SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Draw failed");
+            SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Scene draw failed");
             __builtin_trap();
         }
+        if (graphene->osd())
+            if (graphene->osd()->draw())
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "OSD draw failed");
+                __builtin_trap();
+            }
+        
         SDL_GL_SwapWindow(window);
     }
+    if (graphene->osd())
+        graphene->osd()->stop();
     graphene->stop();
 
     /* Deinitialize everything */

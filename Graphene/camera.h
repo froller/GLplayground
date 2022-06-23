@@ -51,8 +51,8 @@ public:
     virtual ~Targeted() = default;
     virtual fmat4 view() const override;
     virtual void rotation(const fquat rotation) override;
-    virtual void orbit(const fvec3 angle);
-    virtual void rotate(const fvec3 angle);
+    virtual void orbit(const fvec3 angle) override;
+    virtual void rotate(const fvec3 angle) override;
 };
 
 #endif // __CAMERA_H__

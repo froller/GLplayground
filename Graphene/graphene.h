@@ -1,6 +1,12 @@
 #ifndef __GRAPHENE_H__
 #define __GRAPHENE_H__
 
+#ifdef _WIN32
+#   ifndef __builtin_trap
+#       define __builtin_trap __debugbreak
+#   endif // __builtin_trap
+#endif // _WIN32
+
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
 
@@ -41,6 +47,7 @@ public:
     class Light;
     class SimpleObjects;
     class Scene;
+    class OSD;
 
     enum ShaderType
     {
@@ -126,6 +133,7 @@ protected:
     
     Program *m_Program;
     Scene *m_Scene;
+    OSD *m_OSD;
     fvec3 m_ClearColor;
 
     void *m_VertexBuffer = nullptr;
@@ -156,6 +164,8 @@ public:
     virtual void camera(Graphene::Camera *camera);
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
+    virtual void osd(Graphene::OSD *osd);
+    virtual Graphene::OSD *osd();
     virtual void setClearColor(const Color color);
     virtual void clear() const;
     virtual bool cull() const;
@@ -192,5 +202,7 @@ protected:
 #include "light.h"
 
 #include "scene.h"
+
+#include "osd.h"
 
 #endif // __GRAPHENE_H__

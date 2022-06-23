@@ -10,10 +10,11 @@
  ******************************************************************************/
 
 Graphene::Graphene()
+    :m_Started(false)
+    ,m_ClearColor({0, 0, 0})
 {
     m_Program = new Program();
     m_Scene = new Scene();
-    m_ClearColor = { 0, 0, 0 };
     
     // Создание VAO
     glGenVertexArrays(1, &m_VAO);
@@ -118,16 +119,18 @@ int Graphene::draw()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);
     glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[BufferType::StorageBuffer], 0, m_Scene->lightRangeSize());
     glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_Buffers[BufferType::StorageBuffer], m_Scene->lightRangeSize(), m_Scene->modelRangeSize());
-    // Матрицы кмеры
+    // Матрицы камеры
     glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
     glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
     
+    // Отрисовка сцены
     if (m_Wireframe)
         for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
             glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
     else
         glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
  
+    // Отключение использованных массивов
     glDisableVertexAttribArray(4);
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
@@ -183,6 +186,16 @@ void Graphene::addLight(const Graphene::Light &light)
     m_Scene->addLight(light);
 }
 
+void Graphene::osd(Graphene::OSD* osd)
+{
+    m_OSD = osd;
+}
+
+Graphene::OSD* Graphene::osd()
+{
+    return m_OSD;
+}
+
 void Graphene::setClearColor(const Color color)
 {
     m_ClearColor = color;
@@ -190,6 +203,10 @@ void Graphene::setClearColor(const Color color)
 
 void Graphene::clear() const
 {
+    // Очистка ОСД
+    if (m_OSD)
+        m_OSD->clear();
+    // Очистка фреймбуфера
     glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

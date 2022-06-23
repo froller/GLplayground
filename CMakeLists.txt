@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 
 project(GLplayground)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(OpenGL_GL_PREFERENCE "GLVND")
 
 set(CMAKE_glsl_COMPILE_OBJECT )
@@ -34,6 +36,7 @@ else()
     find_package(OpenGL REQUIRED)
     find_package(GLEW REQUIRED)
     find_package(glm REQUIRED)
+    find_package(Cairo REQUIRED)
 
 endif()
 
@@ -77,10 +80,15 @@ set(SOURCES
     Graphene/light.cpp
     Graphene/scene.h
     Graphene/scene.cpp
+    Graphene/osd.h
+    Graphene/osd.cpp
 )
 set(SHADERS
     fragment.glsl
     vertex.glsl
+    osd-frag.glsl
+    osd-geom.glsl
+    osd-vert.glsl
 )
 
 if (WIN32)
@@ -91,9 +99,9 @@ else()
 endif()
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS})
+target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR} ${CAIRO_LIBDIR})
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${CAIRO_LIBRARIES})
 
 set_source_files_properties(fragment.glsl vertex.glsl
     PROPERTIES

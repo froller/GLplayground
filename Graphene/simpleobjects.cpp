@@ -1,6 +1,8 @@
 #include "graphene.h"
 #include <math.h>
 #include <array>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/ext/quaternion_exponential.hpp>
 
 #define VERTEX(x,y,z,nx,ny,nz,r,g,b) m_Vertices.push_back({fvec3(x, y, z), fvec3(nx, ny, nz), fvec3(r, g, b)})
 #define ELEMENT(a,b,c) m_Primitives.push_back({a, b, c})
@@ -98,29 +100,6 @@ Graphene::SimpleObjects::Cube::Cube(const fvec3 position, const fquat rotation, 
     ELEMENT(21, 22, 23);
 }
 
-/*
-Graphene::SimpleObjects::Sphere::Sphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
-{
-    VERTEX(sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) /  2.f, sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) /  2.f, 0.9, 0.5, 0.f); // л з 0
-    VERTEX(sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) /  2.f, sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) /  2.f, 0.9, 0.5, 0.f); // п з 1
-    VERTEX(sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) / -2.f, sqrtf(2.f) /  2.f, 0.f, sqrtf(2.f) / -2.f, 0.9, 0.5, 0.f); // п п 2
-    VERTEX(sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) / -2.f, sqrtf(2.f) / -2.f, 0.f, sqrtf(2.f) / -2.f, 0.9, 0.5, 0.f); // л п 3
-    VERTEX(0.f, sqrtf(2.f) /  2.f, 0.f, 0.f, sqrtf(2.f) /  2.f, 0.f, 0.9, 0.5, 0.0); // в 4
-    VERTEX(0.f, sqrtf(2.f) / -2.f, 0.f, 0.f, sqrtf(2.f) / -2.f, 0.f, 0.9, 0.5, 0.0); // н 5
-    ELEMENT(1, 0, 4);
-    ELEMENT(2, 1, 4);
-    ELEMENT(3, 2, 4);
-    ELEMENT(0, 3, 4);
-    ELEMENT(0, 1, 5);
-    ELEMENT(1, 2, 5);
-    ELEMENT(2, 3, 5);
-    ELEMENT(3, 0, 5);
-}
-*/
-
-#include <glm/gtc/quaternion.hpp>
-#include <glm/ext/quaternion_exponential.hpp>
-
 Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat rotation, const fvec3 scale) : Model(position, rotation, scale)
 {
     int vertexAcc = 0;
@@ -136,24 +115,23 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
         std::vector<Vertex> vertices;
         for (int lon = 0; lon < meridians; ++lon)  // Проходим все меридианы
         {
-            // Нормаль азимута
+            // Нормаль азимута (долготы)
             glm::fvec3 nor =
-                glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0)) // Азимут
+                glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0)) // Азимут (долгота)
                 * glm::fvec3(0, 0, 1);  // Норма Z
             // Координаты вершины
             glm::fvec3 vertexCoords =
-                glm::angleAxis((float)M_PI / s_Segments * -lat, nor)   // Угол места
-                * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
+                glm::angleAxis((float)M_PI / s_Segments * -lat, nor)   // Угол места (широта)
+                * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут (долгота)
                 * glm::fvec3(1, 0, 0);  // Норма X
 
             // Вершина
-            //Vertex vertex = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
             Vertex vertex = { vertexCoords, vertexCoords, { 0.9, 0.f, 0.5 } };
             vertices.push_back(vertex);
             m_Vertices.push_back(vertex); // Добавляем вершину в вертексный буфер
             ++vertexAcc;
 
-            if (abs(lat) == s_Segments / 2)  // полюс
+            if (abs(lat) == s_Segments / 2)  // Полюс
                 break;
         }
         
@@ -173,6 +151,7 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
             while (currentIdxR >= vertexAcc) // закольцовывание
                 currentIdxR -= vertices.size();
 
+            // Добавление грани в массив элементов
             if (currentIdxR != currentIdxC)
                 m_Primitives.push_back({ (unsigned int)lowerIdxC, (unsigned int)currentIdxR, (unsigned int)currentIdxC });
             if (lowerIdxR != lowerIdxC)
@@ -184,8 +163,6 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
     
     
 }
-
-
 
 #undef ELEMENT
 #undef VERTEX
