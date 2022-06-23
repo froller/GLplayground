@@ -75,12 +75,12 @@ size_t Graphene::Model::SSBOdata(void *storageBuffer) const
     return s;
 }
 
-void Graphene::Model::material(std::shared_ptr<Graphene::Material> &material)
+void Graphene::Model::material(Graphene::Material *material)
 {
     m_Material = material;
 }
 
-std::shared_ptr<Graphene::Material> Graphene::Model::material() const
+Graphene::Material *Graphene::Model::material() const
 {
     return m_Material;
 }

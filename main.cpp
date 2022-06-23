@@ -89,9 +89,9 @@ int main(int argc, char **argv)
     vertexShader.loadSource(std::filesystem::path("../vertex.glsl"));
     Graphene::Shader fragmentShader(Graphene::FragmentShader);
     fragmentShader.loadSource(std::filesystem::path("../fragment.glsl"));
-    Graphene::Material blinn;
-    blinn.addShader(vertexShader);
-    blinn.addShader(fragmentShader);
+    Graphene::Material *blinn = new Graphene::Material();
+    blinn->addShader(vertexShader);
+    blinn->addShader(fragmentShader);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
@@ -101,19 +101,19 @@ int main(int argc, char **argv)
         { 0.87, -0.25 / sqrt(3), 0.5 },
         fquat({ 0.f, 0.f, 0.f }), // fquat({0, -M_PI_2, 0})
         { 1.f, 1.f, 1.f },
-        &blinn
+        blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         { -0.87, 0, 0.5 },
         fquat({ 0.f, 0.f, 0.f }),
         { 0.7, 0.7, 0.7 },
-        &blinn
+        blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         { 0.0, 0.0, -1.f },
         fquat({ 0.f, 0.f, 0.f }),
         { 0.5, 0.5, 0.5 },
-        &blinn
+        blinn
     ));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding lights");
@@ -279,6 +279,7 @@ int main(int argc, char **argv)
     }
 
     /* Deinitialize everything */
+    delete blinn;
     delete graphene;
     SDL_GL_DeleteContext(ctx);
     SDL_DestroyWindow(window);

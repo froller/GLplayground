@@ -23,7 +23,7 @@ public:
     
 protected:
     uint16_t m_Modified;
-    std::set<std::shared_ptr<Graphene::Material>> m_Materials;
+    std::set<Graphene::Material *> m_Materials;
     std::vector<Graphene::Model> m_Models;
     std::vector<Graphene::Light> m_Lights;
     std::shared_ptr<Graphene::Camera> m_DefaultCamera;
@@ -32,15 +32,17 @@ protected:
     
 public:
     Scene();
-    virtual ~Scene() = default;
+    virtual ~Scene() {
+        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Destoying scene");
+    };
     virtual uint16_t modified() const;
     virtual void touch(Graphene::Scene::Aspect aspect);
     virtual void depict(Graphene::Scene::Aspect aspect);
     virtual void resetCamera();
     virtual std::shared_ptr<Graphene::Camera> camera() const;
     virtual void camera(std::shared_ptr<Graphene::Camera> &camera);
-    virtual void addMaterial(std::shared_ptr<Graphene::Material> &material);
-    virtual std::set<std::shared_ptr<Graphene::Material>> &materials();
+    virtual void addMaterial(Graphene::Material *material);
+    virtual std::set<Graphene::Material *> &materials();
     virtual void addModel(const Graphene::Model &model);
     virtual void addLight(const Graphene::Light &light);
     virtual Graphene::Color ambient() const;

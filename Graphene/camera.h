@@ -26,8 +26,12 @@ protected:
     static constexpr fvec3 s_Base = glm::fvec3( 0, 0, 1 );
 public:
     Camera(const fvec3 position = {0, 0, 2}, const fquat rotation = {0, 0, 0, 0}, const float aspectRatio = 1.25, const float FOV = M_PI_4)
-        : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {};
-    virtual ~Camera() = default;
+        : Object(position, rotation), m_AspectRatio(aspectRatio), m_FOV(FOV) {
+        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating camera %p", this);
+    };
+    virtual ~Camera() {
+        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Destroying camera %p", this);
+    };
     virtual float aspectRatio() const;
     virtual void aspectRatio(const float aspectRatio);
     virtual float FOV() const;

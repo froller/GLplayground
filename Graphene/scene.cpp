@@ -1,8 +1,9 @@
 #include "graphene.h"
 
-Graphene::Scene::Scene() : m_DefaultCamera(std::make_shared<Graphene::Camera::Targeted>(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4))
+Graphene::Scene::Scene()
 {
-    m_Camera = m_DefaultCamera;
+//    m_DefaultCamera = std::make_shared<Graphene::Camera::Targeted>(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4);
+//    m_Camera = m_DefaultCamera;
     m_Ambient = Color(0.f, 0.f, 0.f);
     m_Modified = Aspect::All;
 }
@@ -39,14 +40,14 @@ void Graphene::Scene::camera(std::shared_ptr<Graphene::Camera> &camera)
     m_Modified |= Aspect::Camera;
 }
 
-void Graphene::Scene::addMaterial(std::shared_ptr<Graphene::Material> &material)
+void Graphene::Scene::addMaterial(Graphene::Material *material)
 {
     m_Materials.insert(material);
     material->m_Program.use();
     m_Modified |= Aspect::Shaders;
 }
 
-std::set<std::shared_ptr<Graphene::Material>> &Graphene::Scene::materials()
+std::set<Graphene::Material *> &Graphene::Scene::materials()
 {
     return m_Materials;
 }
