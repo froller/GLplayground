@@ -277,7 +277,7 @@ int main(int argc, char **argv)
         }
         SDL_GL_SwapWindow(window);
     }
-
+    
     /* Deinitialize everything */
     SDL_GL_DeleteContext(ctx);
     SDL_DestroyWindow(window);

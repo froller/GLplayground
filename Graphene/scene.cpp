@@ -146,7 +146,7 @@ size_t Graphene::Scene::modelRangeSize() const
 {
     const size_t align = 64;
     size_t modelRangeSize =
-        +sizeof(float) * 4 // uint + 3 float padding
+        + sizeof(float) * 4 // uint + 3 float padding
         + modelCount() * sizeof(ModelMatrices);
     // Выравнивание
     if (modelRangeSize % align)

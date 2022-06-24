@@ -34,9 +34,9 @@
 #include "graphene_types.h"
 
 /*******************************************************************************
- * 
+ *
  * Graphene
- * 
+ *
  ******************************************************************************/
 
 class Graphene
@@ -63,7 +63,7 @@ public:
         ComputeShader,
         Invalid
     };
-    
+
     enum BufferType
     {
         VertexBuffer = 0,
@@ -72,7 +72,7 @@ public:
         UniformBuffer,
         BufferTypeMax
     };
-      
+
     constexpr static unsigned int ElementSize = 3;
 
     typedef std::array<GLsizei, ElementSize> Element;
@@ -138,7 +138,7 @@ public:
 protected:
     bool m_Started;
     bool m_Wireframe = false;
-    
+
     std::shared_ptr<Scene> m_Scene;
     fvec3 m_ClearColor;
 
@@ -150,10 +150,10 @@ protected:
     size_t m_ElementBufferSize = 0;
     size_t m_StorageBufferSize = 0;
     size_t m_UniformBufferSize = 0;
-    
+
     unsigned int m_VAO;
     unsigned int m_Buffers[BufferTypeMax];
-    
+
 public:
     Graphene();
     Graphene(const Graphene &) = delete;

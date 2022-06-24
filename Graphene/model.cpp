@@ -4,10 +4,10 @@
 
 void Graphene::Model::addPrimitive(const Vertex a, const Vertex b, const Vertex c)
 {
-    addPrimitive({a, b, c});
+    addPrimitive({ a, b, c });
 }
 
-void Graphene::Model::addPrimitive ( const std::array<Vertex, 3> vertices )
+void Graphene::Model::addPrimitive(const std::array<Vertex, 3> vertices)
 {
     std::array<unsigned int, 3> primitive;
     for (int i = 0; i < 3; ++i)
@@ -59,7 +59,7 @@ size_t Graphene::Model::EBOdata(void *elementBuffer, GLsizei offset) const
 {
     const size_t s = EBOsize();
     void *bufferTop = elementBuffer;
-    for(auto i = m_Primitives.begin(); i != m_Primitives.end(); ++i)
+    for (auto i = m_Primitives.begin(); i != m_Primitives.end(); ++i)
     {
         for (unsigned int j = 0; j < ElementSize; ++j)
             (*(Element *)bufferTop)[j] = (*i)[j] + offset;

@@ -4,30 +4,30 @@
 #include <stdlib.h>
 
 /*******************************************************************************
- * 
+ *
  * Graphene
- * 
+ *
  ******************************************************************************/
 
 Graphene::Graphene()
 {
     m_Scene = std::make_shared<Scene>();
     m_ClearColor = { 0, 0, 0 };
-    
+
     // Создание VAO
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
-    
+
     // Создание буферов
     glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
 
     // Использование буфера глубины
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    
+
     // Настройки фреймбуфера
     glEnable(GL_FRAMEBUFFER_SRGB);
-    
+
     // Куллинг
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -47,7 +47,7 @@ Graphene::~Graphene()
 
     // Удаление буферов
     glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
-    
+
     // Удаление VAO
     glDeleteVertexArrays(1, &m_VAO);
 }
@@ -66,13 +66,14 @@ int Graphene::draw()
         onShaderChanged();
 
     clear();
-    
-//
-// Это должно выполняться на рендере каждого кадра
-//
+
+    //
+    // Это должно выполняться на рендере каждого кадра
+    //
+
     // Координаты
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);   
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
     // Нормали
     glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
@@ -95,27 +96,27 @@ int Graphene::draw()
     // Матрицы кмеры
     glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
     glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
-    
+
     if (m_Wireframe)
         for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
             glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
     else
- 
         glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
+
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
-    
+
     return 0;
 }
 
 std::shared_ptr<Graphene::Scene> Graphene::scene() const
 {
-    return m_Scene;   
+    return m_Scene;
 }
 
-void Graphene::camera(std::shared_ptr<Graphene::Camera> camera) 
+void Graphene::camera(std::shared_ptr<Graphene::Camera> camera)
 {
     m_Scene->camera(camera);
 }
@@ -231,7 +232,7 @@ void Graphene::fillVertexBuffer()
 {
     reAllocateVertexBuffer();
     m_Scene->VBOdata(m_VertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);   
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
     glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
@@ -239,7 +240,7 @@ void Graphene::fillElementBuffer()
 {
     reAllocateElementBuffer();
     m_Scene->EBOdata(m_ElementBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);   
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
 }
 
@@ -247,7 +248,7 @@ void Graphene::fillStorageBuffer()
 {
     reAllocateStorageBuffer();
     m_Scene->SSBOdata(m_StorageBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);   
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_Scene->SSBOsize(), m_StorageBuffer, GL_STATIC_DRAW);
 }
 
@@ -270,7 +271,7 @@ void Graphene::onGeometryChanged()
     // Заполнение буферов
     fillVertexBuffer();
     fillElementBuffer();
-//    fillUniformBuffer();
+    // fillUniformBuffer();
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 
@@ -282,13 +283,13 @@ void Graphene::onCameraChanged()
 
 void Graphene::onLightChanged()
 {
-    fillStorageBuffer();   
+    fillStorageBuffer();
     m_Scene->depict(Scene::Aspect::Light);
 }
 
 void Graphene::onEnvironmentChanged()
 {
-    fillStorageBuffer();   
+    fillStorageBuffer();
     m_Scene->depict(Scene::Aspect::Environment);
 }
 
