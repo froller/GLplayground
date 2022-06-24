@@ -27,7 +27,7 @@ public:
 class Graphene::SimpleObjects::Triangle : public Graphene::Model
 {
 public:
-    Triangle(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr);
+    Triangle(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, std::shared_ptr<Graphene::Material> material = nullptr);
     virtual ~Triangle() = default;
 };
 
@@ -40,7 +40,7 @@ public:
 class Graphene::SimpleObjects::Square : public Graphene::Model
 {
 public:
-    Square(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr);
+    Square(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, std::shared_ptr<Graphene::Material> material = nullptr);
     virtual ~Square() = default;
 };
 
@@ -53,7 +53,7 @@ public:
 class Graphene::SimpleObjects::Tetrahedron : public Graphene::Model
 {
 public:
-    Tetrahedron(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr);
+    Tetrahedron(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, std::shared_ptr<Graphene::Material> material = nullptr);
     virtual ~Tetrahedron() = default;
 };
 
@@ -66,7 +66,7 @@ public:
 class Graphene::SimpleObjects::Cube : public Graphene::Model
 {
 public:
-    Cube(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr);
+    Cube(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, std::shared_ptr<Graphene::Material> material = nullptr);
     virtual ~Cube() = default;
 };
 
@@ -81,7 +81,7 @@ class Graphene::SimpleObjects::UVSphere : public Graphene::Model
 protected:
     static constexpr unsigned int s_Segments = 16;
 public:
-    UVSphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, Graphene::Material *material = nullptr);
+    UVSphere(const fvec3 position = { 0, 0, 0 }, const fquat rotation = { 0, 0, 0, 1 }, const fvec3 scale = { 1, 1, 1 }, std::shared_ptr<Graphene::Material> material = nullptr);
     virtual ~UVSphere() = default;
 };
 

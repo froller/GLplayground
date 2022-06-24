@@ -77,14 +77,12 @@ public:
     {
         fvec3 position;
         fvec3 normal;
-        Color color;       
         fvec2 UV;
         uint meshId = 0;
         inline bool operator==(const struct Vertex &that)
         {
             return position == that.position
                 && normal == that.normal
-                && color == that.color
                 && UV == that.UV
                 && meshId == that.meshId;
         }

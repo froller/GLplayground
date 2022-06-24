@@ -78,18 +78,14 @@ int Graphene::draw()
     glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
-    // Цвета
+    // Текстурные координаты
     glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, color));
-    // Текстурные координаты
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
+    // ID сетки
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
-    // ID сетки
-    glEnableVertexAttribArray(4);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
-    glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
+    glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
     // Примитивы
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
     // Источники света
@@ -106,7 +102,6 @@ int Graphene::draw()
     else
         glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
  
-    glDisableVertexAttribArray(4);
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);

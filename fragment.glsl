@@ -3,7 +3,6 @@
 struct Vertex {
     vec3 position;
     vec3 normal;
-    vec3 color;
     vec2 UV;
 };
 
@@ -51,5 +50,5 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular + (diffuse + lights.ambient) * vertex.color;
+    fragmentColor = specular + (diffuse + lights.ambient) * vec3(0.6);
 }

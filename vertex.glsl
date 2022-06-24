@@ -3,15 +3,13 @@
 struct Vertex {
     vec3 position;
     vec3 normal;
-    vec3 color;
     vec2 UV;
 };
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 color;
-layout(location = 3) in vec2 UV;
-layout(location = 4) in uint meshId;
+layout(location = 2) in vec2 UV;
+layout(location = 3) in uint meshId;
 
 layout(std140, binding = 0) uniform CameraMatrices {
     mat4 world;
@@ -36,8 +34,6 @@ void main()
     vertexMeshId = meshId;
     vertex.position = vec4(models.model[vertexMeshId] * vec4(position, 0)).xyz;
     vertex.normal = normalize(vec4(models.model[vertexMeshId] * vec4(normal, 0)).xyz);
-    vertex.color = color;
-    //vertex.color = (position + vec3(1, 1, 1)) / 2.f;    // Раскраска по координатам
     vertex.UV = UV;
     gl_Position = cameraMatrices.projection * cameraMatrices.view * cameraMatrices.world * models.model[vertexMeshId] * vec4(position, 1);
 }
