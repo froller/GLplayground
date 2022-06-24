@@ -40,14 +40,14 @@ void Graphene::Scene::camera(std::shared_ptr<Graphene::Camera> &camera)
     m_Modified |= Aspect::Camera;
 }
 
-void Graphene::Scene::addMaterial(Graphene::Material *material)
+void Graphene::Scene::addMaterial(std::shared_ptr<Graphene::Material> material)
 {
     m_Materials.insert(material);
     material->m_Program.use();
     m_Modified |= Aspect::Shaders;
 }
 
-std::set<Graphene::Material *> &Graphene::Scene::materials()
+std::set<std::shared_ptr<Graphene::Material>> &Graphene::Scene::materials()
 {
     return m_Materials;
 }
@@ -162,24 +162,24 @@ size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
     {
         size_t modelBufferSize = model->VBOdata(bufferTop);
         for (size_t i = 0; i < model->m_Vertices.size(); ++i)
-            *(unsigned int *)((char *)bufferTop + sizeof(Vertex) * i + offsetof(Vertex, meshId)) = meshId;
-        bufferTop = (char *)bufferTop + modelBufferSize;
+            *static_cast<GLuint *>(static_cast<void *>(static_cast<char *>(bufferTop) + sizeof(Vertex) * i + offsetof(Vertex, meshId))) = meshId;
+        bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
         ++meshId;
     }
-    return (char *)bufferTop - (char *)vertexBuffer;
+    return static_cast<char *>(bufferTop) - static_cast<char *>(vertexBuffer);
 }
 
 size_t Graphene::Scene::EBOdata(void *elementBuffer) const
 {
     void *bufferTop = elementBuffer;
-    Index indexOffset = 0;
+    GLsizei indexOffset = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
         size_t modelBufferSize = model->EBOdata(bufferTop, indexOffset);
-        bufferTop = (char *)bufferTop + modelBufferSize;
+        bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
         indexOffset += model->vertexCount();
     }
-    return (char *)bufferTop - (char *)elementBuffer;
+    return static_cast<char *>(bufferTop) - static_cast<char *>(elementBuffer);
 }
 
 size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
@@ -190,30 +190,30 @@ size_t Graphene::Scene::UBOdata(void *uniformBuffer) const
     cameraMatrices->view = m_Camera->view();
     cameraMatrices->projection = m_Camera->projection();
     cameraMatrices->position = m_Camera->position();
-    bufferTop = (char *)bufferTop + sizeof(CameraMatrices);
+    bufferTop = static_cast<char *>(bufferTop) + sizeof(CameraMatrices);
     // ...
-    return (char *)bufferTop - (char *)uniformBuffer;
+    return static_cast<char *>(bufferTop) - static_cast<char *>(uniformBuffer);
 }
 
 size_t Graphene::Scene::SSBOdata(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
-    bufferTop = (char *)bufferTop + lightRangeData(bufferTop);
-    bufferTop = (char *)bufferTop + modelRangeData(bufferTop);
-    return (char *)bufferTop - (char *)storageBuffer;
+    bufferTop = static_cast<char *>(bufferTop) + lightRangeData(bufferTop);
+    bufferTop = static_cast<char *>(bufferTop) + modelRangeData(bufferTop);
+    return static_cast<char *>(bufferTop) - static_cast<char *>(storageBuffer);
 }
 
 size_t Graphene::Scene::lightRangeData(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
     *(fvec3 *)bufferTop = m_Ambient;
-    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
-    *(unsigned int *)bufferTop = m_Lights.size();
-    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
+    bufferTop = static_cast<char *>(bufferTop) + sizeof(float) * 4; // std430 выравнивает по vec4
+    *static_cast<GLuint *>(bufferTop) = m_Lights.size();
+    bufferTop = static_cast<char *>(bufferTop) + sizeof(float) * 4; // std430 выравнивает по vec4
     for (auto light = m_Lights.begin(); light != m_Lights.end(); ++light)
     {
         light->lightData(bufferTop);
-        bufferTop = (char *)bufferTop + sizeof(LightSource);
+        bufferTop = static_cast<char *>(bufferTop) + sizeof(LightSource);
     }
     return lightRangeSize();
 }
@@ -221,12 +221,12 @@ size_t Graphene::Scene::lightRangeData(void *storageBuffer) const
 size_t Graphene::Scene::modelRangeData(void *storageBuffer) const
 {
     void *bufferTop = storageBuffer;
-    *(unsigned int *)bufferTop = m_Models.size();
-    bufferTop = (char *)bufferTop + sizeof(float) * 4; // std430 выравнивает по vec4
+    *static_cast<GLuint *>(bufferTop) = m_Models.size();
+    bufferTop = static_cast<char *>(bufferTop) + sizeof(float) * 4; // std430 выравнивает по vec4
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
         model->SSBOdata(bufferTop);
-        bufferTop = (char *)bufferTop + sizeof(ModelMatrices);
+        bufferTop = static_cast<char *>(bufferTop) + sizeof(ModelMatrices);
     }
     return modelRangeSize();
 }

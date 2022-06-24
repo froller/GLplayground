@@ -82,14 +82,14 @@ int main(int argc, char **argv)
 
     /* Initializing Graphene */
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing Graphene");
-    Graphene *graphene = new Graphene;
+    std::unique_ptr<Graphene> graphene = std::make_unique<Graphene>();
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating materials");
     Graphene::Shader vertexShader(Graphene::VertexShader);
     vertexShader.loadSource(std::filesystem::path("../vertex.glsl"));
     Graphene::Shader fragmentShader(Graphene::FragmentShader);
     fragmentShader.loadSource(std::filesystem::path("../fragment.glsl"));
-    Graphene::Material *blinn = new Graphene::Material();
+    std::shared_ptr<Graphene::Material> blinn = std::make_shared<Graphene::Material>();
     blinn->addShader(vertexShader);
     blinn->addShader(fragmentShader);
 
@@ -279,8 +279,6 @@ int main(int argc, char **argv)
     }
 
     /* Deinitialize everything */
-    delete blinn;
-    delete graphene;
     SDL_GL_DeleteContext(ctx);
     SDL_DestroyWindow(window);
     SDL_Quit();
