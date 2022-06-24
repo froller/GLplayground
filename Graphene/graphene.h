@@ -185,6 +185,7 @@ protected:
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
     virtual void useMaterials();
+    virtual void useTextures();
     virtual void onGeometryChanged();
     virtual void onCameraChanged();
     virtual void onLightChanged();

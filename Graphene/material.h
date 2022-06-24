@@ -14,14 +14,18 @@ public:
 
 public:
     Graphene::Program m_Program;
+    std::shared_ptr<Graphene::Texture> m_Texture;
 
 public:
-    Material(): m_Program() {};
+    Material(): m_Program(), m_Texture(nullptr) {};
     Material(const Material &) = delete;
     Material(Material &&) = default;
     virtual ~Material() = default;
     Material &operator=(const Material &) = delete;
     Material &operator=(Material &&) = default;
+    virtual void setTexture(std::shared_ptr<Texture> texture);
+    virtual void useTextures();
+
 
 public:
     virtual void addShader(Shader &shader);

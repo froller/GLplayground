@@ -262,8 +262,15 @@ void Graphene::fillUniformBuffer()
 
 void Graphene::useMaterials()
 {
-    for (auto m = m_Scene->materials().begin(); m != m_Scene->materials().end(); ++m)
-        (*m)->m_Program.use();
+    for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
+        (*material)->m_Program.use();
+}
+
+void Graphene::useTextures()
+{
+    for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
+        (*material)->useTextures();
+
 }
 
 void Graphene::onGeometryChanged()
