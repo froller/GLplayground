@@ -7,7 +7,15 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#if defined(__clang__) && defined(_WIN32)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmacro-redefined"
+#pragma clang diagnostic ignored "-Wpragma-pack"
+#endif // __clang__ && _WIN32
 #include <SDL.h>
+#if defined(__clang__) && defined(_WIN32)
+#pragma clang diagnostic pop
+#endif // __clang__ && _WIN32
 
 #include <string>
 #include <vector>
@@ -93,7 +101,14 @@ public:
     public:
         fvec3 position;
     private:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif // __clang__
         char padding0[sizeof(float)] = { 0 };
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
     public:
         Color color;
         float attenuation;
@@ -107,7 +122,14 @@ public:
         fmat4 projection;
         fvec3 position;
     private:
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif // __clang__
         char padding0[sizeof(float)] = { 0 };
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
     } CameraMatrices;
 
     typedef struct ModelMatrices

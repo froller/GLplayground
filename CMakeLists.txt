@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.23)
 
 project(GLplayground)
 
@@ -22,6 +22,7 @@ if(WIN32)
     set(SDL2_LIBDIR "build/packages/sdl2.2.0.5/build/native/lib/$(Platform)/dynamic")
     set(SDL2_BINDIR "build/packages/sdl2.redist.2.0.5/build/native/bin/$(Platform)/dynamic")
     set(GLEW_LIBDIR "build/packages/Glew_dynamic.2.0.0.0/build/native/lib/v140/$(Platform)")
+    set(GLEW_BINDIR "build/packages/Glew_dynamic.2.0.0.0/build/native/bin/v140/$(Platform)")
 
     set(SDL2_INCLUDE_DIRS "build/packages/sdl2.2.0.5/build/native/include")
     set(GLEW_INCLUDE_DIRS "build/packages/Glew_dynamic.2.0.0.0/build/native/include")
@@ -48,13 +49,16 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
 # Add compiler flags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    add_compile_options(-Wno-write-strings -pedantic)
+    add_compile_options(-Wno-write-strings)
+	add_compile_options(-pedantic)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -ggdb")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb")
 elseif(WIN32)
-    add_compile_definitions(_UNICODE UNICODE)
+	#add_compile_options(-W3)
+    add_compile_definitions(_UNICODE UNICODE _CRT_SECURE_NO_WARNINGS)
     remove_definitions(MBCS)
 endif()
+
 
 set(SOURCES
     main.cpp
@@ -95,10 +99,14 @@ if (WIN32)
 else()
     add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 endif()
+set_property(GLOBAL
+	PROPERTY
+	VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME}
+)
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR})
+target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR} ${SDL2_BINDIR} ${GLEW_BINDIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
 set_source_files_properties(fragment.glsl vertex.glsl
@@ -106,7 +114,9 @@ set_source_files_properties(fragment.glsl vertex.glsl
     LANGUAGE glsl
     VS_COPY_TO_OUT_DIR Always
 )
-source_group(Shaders REGULAR_EXPRESSION glsl$)
+source_group("Graphene/Source Files" REGULAR_EXPRESSION Graphene/.+\.c\(pp|c\)?$)
+source_group("Graphene/Header Files" REGULAR_EXPRESSION Graphene/.+\.h\(pp|h\)?$)
+source_group(Shaders REGULAR_EXPRESSION \.glsl$)
 add_custom_target(Shaders SOURCES ${SHADERS})
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
