@@ -98,35 +98,35 @@ int main(int argc, char **argv)
     //    graphene->addModel(Graphene::SimpleObjects::Square());
 
     graphene->scene()->addModel(Graphene::SimpleObjects::Tetrahedron(
-        { 0.87, -0.25 / sqrt(3), 0.5 },
-        fquat({ 0.f, 0.f, 0.f }), // fquat({0, -M_PI_2, 0})
-        { 1.f, 1.f, 1.f },
+        fvec3(0.87, -0.25 / sqrt(3), 0.5),
+        fquat(fvec3(0.f, 0.f, 0.f)), // fquat({0, -M_PI_2, 0})
+        fvec3(1.f, 1.f, 1.f),
         blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
-        { -0.87, 0, 0.5 },
-        fquat({ 0.f, 0.f, 0.f }),
-        { 0.7, 0.7, 0.7 },
+        fvec3(-0.87, 0, 0.5),
+        fquat(fvec3(0.f, 0.f, 0.f)),
+        fvec3(0.7, 0.7, 0.7),
         blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
-        { 0.0, 0.0, -1.f },
-        fquat({ 0.f, 0.f, 0.f }),
-        { 0.5, 0.5, 0.5 },
+        fvec3(0.0, 0.0, -1.f),
+        fquat(fvec3(0.f, 0.f, 0.f)),
+        fvec3(0.5, 0.5, 0.5),
         blinn
     ));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding lights");
-    graphene->scene()->addLight(Graphene::Light::Omni({ 4,  4, -4 }, { 0.9, 1.0, 1.0 }, 20.f));
-    graphene->scene()->addLight(Graphene::Light::Omni({ -4, -4,  4 }, { 1.0, 1.0, 0.9 }, 20.f));
-    graphene->scene()->ambient({ 0.1, 0.1, 0.1 });
+    graphene->scene()->addLight(Graphene::Light::Omni(fvec3( 4.f,  4.f, -4.f), Graphene::Color(0.9, 1.0, 1.0), 20.f));
+    graphene->scene()->addLight(Graphene::Light::Omni(fvec3(-4.f, -4.f,  4.f), Graphene::Color(1.0, 1.0, 0.9), 20.f));
+    graphene->scene()->ambient(Graphene::Color(0.1, 0.1, 0.1));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding cameras");
     std::shared_ptr<Graphene::Camera> camera[4] = {
-        std::make_shared<Graphene::Camera::Targeted, const fvec3, const fvec3>({ 0.f, 0.f, 2.f }, { 0.f, 0.f, 0.f }),
-        std::make_shared<Graphene::Camera::Targeted, const fvec3, const fvec3>({ 0.5, 0.f, 2.f }, { 0.5, 0.f, 0.f }),
-        std::make_shared<Graphene::Camera, const fvec3, const fquat>({ 0.f, 0.f, 2.f }, { 0.f, 0.f, 0.f, 1.f }),
-        std::make_shared<Graphene::Camera, const fvec3, const fquat>({ 0.5, 0.f, 2.f }, { 0.f, 0.f, 0.f, 1.f })
+        std::make_shared<Graphene::Camera::Targeted>(fvec3(0.f, 0.f, 2.f), fvec3(0.f, 0.f, 0.f)),
+        std::make_shared<Graphene::Camera::Targeted>(fvec3(0.5, 0.f, 2.f), fvec3(0.5, 0.f, 0.f)),
+        std::make_shared<Graphene::Camera>(fvec3(0.f, 0.f, 2.f), fquat(0.f, 0.f, 0.f, 1.f)),
+        std::make_shared<Graphene::Camera>(fvec3(0.5, 0.f, 2.f), fquat(0.f, 0.f, 0.f, 1.f))
     };
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Setting default camera");
