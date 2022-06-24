@@ -26,7 +26,7 @@ public:
     virtual size_t EBOsize() const;
     virtual size_t SSBOsize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
-    virtual size_t EBOdata(void *elementBuffer, Index offset) const;
+    virtual size_t EBOdata(void *elementBuffer, GLsizei offset) const;
     virtual size_t SSBOdata(void *storageBuffer) const;
     virtual void material(std::shared_ptr<Graphene::Material> material);
     virtual std::shared_ptr<Graphene::Material> material() const;

@@ -98,10 +98,10 @@ int Graphene::draw()
     
     if (m_Wireframe)
         for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
-            glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(Index)));
+            glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
     else
-        glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, (void *)0);
  
+        glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
     glDisableVertexAttribArray(3);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);

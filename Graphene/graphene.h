@@ -74,11 +74,9 @@ public:
     };
       
     constexpr static unsigned int ElementSize = 3;
-    
-    typedef unsigned int Index;
-    
-    typedef std::array<Index, ElementSize> Element;
-    
+
+    typedef std::array<GLsizei, ElementSize> Element;
+
     typedef fvec3 Color;
 
     typedef struct Vertex
