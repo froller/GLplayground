@@ -2,9 +2,15 @@
 
 Graphene::Material::Blinn::Blinn() : m_Ambient(nullptr), m_Diffuse(nullptr), m_Specular(nullptr), m_Bump(nullptr)
 {
+    std::shared_ptr<Shader> vertexShader = std::make_shared<Shader>(ShaderType::Vertex);
+    vertexShader->loadSource(std::filesystem::path("../Shaders/blinn.vertex.glsl"));
+    std::shared_ptr<Shader> fragmentShader = std::make_shared<Shader>(ShaderType::Fragment);
+    fragmentShader->loadSource(std::filesystem::path("../Shaders/blinn.fragment.glsl"));
+    m_Program.addShader(vertexShader);
+    m_Program.addShader(fragmentShader);
 }
 
-void Graphene::Material::Blinn::setTexture(Graphene::Material::Blinn::TextureChannel &channel, std::shared_ptr<Texture> texture)
+void Graphene::Material::Blinn::setTexture(const Graphene::Material::Blinn::TextureChannel &channel, std::shared_ptr<Texture> texture)
 {
     switch (channel)
     {

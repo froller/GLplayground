@@ -19,7 +19,7 @@ Graphene::Graphene()
     glBindVertexArray(m_VAO);
 
     // Создание буферов
-    glGenBuffers(BufferType::BufferTypeMax, m_Buffers);
+    glGenBuffers(GLsizei(BufferType::BufferTypeMax), m_Buffers);
 
     // Использование буфера глубины
     glEnable(GL_DEPTH_TEST);
@@ -46,7 +46,7 @@ Graphene::~Graphene()
         free(m_UniformBuffer);
 
     // Удаление буферов
-    glDeleteBuffers(BufferType::BufferTypeMax, m_Buffers);
+    glDeleteBuffers(size_t(BufferType::BufferTypeMax), m_Buffers);
 
     // Удаление VAO
     glDeleteVertexArrays(1, &m_VAO);
@@ -73,29 +73,29 @@ int Graphene::draw()
 
     // Координаты
     glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
     // Нормали
     glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
     // Текстурные координаты
     glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
     // ID сетки
     glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
     glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
     // Примитивы
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
     // Источники света
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);
-    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[BufferType::StorageBuffer], 0, m_Scene->lightRangeSize());
-    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_Buffers[BufferType::StorageBuffer], m_Scene->lightRangeSize(), m_Scene->modelRangeSize());
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[GLuint(BufferType::Storage)]);
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[GLuint(BufferType::Storage)], 0, m_Scene->lightRangeSize());
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_Buffers[GLuint(BufferType::Storage)], m_Scene->lightRangeSize(), m_Scene->modelRangeSize());
     // Матрицы кмеры
-    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[BufferType::UniformBuffer], 0, sizeof(CameraMatrices));
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[GLuint(BufferType::Uniform)]);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[GLuint(BufferType::Uniform)], 0, sizeof(CameraMatrices));
 
     if (m_Wireframe)
         for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
@@ -232,7 +232,7 @@ void Graphene::fillVertexBuffer()
 {
     reAllocateVertexBuffer();
     m_Scene->VBOdata(m_VertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[BufferType::VertexBuffer]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
     glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
@@ -240,7 +240,7 @@ void Graphene::fillElementBuffer()
 {
     reAllocateElementBuffer();
     m_Scene->EBOdata(m_ElementBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[BufferType::ElementBuffer]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
 }
 
@@ -248,7 +248,7 @@ void Graphene::fillStorageBuffer()
 {
     reAllocateStorageBuffer();
     m_Scene->SSBOdata(m_StorageBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[BufferType::StorageBuffer]);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[GLuint(BufferType::Storage)]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_Scene->SSBOsize(), m_StorageBuffer, GL_STATIC_DRAW);
 }
 
@@ -256,7 +256,7 @@ void Graphene::fillUniformBuffer()
 {
     reAllocateUniformBuffer();
     m_Scene->UBOdata(m_UniformBuffer);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[BufferType::UniformBuffer]);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[GLuint(BufferType::Uniform)]);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraMatrices), m_UniformBuffer, GL_STATIC_DRAW);
 }
 
@@ -268,9 +268,10 @@ void Graphene::useMaterials()
 
 void Graphene::useTextures()
 {
+/*
     for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
         (*material)->useTextures();
-
+*/
 }
 
 void Graphene::onGeometryChanged()

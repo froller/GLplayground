@@ -4,7 +4,6 @@
 
 Graphene::Texture::Texture()
 {
-
 }
 
 Graphene::Texture::~Texture()
@@ -17,22 +16,26 @@ Graphene::Texture::Color::Color(Graphene::Color &color) : m_Color(color)
 {
     m_Width = 1;
     m_Height = 1;
-    m_Buffer = malloc(width() * height() * sizeof(RGB8));
+    size_t bufferSize = width() * height() * sizeof(RGB8);
+    m_Buffer = malloc(bufferSize);
     struct RGB8 *pixel = static_cast<struct RGB8 *>(m_Buffer);
     pixel[0].r = 0xFF * color.r;
     pixel[0].g = 0xFF * color.g;
     pixel[0].b = 0xFF * color.b;
 
     glGenTextures(1, &m_TextureID);
-    glBindTexture(GL_TEXTURE_BUFFER, m_TextureID);
-    glGenBuffers(1, &m_BufferID);
-    glTexBuffer(GL_TEXTURE_BUFFER, GL_RGB8UI, m_BufferID);
+    glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_BGR, GL_UNSIGNED_BYTE, m_Buffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
+/*
 void Graphene::Texture::Color::use()
 {
 
 }
+*/
 
 Graphene::Texture::Checker::Checker(Graphene::Color &color1, Graphene::Color &color2) : m_Color1(color1), m_Color2(color2)
 {
@@ -47,4 +50,14 @@ Graphene::Texture::Checker::Checker(Graphene::Color &color1, Graphene::Color &co
     pixel[2].g = pixel[1].g = 0xFF * color2.g;
     pixel[2].b = pixel[1].b = 0xFF * color2.b;
 
+    glGenTextures(1, &m_TextureID);
+    glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+/*
+    glGenBuffers(1, &m_BufferID);
+    glTexBuffer(, GL_RGB8UI, m_BufferID);
+    glBufferData(, bufferSize, m_Buffer, GL_STATIC_DRAW);
+*/
 };

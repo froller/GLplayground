@@ -11,7 +11,7 @@ class Graphene::Program
 {
 protected:
     GLuint m_Handle;
-    std::vector<Shader> m_Shaders;
+    std::vector<std::shared_ptr<Shader>> m_Shaders;
     std::string m_Log;
     uint64_t m_LastError;
 
@@ -21,7 +21,7 @@ public:
     virtual ~Program();
     Program &operator=(const Program &) = delete;
     virtual GLuint handle() const;
-    virtual void addShader(Shader &shader);
+    virtual void addShader(std::shared_ptr<Shader> shader);
     virtual int link();
     virtual int use();
     virtual bool linked() const;

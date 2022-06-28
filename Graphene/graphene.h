@@ -53,23 +53,23 @@ public:
     class SimpleObjects;
     class Scene;
 
-    enum ShaderType
+    enum class ShaderType
     {
-        GeometryShader,
-        VertexShader,
-        TesselationControlShader,
-        TesselationEvaluationShader,
-        FragmentShader,
-        ComputeShader,
+        Geometry,
+        Vertex,
+        TesselationControl,
+        TesselationEvaluation,
+        Fragment,
+        Compute,
         Invalid
     };
 
-    enum BufferType
+    enum class BufferType
     {
-        VertexBuffer = 0,
-        ElementBuffer,
-        StorageBuffer,
-        UniformBuffer,
+        Vertex = 0,
+        Element,
+        Storage,
+        Uniform,
         BufferTypeMax
     };
 
@@ -152,7 +152,7 @@ protected:
     size_t m_UniformBufferSize = 0;
 
     unsigned int m_VAO;
-    unsigned int m_Buffers[BufferTypeMax];
+    unsigned int m_Buffers[size_t(BufferType::BufferTypeMax)];
 
 public:
     Graphene();
@@ -196,6 +196,7 @@ protected:
 #include "shader.h"
 #include "program.h"
 
+#include "texture.h"
 #include "material.h"
 #include "blinn.h"
 

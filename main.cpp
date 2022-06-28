@@ -85,15 +85,11 @@ int main(int argc, char **argv)
     std::unique_ptr<Graphene> graphene = std::make_unique<Graphene>();
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating materials");
-    Graphene::Shader vertexShader(Graphene::VertexShader);
-    vertexShader.loadSource(std::filesystem::path("../vertex.glsl"));
-    Graphene::Shader fragmentShader(Graphene::FragmentShader);
-    fragmentShader.loadSource(std::filesystem::path("../fragment.glsl"));
-    std::shared_ptr<Graphene::Material> simpleMaterial = std::make_shared<Graphene::Material>();
-    simpleMaterial->addShader(vertexShader);
-    simpleMaterial->addShader(fragmentShader);
-    std::shared_ptr<Graphene::Texture> simpleTexture = std::make_shared<Graphene::Texture::Color>(Graphene::Color(1.f, 0.5, 0.25));
-    simpleMaterial->setTexture(simpleTexture);
+    std::shared_ptr<Graphene::Material::Default> defaultMaterial = std::make_shared<Graphene::Material::Default>();
+    std::shared_ptr<Graphene::Material::Blinn> blinn = std::make_shared<Graphene::Material::Blinn>();
+
+    std::shared_ptr<Graphene::Texture> flatLime = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 1.f, 0.f));
+    blinn->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, flatLime);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
@@ -103,19 +99,19 @@ int main(int argc, char **argv)
         fvec3(0.87, -0.25 / sqrt(3), 0.5),
         fquat(fvec3(0.f, 0.f, 0.f)), // fquat({0, -M_PI_2, 0})
         fvec3(1.f, 1.f, 1.f),
-        simpleMaterial
+        defaultMaterial
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         fvec3(-0.87, 0, 0.5),
         fquat(fvec3(0.f, 0.f, 0.f)),
         fvec3(0.7, 0.7, 0.7),
-        simpleMaterial
+        defaultMaterial
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         fvec3(0.0, 0.0, -1.f),
         fquat(fvec3(0.f, 0.f, 0.f)),
         fvec3(0.5, 0.5, 0.5),
-        simpleMaterial
+        blinn
     ));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding lights");

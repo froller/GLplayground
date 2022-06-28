@@ -21,11 +21,11 @@ GLuint Graphene::Program::handle() const
     return m_Handle;
 }
 
-void Graphene::Program::addShader(Shader &shader)
+void Graphene::Program::addShader(std::shared_ptr<Shader> shader)
 {
-    shader.compile();
-    glAttachShader(m_Handle, shader.handle());
-    m_Shaders.push_back(std::move(shader));
+    shader->compile();
+    glAttachShader(m_Handle, shader->handle());
+    m_Shaders.push_back(shader);
 }
 
 int Graphene::Program::use()
@@ -40,7 +40,7 @@ int Graphene::Program::use()
 int Graphene::Program::link()
 {
     for (auto shader = m_Shaders.begin(); shader != m_Shaders.end(); ++shader)
-        if (!shader->compiled())
+        if (!(*shader)->compiled())
             return -1;
     glLinkProgram(m_Handle);
     if (!linked())

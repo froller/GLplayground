@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.19)
 
 project(GLplayground)
 
@@ -89,8 +89,10 @@ set(SOURCES
     Graphene/blinn.cpp
 )
 set(SHADERS
-    fragment.glsl
-    vertex.glsl
+    Shaders/default.vertex.glsl
+    Shaders/default.fragment.glsl
+    Shaders/blinn.vertex.glsl
+    Shaders/blinn.fragment.glsl
 )
 
 if (WIN32)

@@ -12,7 +12,10 @@ public:
         Checker
     };
     struct RGB8 {
-        unsigned char r, g, b;
+        uint8_t r, g, b;
+    };
+    struct RGBA8 {
+        uint8_t r, g, b, a;
     };
 
     constexpr static const Type s_Type = Type::None;
@@ -24,7 +27,7 @@ public:
     constexpr size_t width() const { return m_Width; }
     constexpr size_t height() const { return m_Height; }
     constexpr void *buffer() const { return m_Buffer; }
-    virtual void use() = 0;
+    //virtual void use() = 0;
 
 protected:
     size_t m_Width = 0;
@@ -46,7 +49,7 @@ protected:
 public:
     Color(Graphene::Color &color);
     virtual ~Color() = default;
-    virtual void use();
+    //virtual void use();
 
 protected:
     Graphene::Color m_Color;
