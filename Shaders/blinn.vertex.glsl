@@ -27,8 +27,6 @@ layout(std430, binding = 1) buffer Models {
 out Vertex vertex;
 out flat uint vertexMeshId;
 
-//uniform mat4 MVP[3];
-
 void main()
 {
     vertexMeshId = meshId;

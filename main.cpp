@@ -268,7 +268,7 @@ int main(int argc, char **argv)
             graphene->scene()->camera()->orbit(step);
             graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
         }
-        if (graphene->draw())
+        if (graphene->drawScene())
         {
             SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Draw failed");
             __builtin_trap();

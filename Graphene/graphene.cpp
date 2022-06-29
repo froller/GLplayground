@@ -52,10 +52,10 @@ Graphene::~Graphene()
     glDeleteVertexArrays(1, &m_VAO);
 }
 
-int Graphene::draw()
+int Graphene::drawScene()
 {
-    if (m_Scene->modified() & Scene::Aspect::Geometry)
-        onGeometryChanged();
+    //if (m_Scene->modified() & Scene::Aspect::Geometry)
+    //    onGeometryChanged(nullptr);
     if (m_Scene->modified() & Scene::Aspect::Light)
         onLightChanged();
     if (m_Scene->modified() & Scene::Aspect::Camera)
@@ -70,25 +70,9 @@ int Graphene::draw()
     //
     // Это должно выполняться на рендере каждого кадра
     //
+    
+    // Эти данные инвариантны относительно draw-call-ов, так что пусть устанавливаются только один раз
 
-    // Координаты
-    glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
-    // Нормали
-    glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
-    // Текстурные координаты
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
-    // ID сетки
-    glEnableVertexAttribArray(3);
-    glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
-    // Примитивы
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
     // Источники света
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_Buffers[GLuint(BufferType::Storage)]);
     glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, m_Buffers[GLuint(BufferType::Storage)], 0, m_Scene->lightRangeSize());
@@ -97,16 +81,42 @@ int Graphene::draw()
     glBindBuffer(GL_UNIFORM_BUFFER, m_Buffers[GLuint(BufferType::Uniform)]);
     glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_Buffers[GLuint(BufferType::Uniform)], 0, sizeof(CameraMatrices));
 
-    if (m_Wireframe)
-        for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
-            glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
-    else
+    // Геометрия и прочая фигня, которая уникальна для каждого draw-call-а
+    for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
+    {
+        onGeometryChanged(*material);
+        // Координаты
+        glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
+        glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
+        // Нормали
+        glEnableVertexAttribArray(1); // 1 - просто потому что следующий свободный
+        glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+        // Текстурные координаты
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
+        // ID сетки
+        glEnableVertexAttribArray(3);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
+        glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
+        // Примитивы
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
+
+        /* Красиво, но бесполезно
+            if (m_Wireframe)
+                for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
+                    glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
+            else
+        */
         glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
 
-    glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(3);
+        glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(0);
+    }
 
     return 0;
 }
@@ -180,9 +190,9 @@ void Graphene::wireframe(const bool enable)
 
 /*****************************************************************************/
 
-size_t Graphene::reAllocateElementBuffer()
+size_t Graphene::reAllocateElementBuffer(std::shared_ptr<Graphene::Material> material)
 {
-    size_t newSize = m_Scene->EBOsize();
+    size_t newSize = m_Scene->EBOsize(material);
     if (newSize > m_ElementBufferSize)
     {
         void *ptr = realloc(m_ElementBuffer, newSize);
@@ -192,9 +202,9 @@ size_t Graphene::reAllocateElementBuffer()
     return m_ElementBufferSize;
 }
 
-size_t Graphene::reAllocateVertexBuffer()
+size_t Graphene::reAllocateVertexBuffer(std::shared_ptr<Graphene::Material> material)
 {
-    size_t newSize = m_Scene->VBOsize();
+    size_t newSize = m_Scene->VBOsize(material);
     if (newSize > m_VertexBufferSize)
     {
         void *ptr = realloc(m_VertexBuffer, newSize);
@@ -228,20 +238,20 @@ size_t Graphene::reAllocateUniformBuffer()
     return m_UniformBufferSize;
 }
 
-void Graphene::fillVertexBuffer()
+void Graphene::fillVertexBuffer(std::shared_ptr<Graphene::Material> material)
 {
-    reAllocateVertexBuffer();
+    reAllocateVertexBuffer(material);
     m_Scene->VBOdata(m_VertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(material), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::fillElementBuffer()
+void Graphene::fillElementBuffer(std::shared_ptr<Graphene::Material> material)
 {
-    reAllocateElementBuffer();
+    reAllocateElementBuffer(material);
     m_Scene->EBOdata(m_ElementBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(material), m_ElementBuffer, GL_STATIC_DRAW);
 }
 
 void Graphene::fillStorageBuffer()
@@ -274,12 +284,11 @@ void Graphene::useTextures()
 */
 }
 
-void Graphene::onGeometryChanged()
+void Graphene::onGeometryChanged(std::shared_ptr<Graphene::Material> material)
 {
     // Заполнение буферов
-    fillVertexBuffer();
-    fillElementBuffer();
-    // fillUniformBuffer();
+    fillVertexBuffer(material);
+    fillElementBuffer(material);
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 

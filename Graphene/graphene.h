@@ -161,7 +161,7 @@ public:
     virtual ~Graphene();
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
-    virtual int draw();
+    virtual int drawScene();
     virtual std::shared_ptr<Graphene::Scene> scene() const;
     virtual void camera(std::shared_ptr<Graphene::Camera> camera);
     virtual void addModel(const Graphene::Model &model);
@@ -176,17 +176,17 @@ public:
     virtual void wireframe(const bool enable);
 
 protected:
-    virtual size_t reAllocateVertexBuffer();
-    virtual size_t reAllocateElementBuffer();
+    virtual size_t reAllocateVertexBuffer(std::shared_ptr<Material> material);
+    virtual size_t reAllocateElementBuffer(std::shared_ptr<Material> material);
     virtual size_t reAllocateStorageBuffer();
     virtual size_t reAllocateUniformBuffer();
-    virtual void fillVertexBuffer();
-    virtual void fillElementBuffer();
+    virtual void fillVertexBuffer(std::shared_ptr<Material> material);
+    virtual void fillElementBuffer(std::shared_ptr<Material> material);
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
     virtual void useMaterials();
     virtual void useTextures();
-    virtual void onGeometryChanged();
+    virtual void onGeometryChanged(std::shared_ptr<Material> material);
     virtual void onCameraChanged();
     virtual void onLightChanged();
     virtual void onEnvironmentChanged();

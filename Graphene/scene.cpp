@@ -103,19 +103,21 @@ size_t Graphene::Scene::modelCount() const
     return m_Models.size();
 }
 
-size_t Graphene::Scene::VBOsize() const
+size_t Graphene::Scene::VBOsize(std::shared_ptr<Graphene::Material> material) const
 {
     size_t vboSize = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
-        vboSize += model->VBOsize();
+        if (model->m_Material == material)
+            vboSize += model->VBOsize();
     return vboSize;
 }
 
-size_t Graphene::Scene::EBOsize() const
+size_t Graphene::Scene::EBOsize(std::shared_ptr<Graphene::Material> material) const
 {
     size_t eboSize = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
-        eboSize += model->EBOsize();
+        if (model->m_Material == material)
+            eboSize += model->EBOsize();
     return eboSize;
 }
 
