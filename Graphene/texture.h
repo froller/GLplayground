@@ -47,7 +47,7 @@ protected:
     constexpr static const GLenum s_GLPixelFormat = GL_RGB8;
 
 public:
-    Color(Graphene::Color &color);
+    Color(const Graphene::Color &color);
     virtual ~Color() = default;
     //virtual void use();
 
@@ -65,7 +65,7 @@ protected:
     constexpr static const GLenum s_GLPixelFormat = GL_RGB8;
 
 public:
-    Checker(Graphene::Color &color1, Graphene::Color &color2);
+    Checker(const Graphene::Color &color1, const Graphene::Color &color2);
     virtual ~Checker() = default;
 
 protected:

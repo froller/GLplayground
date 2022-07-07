@@ -12,7 +12,7 @@ Graphene::Texture::~Texture()
         free(m_Buffer);
 }
 
-Graphene::Texture::Color::Color(Graphene::Color &color) : m_Color(color)
+Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
 {
     m_Width = 1;
     m_Height = 1;
@@ -37,7 +37,7 @@ void Graphene::Texture::Color::use()
 }
 */
 
-Graphene::Texture::Checker::Checker(Graphene::Color &color1, Graphene::Color &color2) : m_Color1(color1), m_Color2(color2)
+Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphene::Color &color2) : m_Color1(color1), m_Color2(color2)
 {
     m_Width = 2;
     m_Height = 2;
