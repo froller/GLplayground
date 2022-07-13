@@ -176,12 +176,12 @@ public:
     virtual void wireframe(const bool enable);
 
 protected:
-    virtual size_t reAllocateVertexBuffer(std::shared_ptr<Material> material);
-    virtual size_t reAllocateElementBuffer(std::shared_ptr<Material> material);
+    virtual size_t reAllocateVertexBuffer();
+    virtual size_t reAllocateElementBuffer();
     virtual size_t reAllocateStorageBuffer();
     virtual size_t reAllocateUniformBuffer();
-    virtual void fillVertexBuffer(std::shared_ptr<Material> material);
-    virtual void fillElementBuffer(std::shared_ptr<Material> material);
+    virtual void fillVertexBuffer();
+    virtual void fillElementBuffer();
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
     virtual void useMaterials();

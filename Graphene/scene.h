@@ -51,8 +51,8 @@ public:
     virtual size_t elementCount() const;
     virtual size_t lightCount() const;
     virtual size_t modelCount() const;
-    virtual size_t VBOsize(std::shared_ptr<Material> material) const;
-    virtual size_t EBOsize(std::shared_ptr<Material> material) const;
+    virtual size_t VBOsize() const;
+    virtual size_t EBOsize() const;
     virtual size_t UBOsize() const;
     virtual size_t SSBOsize() const;
     virtual size_t lightRangeSize() const;

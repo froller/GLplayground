@@ -190,9 +190,9 @@ void Graphene::wireframe(const bool enable)
 
 /*****************************************************************************/
 
-size_t Graphene::reAllocateElementBuffer(std::shared_ptr<Graphene::Material> material)
+size_t Graphene::reAllocateElementBuffer()
 {
-    size_t newSize = m_Scene->EBOsize(material);
+    size_t newSize = m_Scene->EBOsize();
     if (newSize > m_ElementBufferSize)
     {
         void *ptr = realloc(m_ElementBuffer, newSize);
@@ -202,9 +202,9 @@ size_t Graphene::reAllocateElementBuffer(std::shared_ptr<Graphene::Material> mat
     return m_ElementBufferSize;
 }
 
-size_t Graphene::reAllocateVertexBuffer(std::shared_ptr<Graphene::Material> material)
+size_t Graphene::reAllocateVertexBuffer()
 {
-    size_t newSize = m_Scene->VBOsize(material);
+    size_t newSize = m_Scene->VBOsize();
     if (newSize > m_VertexBufferSize)
     {
         void *ptr = realloc(m_VertexBuffer, newSize);
@@ -238,20 +238,20 @@ size_t Graphene::reAllocateUniformBuffer()
     return m_UniformBufferSize;
 }
 
-void Graphene::fillVertexBuffer(std::shared_ptr<Graphene::Material> material)
+void Graphene::fillVertexBuffer()
 {
-    reAllocateVertexBuffer(material);
+    reAllocateVertexBuffer();
     m_Scene->VBOdata(m_VertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(material), m_VertexBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::fillElementBuffer(std::shared_ptr<Graphene::Material> material)
+void Graphene::fillElementBuffer()
 {
-    reAllocateElementBuffer(material);
+    reAllocateElementBuffer();
     m_Scene->EBOdata(m_ElementBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(material), m_ElementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
 }
 
 void Graphene::fillStorageBuffer()
@@ -287,8 +287,8 @@ void Graphene::useTextures()
 void Graphene::onGeometryChanged(std::shared_ptr<Graphene::Material> material)
 {
     // Заполнение буферов
-    fillVertexBuffer(material);
-    fillElementBuffer(material);
+    fillVertexBuffer();
+    fillElementBuffer();
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 
