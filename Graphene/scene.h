@@ -58,7 +58,7 @@ public:
     virtual size_t lightRangeSize() const;
     virtual size_t modelRangeSize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
-    virtual size_t EBOdata(void *elementBuffer) const;
+    virtual size_t EBOdata(void *elementBuffer, std::shared_ptr<Material> material) const;
     virtual size_t UBOdata(void *unformBuffer) const;
     virtual size_t SSBOdata(void *storageBuffer) const;
     virtual size_t lightRangeData(void *storageBuffer) const;

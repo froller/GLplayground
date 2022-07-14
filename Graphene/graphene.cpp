@@ -125,6 +125,13 @@ int Graphene::drawScene()
     return 0;
 }
 
+int Graphene::drawObjects(std::shared_ptr<Material> material)
+{
+    // Вот здесь должны быть useProgram() соответствующего материала
+    return 0;
+}
+
+
 std::shared_ptr<Graphene::Scene> Graphene::scene() const
 {
     return m_Scene;
@@ -250,10 +257,10 @@ void Graphene::fillVertexBuffer()
     glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::fillElementBuffer()
+void Graphene::fillElementBuffer(std::shared_ptr<Material> material)
 {
     reAllocateElementBuffer();
-    m_Scene->EBOdata(m_ElementBuffer);
+    m_Scene->EBOdata(m_ElementBuffer, material);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
 }
@@ -292,7 +299,7 @@ void Graphene::onGeometryChanged(std::shared_ptr<Graphene::Material> material)
 {
     // Заполнение буферов
     fillVertexBuffer();
-    fillElementBuffer();
+    fillElementBuffer(material);
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 

@@ -162,21 +162,28 @@ size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
     {
         size_t modelBufferSize = model->VBOdata(bufferTop);
         for (size_t i = 0; i < model->m_Vertices.size(); ++i)
-            (static_cast<Vertex *>(bufferTop) + i)->meshId = meshId;
+        {
+            Vertex *vertex = static_cast<Vertex *>(bufferTop) + i;
+            vertex->meshId = meshId;
+            //vertex->materialId = model->material();
+        }
         bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
         ++meshId;
     }
     return static_cast<char *>(bufferTop) - static_cast<char *>(vertexBuffer);
 }
 
-size_t Graphene::Scene::EBOdata(void *elementBuffer) const
+size_t Graphene::Scene::EBOdata(void *elementBuffer, std::shared_ptr<Material> material) const
 {
     void *bufferTop = elementBuffer;
     GLsizei indexOffset = 0;
     for (auto model = m_Models.begin(); model != m_Models.end(); ++model)
     {
-        size_t modelBufferSize = model->EBOdata(bufferTop, indexOffset);
-        bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
+        if (model->material() == material)
+        {
+            size_t modelBufferSize = model->EBOdata(bufferTop, indexOffset);
+            bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
+        }
         indexOffset += model->vertexCount();
     }
     return static_cast<char *>(bufferTop) - static_cast<char *>(elementBuffer);
