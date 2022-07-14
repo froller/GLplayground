@@ -162,7 +162,7 @@ size_t Graphene::Scene::VBOdata(void *vertexBuffer) const
     {
         size_t modelBufferSize = model->VBOdata(bufferTop);
         for (size_t i = 0; i < model->m_Vertices.size(); ++i)
-            *static_cast<GLuint *>(static_cast<void *>(static_cast<char *>(bufferTop) + sizeof(Vertex) * i + offsetof(Vertex, meshId))) = meshId;
+            (static_cast<Vertex *>(bufferTop) + i)->meshId = meshId;
         bufferTop = static_cast<char *>(bufferTop) + modelBufferSize;
         ++meshId;
     }

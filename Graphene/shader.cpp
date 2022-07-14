@@ -30,7 +30,7 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
         return -1;
     }
     struct stat shaderSourceFileStat;
-    if (fstat(_fileno(shaderSourceFile), &shaderSourceFileStat))
+    if (fstat(fileno(shaderSourceFile), &shaderSourceFileStat))
     {
         m_LastError = errno;
         m_Log = strerror(m_LastError);
