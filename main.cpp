@@ -125,9 +125,9 @@ int main(int argc, char **argv)
 
     SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding cameras");
     std::shared_ptr<Graphene::Camera> camera[4] = {
-        std::make_shared<Graphene::Camera::Targeted>(fvec3(0.f, 0.f, 2.f), fvec3(0.f, 0.f, 0.f)),
+        std::make_shared<Graphene::Camera::Targeted>(fvec3(2.f, 2.f, 2.f), fvec3(0.f, 0.f, 0.f)),
         std::make_shared<Graphene::Camera::Targeted>(fvec3(0.5, 0.f, 2.f), fvec3(0.5, 0.f, 0.f)),
-        std::make_shared<Graphene::Camera>(fvec3(0.f, 0.f, 2.f), fquat(0.f, 0.f, 0.f, 1.f)),
+        std::make_shared<Graphene::Camera>(fvec3(2.f, 2.f, 2.f), fquat(fvec3(M_PI / -5, M_PI / 4, 0.f))),
         std::make_shared<Graphene::Camera>(fvec3(0.5, 0.f, 2.f), fquat(0.f, 0.f, 0.f, 1.f))
     };
 
