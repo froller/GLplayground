@@ -14,6 +14,7 @@ struct LightSource {
 };
 
 in Vertex vertex;
+in flat uint vertexMaterialId;
 in flat uint vertexMeshId;
 
 layout (std140, binding = 0) uniform CameraMatrices {
@@ -50,5 +51,5 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular + (diffuse + lights.ambient) * normalize(vertex.position) /* vec3(0.6) */;
+    fragmentColor = specular + (diffuse + lights.ambient) * vec3(0.6);
 }

@@ -97,10 +97,14 @@ int Graphene::drawScene()
         glEnableVertexAttribArray(2);
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, UV));
-        // ID сетки
+        // ID материала
         glEnableVertexAttribArray(3);
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
-        glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
+        glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, materialId));
+        // ID сетки
+        glEnableVertexAttribArray(4);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
+        glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Vertex), (void *)offsetof(Vertex, meshId));
         // Примитивы
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
 

@@ -9,7 +9,8 @@ struct Vertex {
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 UV;
-layout(location = 3) in uint meshId;
+layout(location = 3) in uint materialId;
+layout(location = 4) in uint meshId;
 
 layout(std140, binding = 0) uniform CameraMatrices {
     mat4 world;
@@ -25,6 +26,7 @@ layout(std430, binding = 1) buffer Models {
 } models;
 
 out Vertex vertex;
+out flat uint vertexMaterialId;
 out flat uint vertexMeshId;
 
 void main()

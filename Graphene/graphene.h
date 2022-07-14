@@ -73,7 +73,7 @@ public:
         BufferTypeMax
     };
 
-    constexpr static unsigned int ElementSize = 3;
+    constexpr static unsigned int ElementSize = 3;  // Количество вершин в элементе (треугольнике или полигоне)
 
     typedef std::array<GLsizei, ElementSize> Element;
 
@@ -84,12 +84,14 @@ public:
         fvec3 position;
         fvec3 normal;
         fvec2 UV;
+        uint materialId = 0;
         uint meshId = 0;
         inline bool operator==(const struct Vertex &that)
         {
             return position == that.position
                 && normal == that.normal
                 && UV == that.UV
+                && materialId == that.materialId
                 && meshId == that.meshId;
         }
     } Vertex;
