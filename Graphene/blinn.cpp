@@ -27,6 +27,6 @@ void Graphene::Material::Blinn::setTexture(const Graphene::Material::Blinn::Text
         m_Bump = texture;
         break;
     default:
-        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Unknown texture channel %u", channel);
+        SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Unknown texture channel %u", channel);
     }
 }

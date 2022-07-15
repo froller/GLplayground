@@ -69,7 +69,7 @@ int Graphene::Shader::compile()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetShaderInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
-        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error compiling shader: %s\n", m_Log.c_str());
+        SDL_LogCritical(SDL_LOG_CATEGORY_RENDER, "Error compiling shader: %s\n", m_Log.c_str());
         return -1;
     }
     else

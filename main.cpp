@@ -57,11 +57,11 @@ int main(int argc, char **argv)
     }
 
     /* OpenGL context */
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating context");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Creating context");
     SDL_GLContext ctx = SDL_GL_CreateContext(window);
     if (ctx)
     {
-        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Setting current context");
+        SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Setting current context");
         SDL_GL_MakeCurrent(window, ctx);
     }
     else
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     }
     /* Setting up GLEW */
 #ifndef __APPLE__
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing GLEW");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Initializing GLEW");
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {
@@ -81,17 +81,17 @@ int main(int argc, char **argv)
 #endif
 
     /* Initializing Graphene */
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Initializing Graphene");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Initializing Graphene");
     std::unique_ptr<Graphene> graphene = std::make_unique<Graphene>();
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Creating materials");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Creating materials");
     std::shared_ptr<Graphene::Material::Default> defaultMaterial = std::make_shared<Graphene::Material::Default>();
     std::shared_ptr<Graphene::Material::Blinn> blinn = std::make_shared<Graphene::Material::Blinn>();
 
     std::shared_ptr<Graphene::Texture> flatLime = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 1.f, 0.f));
     blinn->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, flatLime);
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Populating scene");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
     //    graphene->addModel(Graphene::SimpleObjects::Square());
 
@@ -114,12 +114,12 @@ int main(int argc, char **argv)
         blinn
     ));
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding lights");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Adding lights");
     graphene->scene()->addLight(Graphene::Light::Omni(fvec3( 4.f,  4.f, -4.f), Graphene::Color(0.9, 1.0, 1.0), 20.f));
     graphene->scene()->addLight(Graphene::Light::Omni(fvec3(-4.f, -4.f,  4.f), Graphene::Color(1.0, 1.0, 0.9), 20.f));
     graphene->scene()->ambient(Graphene::Color(0.1, 0.1, 0.1));
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Adding cameras");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Adding cameras");
     std::shared_ptr<Graphene::Camera> camera[4] = {
         std::make_shared<Graphene::Camera::Targeted>(fvec3(2.f, 2.f, 2.f), fvec3(0.f, 0.f, 0.f)),
         std::make_shared<Graphene::Camera::Targeted>(fvec3(0.5, 0.f, 2.f), fvec3(0.5, 0.f, 0.f)),
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
         std::make_shared<Graphene::Camera>(fvec3(0.5, 0.f, 2.f), fquat(0.f, 0.f, 0.f, 1.f))
     };
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Setting default camera");
+    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Setting default camera");
     graphene->camera(camera[0]);
 
     /* Main loop */
@@ -203,26 +203,26 @@ int main(int argc, char **argv)
                     // сбросить камеру
                     break;
                 case SDLK_1:
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 1");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Targeted camera 1");
                     graphene->camera(camera[0]);
                     break;
                 case SDLK_2:
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Targeted camera 2");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Targeted camera 2");
                     graphene->camera(camera[1]);
                     break;
                 case SDLK_3:
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 1");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Free camera 1");
                     graphene->camera(camera[2]);
                     break;
                 case SDLK_4:
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Free camera 2");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Free camera 2");
                     graphene->camera(camera[3]);
                     break;
                 case SDLK_c:
                 {
                     bool cull = !graphene->cull();
                     graphene->cull(cull);
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Culling %s", cull ? "enabled" : "disabled");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Culling %s", cull ? "enabled" : "disabled");
                 }
                 break;
                 case SDLK_f:
@@ -235,14 +235,14 @@ int main(int argc, char **argv)
                 {
                     bool gc = !graphene->gammaCorrection();
                     graphene->gammaCorrection(gc);
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Gamma correction %s", gc ? "enabled" : "disabled");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Gamma correction %s", gc ? "enabled" : "disabled");
                 }
                 break;
                 case SDLK_w:
                 {
                     bool wf = !graphene->wireframe();
                     graphene->wireframe(wf);
-                    SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "%s rendering", wf ? "Wireframe" : "Shaded");
+                    SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "%s rendering", wf ? "Wireframe" : "Shaded");
                 }
                 break;
                 default:
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
         }
         if (graphene->drawScene())
         {
-            SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Draw failed");
+            SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Draw failed");
             __builtin_trap();
         }
         SDL_GL_SwapWindow(window);

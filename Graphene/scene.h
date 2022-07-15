@@ -33,7 +33,7 @@ protected:
 public:
     Scene();
     virtual ~Scene() {
-        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Destoying scene");
+        SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Destoying scene");
     };
     virtual uint16_t modified() const;
     virtual void touch(Aspect aspect);

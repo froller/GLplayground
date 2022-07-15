@@ -50,7 +50,7 @@ int Graphene::Program::link()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetProgramInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
-        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error linking program: %s\n", m_Log.c_str());
+        SDL_LogCritical(SDL_LOG_CATEGORY_RENDER, "Error linking program: %s\n", m_Log.c_str());
         return -1;
     }
     else
