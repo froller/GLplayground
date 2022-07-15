@@ -54,16 +54,14 @@ Graphene::~Graphene()
 
 int Graphene::drawScene()
 {
-    //if (m_Scene->modified() & Scene::Aspect::Geometry)
-    //    onGeometryChanged(nullptr);
+    if (m_Scene->modified() & Scene::Aspect::Geometry)
+        onGeometryChanged(nullptr);
     if (m_Scene->modified() & Scene::Aspect::Light)
         onLightChanged();
     if (m_Scene->modified() & Scene::Aspect::Camera)
         onCameraChanged();
     if (m_Scene->modified() & Scene::Aspect::Environment)
         onEnvironmentChanged();
-    if (m_Scene->modified() & Scene::Aspect::Shaders)
-        onShaderChanged();
 
     clear();
 
@@ -84,7 +82,10 @@ int Graphene::drawScene()
     // Геометрия и прочая фигня, которая уникальна для каждого draw-call-а
     for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
     {
-        onGeometryChanged(*material);
+        // Переключение шейдера
+        (*material)->m_Program.use();
+
+        // Привязка буферов
         // Координаты
         glEnableVertexAttribArray(0); // 0 - просто потому что первый свободный индекс
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Vertex)]);
@@ -108,14 +109,17 @@ int Graphene::drawScene()
         // Примитивы
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
 
-        /* Красиво, но бесполезно
-            if (m_Wireframe)
-                for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
-                    glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
-            else
-        */
-        glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
+        // Заполнение элементного буфера вершинами для отрисовки конкретного материала
+        fillElementBuffer(*material);
 
+        // Отрисовка
+        if (m_Wireframe)
+            for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
+                glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
+        else
+            glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
+
+        glDisableVertexAttribArray(4);
         glDisableVertexAttribArray(3);
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(1);
@@ -274,12 +278,6 @@ void Graphene::fillUniformBuffer()
     glBufferData(GL_UNIFORM_BUFFER, sizeof(CameraMatrices), m_UniformBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::useMaterials()
-{
-    for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
-        (*material)->m_Program.use();
-}
-
 void Graphene::useTextures()
 {
 /*
@@ -292,7 +290,6 @@ void Graphene::onGeometryChanged(std::shared_ptr<Graphene::Material> material)
 {
     // Заполнение буферов
     fillVertexBuffer();
-    fillElementBuffer(material);
     m_Scene->depict(Scene::Aspect::Geometry);
 }
 
@@ -312,10 +309,4 @@ void Graphene::onEnvironmentChanged()
 {
     fillStorageBuffer();
     m_Scene->depict(Scene::Aspect::Environment);
-}
-
-void Graphene::onShaderChanged()
-{
-    useMaterials();
-    m_Scene->depict(Scene::Aspect::Shaders);
 }

@@ -186,13 +186,11 @@ protected:
     virtual void fillElementBuffer(std::shared_ptr<Material> material);
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
-    virtual void useMaterials();
     virtual void useTextures();
     virtual void onGeometryChanged(std::shared_ptr<Material> material);
     virtual void onCameraChanged();
     virtual void onLightChanged();
     virtual void onEnvironmentChanged();
-    virtual void onShaderChanged();
 };
 
 #include "shader.h"
