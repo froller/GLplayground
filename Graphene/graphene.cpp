@@ -125,13 +125,6 @@ int Graphene::drawScene()
     return 0;
 }
 
-int Graphene::drawObjects(std::shared_ptr<Material> material)
-{
-    // Вот здесь должны быть useProgram() соответствующего материала
-    return 0;
-}
-
-
 std::shared_ptr<Graphene::Scene> Graphene::scene() const
 {
     return m_Scene;

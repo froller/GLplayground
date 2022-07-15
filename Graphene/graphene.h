@@ -178,7 +178,6 @@ public:
     virtual void wireframe(const bool enable);
 
 protected:
-    virtual int drawObjects(std::shared_ptr<Material> material);
     virtual size_t reAllocateVertexBuffer();
     virtual size_t reAllocateElementBuffer();
     virtual size_t reAllocateStorageBuffer();
