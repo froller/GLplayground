@@ -15,7 +15,7 @@ protected:
     uint64_t m_LastError;
 
 public:
-    Shader(ShaderType type);
+    Shader(const ShaderType type);
     Shader(const Shader &) = delete;
     Shader(Shader &&) = default;
     virtual ~Shader();
@@ -27,7 +27,7 @@ public:
     virtual int compile();
     virtual bool compiled() const;
     virtual bool deleted() const;
-    virtual int type() const;
+    virtual ShaderType type() const;
     virtual const GLuint shaderType(const ShaderType type) const;
     virtual const ShaderType shaderType(const GLuint type) const;
     virtual const char *log() const;

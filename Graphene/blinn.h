@@ -8,9 +8,8 @@
  ******************************************************************************/
 
 #include <memory>
-#include "texture.h"
 
-class Graphene::Material::Blinn : public Graphene::Material
+class Graphene::Material::Blinn : public Material
 {
 public:
     enum class TextureChannel {
@@ -23,7 +22,7 @@ public:
 public:
     Blinn();
     virtual ~Blinn() = default;
-    void setTexture(TextureChannel &channel, std::shared_ptr<Texture> texture);
+    void setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture);
 
 protected:
     std::shared_ptr<Texture> m_Ambient;

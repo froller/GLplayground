@@ -10,7 +10,7 @@
  * 
  ******************************************************************************/
 
-Graphene::Shader::Shader(ShaderType type)
+Graphene::Shader::Shader(const ShaderType type)
 {
     m_Handle = glCreateShader(shaderType(type));
 }
@@ -30,7 +30,7 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
         return -1;
     }
     struct stat shaderSourceFileStat;
-    if (fstat(_fileno(shaderSourceFile), &shaderSourceFileStat))
+    if (fstat(fileno(shaderSourceFile), &shaderSourceFileStat))
     {
         m_LastError = errno;
         m_Log = strerror(m_LastError);
@@ -69,7 +69,7 @@ int Graphene::Shader::compile()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetShaderInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
-        SDL_LogCritical(SDL_LOG_CATEGORY_VIDEO, "Error compiling shader: %s\n", m_Log.c_str());
+        SDL_LogCritical(SDL_LOG_CATEGORY_RENDER, "Error compiling shader: %s\n", m_Log.c_str());
         return -1;
     }
     else
@@ -90,7 +90,7 @@ bool Graphene::Shader::deleted() const
     return rv;
 }
 
-int Graphene::Shader::type() const
+Graphene::ShaderType Graphene::Shader::type() const
 {
     GLint rv;
     glGetShaderiv(m_Handle, GL_SHADER_TYPE, &rv);
@@ -102,7 +102,7 @@ GLuint Graphene::Shader::handle() const
     return m_Handle;
 }
 
-const GLuint Graphene::Shader::shaderType(const enum Graphene::ShaderType type) const
+const GLuint Graphene::Shader::shaderType(const ShaderType type) const
 {
     constexpr GLuint map[] = {
         GL_GEOMETRY_SHADER,
@@ -113,19 +113,19 @@ const GLuint Graphene::Shader::shaderType(const enum Graphene::ShaderType type) 
         GL_COMPUTE_SHADER,
         GL_INVALID_ENUM
     };
-    return map[type];
+    return map[size_t(type)];
 }
 
 const enum Graphene::ShaderType Graphene::Shader::shaderType(const GLuint type) const
 {
     const std::map<const GLuint, const ShaderType> map = {
-        {GL_GEOMETRY_SHADER, GeometryShader},
-        {GL_VERTEX_SHADER, VertexShader},
-        {GL_TESS_CONTROL_SHADER, TesselationControlShader},
-        {GL_TESS_EVALUATION_SHADER, TesselationEvaluationShader},
-        {GL_FRAGMENT_SHADER, FragmentShader},
-        {GL_COMPUTE_SHADER, ComputeShader},
-        {GL_INVALID_ENUM, Invalid}
+        {GL_GEOMETRY_SHADER, ShaderType::Geometry},
+        {GL_VERTEX_SHADER, ShaderType::Vertex},
+        {GL_TESS_CONTROL_SHADER, ShaderType::TesselationControl},
+        {GL_TESS_EVALUATION_SHADER, ShaderType::TesselationEvaluation},
+        {GL_FRAGMENT_SHADER, ShaderType::Fragment},
+        {GL_COMPUTE_SHADER, ShaderType::Compute},
+        {GL_INVALID_ENUM, ShaderType::Invalid}
     };
     return map.at(type);
 }

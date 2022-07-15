@@ -33,17 +33,17 @@ protected:
 public:
     Scene();
     virtual ~Scene() {
-        SDL_LogInfo(SDL_LOG_CATEGORY_VIDEO, "Destoying scene");
+        SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Destoying scene");
     };
     virtual uint16_t modified() const;
-    virtual void touch(Graphene::Scene::Aspect aspect);
-    virtual void depict(Graphene::Scene::Aspect aspect);
+    virtual void touch(Aspect aspect);
+    virtual void depict(Aspect aspect);
     virtual void resetCamera();
     virtual std::shared_ptr<Graphene::Camera> camera() const;
     virtual void camera(std::shared_ptr<Graphene::Camera> &camera);
-    virtual void addMaterial(std::shared_ptr<Graphene::Material> material);
-    virtual std::set<std::shared_ptr<Graphene::Material>> &materials();
-    virtual void addModel(const Graphene::Model &model);
+    virtual void addMaterial(std::shared_ptr<Material> material);
+    virtual std::set<std::shared_ptr<Material>> &materials();
+    virtual void addModel(const Model &model);
     virtual void addLight(const Graphene::Light &light);
     virtual Graphene::Color ambient() const;
     virtual void ambient(const Graphene::Color color);
@@ -58,7 +58,7 @@ public:
     virtual size_t lightRangeSize() const;
     virtual size_t modelRangeSize() const;
     virtual size_t VBOdata(void *vertexBuffer) const;
-    virtual size_t EBOdata(void *elementBuffer) const;
+    virtual size_t EBOdata(void *elementBuffer, std::shared_ptr<Material> material) const;
     virtual size_t UBOdata(void *unformBuffer) const;
     virtual size_t SSBOdata(void *storageBuffer) const;
     virtual size_t lightRangeData(void *storageBuffer) const;

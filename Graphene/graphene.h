@@ -53,27 +53,27 @@ public:
     class SimpleObjects;
     class Scene;
 
-    enum ShaderType
+    enum class ShaderType
     {
-        GeometryShader,
-        VertexShader,
-        TesselationControlShader,
-        TesselationEvaluationShader,
-        FragmentShader,
-        ComputeShader,
+        Geometry,
+        Vertex,
+        TesselationControl,
+        TesselationEvaluation,
+        Fragment,
+        Compute,
         Invalid
     };
 
-    enum BufferType
+    enum class BufferType
     {
-        VertexBuffer = 0,
-        ElementBuffer,
-        StorageBuffer,
-        UniformBuffer,
+        Vertex = 0,
+        Element,
+        Storage,
+        Uniform,
         BufferTypeMax
     };
 
-    constexpr static unsigned int ElementSize = 3;
+    constexpr static unsigned int ElementSize = 3;  // Количество вершин в элементе (треугольнике или полигоне)
 
     typedef std::array<GLsizei, ElementSize> Element;
 
@@ -84,12 +84,14 @@ public:
         fvec3 position;
         fvec3 normal;
         fvec2 UV;
+        uint materialId = 0;
         uint meshId = 0;
         inline bool operator==(const struct Vertex &that)
         {
             return position == that.position
                 && normal == that.normal
                 && UV == that.UV
+                && materialId == that.materialId
                 && meshId == that.meshId;
         }
     } Vertex;
@@ -152,7 +154,7 @@ protected:
     size_t m_UniformBufferSize = 0;
 
     unsigned int m_VAO;
-    unsigned int m_Buffers[BufferTypeMax];
+    unsigned int m_Buffers[size_t(BufferType::BufferTypeMax)];
 
 public:
     Graphene();
@@ -161,7 +163,7 @@ public:
     virtual ~Graphene();
     Graphene &operator=(const Graphene &) = delete;
     Graphene &operator=(Graphene &&) = default;
-    virtual int draw();
+    virtual int drawScene();
     virtual std::shared_ptr<Graphene::Scene> scene() const;
     virtual void camera(std::shared_ptr<Graphene::Camera> camera);
     virtual void addModel(const Graphene::Model &model);
@@ -181,21 +183,20 @@ protected:
     virtual size_t reAllocateStorageBuffer();
     virtual size_t reAllocateUniformBuffer();
     virtual void fillVertexBuffer();
-    virtual void fillElementBuffer();
+    virtual void fillElementBuffer(std::shared_ptr<Material> material);
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
-    virtual void useMaterials();
     virtual void useTextures();
-    virtual void onGeometryChanged();
+    virtual void onGeometryChanged(std::shared_ptr<Material> material);
     virtual void onCameraChanged();
     virtual void onLightChanged();
     virtual void onEnvironmentChanged();
-    virtual void onShaderChanged();
 };
 
 #include "shader.h"
 #include "program.h"
 
+#include "texture.h"
 #include "material.h"
 #include "blinn.h"
 
