@@ -50,18 +50,18 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 # Add compiler flags
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
     add_compile_options(-Wno-write-strings)
-	add_compile_options(-pedantic)
+    add_compile_options(-pedantic)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -ggdb")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -ggdb")
 elseif(WIN32)
-	#add_compile_options(-W3)
+    #add_compile_options(-W3)
     add_compile_definitions(_UNICODE UNICODE _CRT_SECURE_NO_WARNINGS)
     remove_definitions(MBCS)
 endif()
 
+###############################################################################
 
-set(SOURCES
-    main.cpp
+set(GRAPHENE_SOURCES
     Graphene/graphene.h
     Graphene/graphene_types.h
     Graphene/graphene.cpp
@@ -88,28 +88,33 @@ set(SOURCES
     Graphene/blinn.h
     Graphene/blinn.cpp
 )
-set(SHADERS
-    Shaders/default.vertex.glsl
-    Shaders/default.fragment.glsl
-    Shaders/blinn.vertex.glsl
-    Shaders/blinn.fragment.glsl
-)
+add_library(Graphene STATIC ${GRAPHENE_SOURCES})
+target_include_directories(Graphene PUBLIC ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
+target_link_directories(Graphene PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR} ${SDL2_BINDIR} ${GLEW_BINDIR})
+target_link_libraries(Graphene PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_compile_features(Graphene PUBLIC cxx_std_17)
+if (WIN32)
+    set_property(TARGET Graphene PROPERTY VS_PACKAGE_REFERENCES "sdl2_2.0.5;GLEW_dynamic_2.0.0.0;glm_0.9.9.800")
+endif()
 
+###############################################################################
+
+set(SOURCES
+    main.cpp
+)
 if (WIN32)
     add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SOURCES})
-    set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY VS_PACKAGE_REFERENCES "sdl2_2.0.5;GLEW_dynamic_2.0.0.0;glm_0.9.9.800")
 else()
     add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 endif()
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC Graphene)
 set_property(GLOBAL
-	PROPERTY
-	VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME}
+    PROPERTY
+    VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME}
 )
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/" ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBDIR} ${GLEW_LIBDIR} ${SDL2_BINDIR} ${GLEW_BINDIR})
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "Graphene/")
 
 set_source_files_properties(fragment.glsl vertex.glsl
     PROPERTIES
@@ -119,6 +124,15 @@ set_source_files_properties(fragment.glsl vertex.glsl
 source_group("Graphene/Source Files" REGULAR_EXPRESSION Graphene/.+\.c\(pp|c\)?$)
 source_group("Graphene/Header Files" REGULAR_EXPRESSION Graphene/.+\.h\(pp|h\)?$)
 source_group(Shaders REGULAR_EXPRESSION \.glsl$)
+
+###############################################################################
+
 add_custom_target(Shaders SOURCES ${SHADERS})
+set(SHADERS
+    Shaders/default.vertex.glsl
+    Shaders/default.fragment.glsl
+    Shaders/blinn.vertex.glsl
+    Shaders/blinn.fragment.glsl
+)
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
