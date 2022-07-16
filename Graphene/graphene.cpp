@@ -110,14 +110,14 @@ int Graphene::drawScene()
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
 
         // Заполнение элементного буфера вершинами для отрисовки конкретного материала
-        fillElementBuffer(*material);
+        size_t elementBufferUsed = fillElementBuffer(*material);
 
         // Отрисовка
         if (m_Wireframe)
             for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
                 glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
         else
-            glDrawElements(GL_TRIANGLES, ElementSize * m_Scene->elementCount(), GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, elementBufferUsed, GL_UNSIGNED_INT, nullptr);
 
         glDisableVertexAttribArray(4);
         glDisableVertexAttribArray(3);
@@ -254,12 +254,13 @@ void Graphene::fillVertexBuffer()
     glBufferData(GL_ARRAY_BUFFER, m_Scene->VBOsize(), m_VertexBuffer, GL_STATIC_DRAW);
 }
 
-void Graphene::fillElementBuffer(std::shared_ptr<Material> material)
+size_t Graphene::fillElementBuffer(std::shared_ptr<Material> material)
 {
     reAllocateElementBuffer();
-    m_Scene->EBOdata(m_ElementBuffer, material);
+    size_t bufferSize = m_Scene->EBOdata(m_ElementBuffer, material);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffers[GLuint(BufferType::Element)]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Scene->EBOsize(), m_ElementBuffer, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, m_ElementBuffer, GL_STATIC_DRAW);
+    return bufferSize;
 }
 
 void Graphene::fillStorageBuffer()

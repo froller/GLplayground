@@ -183,7 +183,7 @@ protected:
     virtual size_t reAllocateStorageBuffer();
     virtual size_t reAllocateUniformBuffer();
     virtual void fillVertexBuffer();
-    virtual void fillElementBuffer(std::shared_ptr<Material> material);
+    virtual size_t fillElementBuffer(std::shared_ptr<Material> material);
     virtual void fillStorageBuffer();
     virtual void fillUniformBuffer();
     virtual void useTextures();
