@@ -51,5 +51,6 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular + (diffuse + lights.ambient) * normalize(vertex.position);
+    //fragmentColor = normalize(vertex.position).rgb; // Включить для обображения координат вершин
+    fragmentColor = normalize(vec3(vertex.UV.x, 0.0, vertex.UV.y)); // Включить для отображения текстурных координат
 }
