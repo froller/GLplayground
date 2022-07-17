@@ -89,7 +89,12 @@ int main(int argc, char **argv)
     std::shared_ptr<Graphene::Material::Blinn> blinn = std::make_shared<Graphene::Material::Blinn>();
 
     std::shared_ptr<Graphene::Texture> flatLime = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 1.f, 0.f));
-    blinn->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, flatLime);
+    std::shared_ptr<Graphene::Texture> flatBlue = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 0.2, 0.9));
+    std::shared_ptr<Graphene::Texture> redWhiteChecker = std::make_shared<Graphene::Texture::Checker>(
+        Graphene::Color(1.f, 0.f, 0.f),
+        Graphene::Color(0.6, 0.6, 0.6)
+    );
+    blinn->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, redWhiteChecker);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
