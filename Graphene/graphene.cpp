@@ -117,7 +117,7 @@ int Graphene::drawScene()
             for (size_t i = 0; i < ElementSize * m_Scene->elementCount(); i += ElementSize)
                 glDrawElements(GL_LINE_LOOP, ElementSize, GL_UNSIGNED_INT, (void *)(i * sizeof(GLsizei)));
         else
-            glDrawElements(GL_TRIANGLES, elementBufferUsed, GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, elementBufferUsed / sizeof(GLsizei), GL_UNSIGNED_INT, nullptr);
 
         glDisableVertexAttribArray(4);
         glDisableVertexAttribArray(3);

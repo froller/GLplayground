@@ -57,15 +57,14 @@ size_t Graphene::Model::VBOdata(void *vertexBuffer) const
 
 size_t Graphene::Model::EBOdata(void *elementBuffer, GLsizei offset) const
 {
-    const size_t s = EBOsize();
     void *bufferTop = elementBuffer;
     for (auto i = m_Primitives.begin(); i != m_Primitives.end(); ++i)
     {
         for (unsigned int j = 0; j < ElementSize; ++j)
-            (*(Element *)bufferTop)[j] = (*i)[j] + offset;
-        bufferTop = (Element *)bufferTop + 1;
+            (*static_cast<Element *>(bufferTop))[j] = (*i)[j] + offset;
+        bufferTop = static_cast<Element *>(bufferTop) + 1;
     }
-    return s;
+    return static_cast<uint8_t *>(bufferTop) - static_cast<uint8_t *>(elementBuffer);
 }
 
 size_t Graphene::Model::SSBOdata(void *storageBuffer) const
