@@ -124,15 +124,27 @@ Graphene::SimpleObjects::UVSphere::UVSphere(const fvec3 position, const fquat ro
                 glm::angleAxis(static_cast<float>(M_PI) / s_Segments * -lat, nor)   // Угол места
                 * glm::angleAxis(meridianStep * (float)lon + meridianOffset, glm::fvec3(0, 1, 0))   // Азимут
                 * glm::fvec3(1, 0, 0);  // Норма X
+            // Текстурные координаты
+            glm::fvec2 texCoords = glm::fvec2(
+                static_cast<float>(lon) / meridians * 2.f,
+                static_cast<float>(-lat) / s_Segments
+            );
 
+            // Шип
+            //if (lat == 0 && lon == 0)
+            //    vertexCoords *= 1.25;
+            // Гребень
+            //if (lon == 0)
+            //    vertexCoords *= 1.25;
+            
             // Вершина
             //Vertex vertex = {vertexCoords, -vertexCoords, (vertexCoords + glm::fvec3(1, 1, 1)) / 2.f };
-            Vertex vertex = { vertexCoords, vertexCoords };
+            Vertex vertex = { vertexCoords, vertexCoords, texCoords }; // Нормаль вершины совпадает с ее координатами
             vertices.push_back(vertex);
             m_Vertices.push_back(vertex); // Добавляем вершину в вертексный буфер
             ++vertexAcc;
 
-            if (abs(lat) == s_Segments / 2)  // полюс
+            if (abs(lat) == s_Segments / 2)  // Полюс. Добавляем только одну вершину.
                 break;
         }
         
