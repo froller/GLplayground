@@ -4,10 +4,12 @@
 
 Graphene::Texture::Texture()
 {
+    glGenBuffers(1, &m_BufferID);
 }
 
 Graphene::Texture::~Texture()
 {
+    glDeleteBuffers(1, &m_BufferID);
     if (m_Buffer)
         free(m_Buffer);
 }
@@ -25,9 +27,15 @@ Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
 
     glGenTextures(1, &m_TextureID);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_BGR, GL_UNSIGNED_BYTE, m_Buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glGenerateMipmap(GL_TEXTURE_2D);   // пока подождет
+    
+    glBindBuffer(GL_TEXTURE_BUFFER, m_BufferID);
+    glBufferData(GL_TEXTURE_BUFFER, bufferSize, m_Buffer, GL_STATIC_DRAW);
 }
 
 /*
@@ -41,6 +49,7 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
 {
     m_Width = 2;
     m_Height = 2;
+    size_t bufferSize = width() * height() * sizeof(RGB8);
     m_Buffer = malloc(width() * height() * sizeof(RGB8));
     struct RGB8 *pixel = static_cast<struct RGB8 *>(m_Buffer);
     pixel[3].r = pixel[0].r = 0xFF * color1.r;
@@ -52,12 +61,13 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
 
     glGenTextures(1, &m_TextureID);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glGenerateMipmap(GL_TEXTURE_2D);   // пока подождет
 
-/*
-    glGenBuffers(1, &m_BufferID);
-    glTexBuffer(, GL_RGB8UI, m_BufferID);
-    glBufferData(, bufferSize, m_Buffer, GL_STATIC_DRAW);
-*/
+    glBindBuffer(GL_TEXTURE_BUFFER, m_BufferID);
+    glBufferData(GL_TEXTURE_BUFFER, bufferSize, m_Buffer, GL_STATIC_DRAW);
 };

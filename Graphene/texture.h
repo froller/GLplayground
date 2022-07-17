@@ -11,13 +11,16 @@ public:
         Color,
         Checker
     };
+    
+#pragma pack(push, 8)
     struct RGB8 {
         uint8_t r, g, b;
     };
     struct RGBA8 {
         uint8_t r, g, b, a;
     };
-
+#pragma pack(pop)
+    
     constexpr static const Type s_Type = Type::None;
     constexpr static const Type type() { return s_Type; };
 

@@ -53,6 +53,7 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    //fragmentColor = specular + (diffuse + lights.ambient) * texture(diffuseTextureSampler, UV).rgb; // Включить для текстурирования
-    fragmentColor = specular + (diffuse + lights.ambient) * vec3(0.0, 0.7, 0.0);
+    fragmentColor = specular + (diffuse + lights.ambient) * texture(diffuseTextureSampler, vertex.UV).rgb; // Включить для текстурирования
+    //fragmentColor = specular + (diffuse + lights.ambient) * vec3(0.5, 0.5, 0.0);
+    //fragmentColor = texture(diffuseTextureSampler, vertex.UV).rgb;
 }
