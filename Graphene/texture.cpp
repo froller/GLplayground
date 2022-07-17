@@ -38,26 +38,19 @@ Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
     glBufferData(GL_TEXTURE_BUFFER, bufferSize, m_Buffer, GL_STATIC_DRAW);
 }
 
-/*
-void Graphene::Texture::Color::use()
-{
-
-}
-*/
-
 Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphene::Color &color2) : m_Color1(color1), m_Color2(color2)
 {
     m_Width = 2;
     m_Height = 2;
     size_t bufferSize = width() * height() * sizeof(RGB8);
-    m_Buffer = malloc(width() * height() * sizeof(RGB8));
-    struct RGB8 *pixel = static_cast<struct RGB8 *>(m_Buffer);
-    pixel[3].r = pixel[0].r = 0xFF * color1.r;
-    pixel[3].g = pixel[0].g = 0xFF * color1.g;
-    pixel[3].b = pixel[0].b = 0xFF * color1.b;
-    pixel[2].r = pixel[1].r = 0xFF * color2.r;
-    pixel[2].g = pixel[1].g = 0xFF * color2.g;
-    pixel[2].b = pixel[1].b = 0xFF * color2.b;
+    m_Buffer = malloc(16);
+    uint8_t *foo = static_cast<uint8_t *>(m_Buffer);
+    foo[0] = foo[11] = 0xFF * color1.r;
+    foo[1] = foo[12] = 0xFF * color1.g;
+    foo[2] = foo[13] = 0xFF * color1.b;
+    foo[3] = foo[8]  = 0xFF * color2.r;
+    foo[4] = foo[9]  = 0xFF * color2.g;
+    foo[5] = foo[10] = 0xFF * color2.b;
 
     glGenTextures(1, &m_TextureID);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
