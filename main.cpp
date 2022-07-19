@@ -104,13 +104,13 @@ int main(int argc, char **argv)
         fvec3(0.87, -0.25 / sqrt(3), 0.5),
         fquat(fvec3(0.f, 0.f, 0.f)), // fquat({0, -M_PI_2, 0})
         fvec3(1.f, 1.f, 1.f),
-        defaultMaterial
+        blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::Cube(
         fvec3(-0.87, 0, 0.5),
         fquat(fvec3(0.f, 0.f, 0.f)),
         fvec3(0.7, 0.7, 0.7),
-        defaultMaterial
+        blinn
     ));
     graphene->scene()->addModel(Graphene::SimpleObjects::UVSphere(
         fvec3(0.0, 0.0, -1.f),
