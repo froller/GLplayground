@@ -121,18 +121,18 @@ set_source_files_properties(fragment.glsl vertex.glsl
     LANGUAGE glsl
     VS_COPY_TO_OUT_DIR Always
 )
-source_group("Graphene/Source Files" REGULAR_EXPRESSION Graphene/.+\.c\(pp|c\)?$)
-source_group("Graphene/Header Files" REGULAR_EXPRESSION Graphene/.+\.h\(pp|h\)?$)
+source_group("Source Files" REGULAR_EXPRESSION Graphene/.+\.c\(pp|c\)?$)
+source_group("Header Files" REGULAR_EXPRESSION Graphene/.+\.h\(pp|h\)?$)
 source_group(Shaders REGULAR_EXPRESSION \.glsl$)
 
 ###############################################################################
 
-add_custom_target(Shaders SOURCES ${SHADERS})
 set(SHADERS
     Shaders/default.vertex.glsl
     Shaders/default.fragment.glsl
     Shaders/blinn.vertex.glsl
     Shaders/blinn.fragment.glsl
 )
+add_custom_target(Shaders SOURCES ${SHADERS})
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
