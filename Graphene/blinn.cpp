@@ -10,6 +10,19 @@ Graphene::Material::Blinn::Blinn() : m_Ambient(nullptr), m_Diffuse(nullptr), m_S
     m_Program.addShader(fragmentShader);
 }
 
+void Graphene::Material::Blinn::use()
+{
+    Graphene::Material::use();
+    if (m_Ambient)
+        glBindTexture(GL_TEXTURE_2D, m_Ambient->textureID());
+    if (m_Diffuse)
+        glBindTexture(GL_TEXTURE_2D, m_Diffuse->textureID());
+    if (m_Specular)
+        glBindTexture(GL_TEXTURE_2D, m_Specular->textureID());
+    if (m_Bump)
+        glBindTexture(GL_TEXTURE_2D, m_Bump->textureID());
+}
+
 void Graphene::Material::Blinn::setTexture(const Graphene::Material::Blinn::TextureChannel &channel, std::shared_ptr<Texture> texture)
 {
     switch (channel)

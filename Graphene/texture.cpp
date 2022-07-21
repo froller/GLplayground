@@ -4,12 +4,12 @@
 
 Graphene::Texture::Texture()
 {
-    glGenBuffers(1, &m_BufferID);
+    glGenTextures(1, &m_TextureID);
 }
 
 Graphene::Texture::~Texture()
 {
-    glDeleteBuffers(1, &m_BufferID);
+    glDeleteTextures(1, &m_TextureID);
     if (m_Buffer)
         free(m_Buffer);
 }
@@ -25,17 +25,12 @@ Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
     pixel[0].g = 0xFF * color.g;
     pixel[0].b = 0xFF * color.b;
 
-    glGenTextures(1, &m_TextureID);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glGenerateMipmap(GL_TEXTURE_2D);   // пока подождет
-    
-    glBindBuffer(GL_TEXTURE_BUFFER, m_BufferID);
-    glBufferData(GL_TEXTURE_BUFFER, bufferSize, m_Buffer, GL_STATIC_DRAW);
 }
 
 Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphene::Color &color2) : m_Color1(color1), m_Color2(color2)
@@ -52,15 +47,11 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
     foo[4] = foo[9]  = 0xFF * color2.g;
     foo[5] = foo[10] = 0xFF * color2.b;
 
-    glGenTextures(1, &m_TextureID);
-    glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    //glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    glActiveTexture(m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glGenerateMipmap(GL_TEXTURE_2D);   // пока подождет
-
-    glBindBuffer(GL_TEXTURE_BUFFER, m_BufferID);
-    glBufferData(GL_TEXTURE_BUFFER, bufferSize, m_Buffer, GL_STATIC_DRAW);
-};
+}

@@ -22,7 +22,8 @@ public:
 public:
     Blinn();
     virtual ~Blinn() = default;
-    void setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture);
+    virtual void use();
+    virtual void setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture);
 
 protected:
     std::shared_ptr<Texture> m_Ambient;

@@ -83,7 +83,7 @@ int Graphene::drawScene()
     for (auto material = m_Scene->materials().begin(); material != m_Scene->materials().end(); ++material)
     {
         // Переключение шейдера
-        (*material)->m_Program.use();
+        (*material)->use();
 
         // Привязка буферов
         // Координаты

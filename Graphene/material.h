@@ -21,8 +21,9 @@ public:
     Material(const Material &) = delete;
     Material(Material &&) = default;
     virtual ~Material() = default;
-    Material &operator=(const Material &) = delete;
-    Material &operator=(Material &&) = default;
+    virtual Material &operator=(const Material &) = delete;
+    virtual Material &operator=(Material &&) = default;
+    virtual void use();
 
 public:
     virtual void addShader(std::shared_ptr<Shader> shader) final;
@@ -33,12 +34,8 @@ public:
 class Graphene::Material::Default : public Material
 {
 public:
-    std::shared_ptr<Texture> m_Texture;
-
-public:
     Default();
     virtual ~Default();
-
 };
 
 #endif // __MATERIAL_H__

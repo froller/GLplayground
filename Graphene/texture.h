@@ -30,7 +30,7 @@ public:
     constexpr size_t width() const { return m_Width; }
     constexpr size_t height() const { return m_Height; }
     constexpr void *buffer() const { return m_Buffer; }
-    //virtual void use() = 0;
+    constexpr GLuint textureID() const { return m_TextureID; }
 
 protected:
     size_t m_Width = 0;
@@ -46,13 +46,12 @@ public:
     constexpr static const Type s_Type = Type::Color;
     constexpr static const Type type() { return s_Type; };
 protected:
-    constexpr static const GLenum s_GLTextureType = GL_TEXTURE_BUFFER;
+    constexpr static const GLenum s_GLTextureType = GL_TEXTURE_2D;
     constexpr static const GLenum s_GLPixelFormat = GL_RGB8;
 
 public:
     Color(const Graphene::Color &color);
     virtual ~Color() = default;
-    //virtual void use();
 
 protected:
     Graphene::Color m_Color;
@@ -64,7 +63,7 @@ public:
     constexpr static const Type s_Type = Type::Checker;
     constexpr static const Type type() { return s_Type; };
 protected:
-    constexpr static const GLenum s_GLTextureType = GL_TEXTURE_RECTANGLE;
+    constexpr static const GLenum s_GLTextureType = GL_TEXTURE_2D;
     constexpr static const GLenum s_GLPixelFormat = GL_RGB8;
 
 public:

@@ -1,5 +1,10 @@
 #include "graphene.h"
 
+void Graphene::Material::use()
+{
+    m_Program.use();
+}
+
 void Graphene::Material::addShader(std::shared_ptr<Shader> shader)
 {
     m_Program.addShader(shader);
