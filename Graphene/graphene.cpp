@@ -54,13 +54,13 @@ Graphene::~Graphene()
 
 int Graphene::drawScene()
 {
-    if (m_Scene->modified() & Scene::Aspect::Geometry)
+    if (m_Scene->modified(Scene::Aspect::Geometry))
         onGeometryChanged(nullptr);
-    if (m_Scene->modified() & Scene::Aspect::Light)
+    if (m_Scene->modified(Scene::Aspect::Lights))
         onLightChanged();
-    if (m_Scene->modified() & Scene::Aspect::Camera)
+    if (m_Scene->modified(Scene::Aspect::Cameras))
         onCameraChanged();
-    if (m_Scene->modified() & Scene::Aspect::Environment)
+    if (m_Scene->modified(Scene::Aspect::Environment))
         onEnvironmentChanged();
 
     clear();
@@ -297,13 +297,13 @@ void Graphene::onGeometryChanged(std::shared_ptr<Graphene::Material> material)
 void Graphene::onCameraChanged()
 {
     fillUniformBuffer();
-    m_Scene->depict(Scene::Aspect::Camera);
+    m_Scene->depict(Scene::Aspect::Cameras);
 }
 
 void Graphene::onLightChanged()
 {
     fillStorageBuffer();
-    m_Scene->depict(Scene::Aspect::Light);
+    m_Scene->depict(Scene::Aspect::Lights);
 }
 
 void Graphene::onEnvironmentChanged()

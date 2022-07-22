@@ -179,7 +179,7 @@ int main(int argc, char **argv)
                     // Здесь баг: размер изображения зависит от высоты, но не от ширины
                     glViewport(0, 0, event.window.data1, event.window.data2);
                     graphene->scene()->camera()->aspectRatio(float(event.window.data1) / float(event.window.data2));
-                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                    graphene->scene()->touch(Graphene::Scene::Aspect::Cameras);
                     break;
                 }
                 break;
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
                         graphene->scene()->camera()->rotate(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
                     else if (graphene->scene()->camera()->type() == Graphene::Camera::Type::Targeted)
                         graphene->scene()->camera()->orbit(fvec3(-event.motion.yrel, -event.motion.xrel, 0) / 100.f);
-                    graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                    graphene->scene()->touch(Graphene::Scene::Aspect::Cameras);
                 }
                 break;
             case SDL_MOUSEWHEEL:
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
                     if (event.wheel.y)
                     {
                         graphene->scene()->camera()->zoom(event.wheel.y / 20.f);
-                        graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                        graphene->scene()->touch(Graphene::Scene::Aspect::Cameras);
                     }
                 }
                 else
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
                     if (event.wheel.y)
                     {
                         graphene->scene()->camera()->dolly(event.wheel.y / 10.f);
-                        graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+                        graphene->scene()->touch(Graphene::Scene::Aspect::Cameras);
                     }
                 }
                 break;
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
             //if ((euler + step).z > M_PI_4)
             //    step.z = -step.z;
             graphene->scene()->camera()->orbit(step);
-            graphene->scene()->touch(Graphene::Scene::Aspect::Camera);
+            graphene->scene()->touch(Graphene::Scene::Aspect::Cameras);
         }
         if (graphene->drawScene())
         {

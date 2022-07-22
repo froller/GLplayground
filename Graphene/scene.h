@@ -12,10 +12,10 @@
 class Graphene::Scene
 {
 public:
-    enum Aspect {
+    enum class Aspect {
         Geometry    = (uint16_t)1 << 0,
-        Light       = (uint16_t)1 << 1,
-        Camera      = (uint16_t)1 << 2,
+        Lights      = (uint16_t)1 << 1,
+        Cameras     = (uint16_t)1 << 2,
         Environment = (uint16_t)1 << 3,
         Shaders     = (uint16_t)1 << 4,
         All         = (uint16_t)31
@@ -36,8 +36,9 @@ public:
         SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Destoying scene");
     };
     virtual uint16_t modified() const;
-    virtual void touch(Aspect aspect);
-    virtual void depict(Aspect aspect);
+    virtual bool modified(const Aspect &aspect) const;
+    virtual void touch(const Aspect &aspect);
+    virtual void depict(const Aspect &aspect);
     virtual void resetCamera();
     virtual std::shared_ptr<Graphene::Camera> camera() const;
     virtual void camera(std::shared_ptr<Graphene::Camera> &camera);

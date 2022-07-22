@@ -5,7 +5,7 @@ Graphene::Scene::Scene()
 //    m_DefaultCamera = std::make_shared<Graphene::Camera::Targeted>(fvec3(3, 3, 3), fvec3(0, 0, 0), 1.25f, M_PI_4);
 //    m_Camera = m_DefaultCamera;
     m_Ambient = Color(0.f, 0.f, 0.f);
-    m_Modified = Aspect::All;
+    m_Modified = static_cast<uint16_t>(Aspect::All);
 }
 
 uint16_t Graphene::Scene::modified() const
@@ -13,20 +13,25 @@ uint16_t Graphene::Scene::modified() const
     return m_Modified;
 }
 
-void Graphene::Scene::touch(Graphene::Scene::Aspect aspect)
+bool Graphene::Scene::modified(const Aspect &aspect) const
 {
-    m_Modified |= aspect;
+    return m_Modified & static_cast<uint16_t>(aspect);
 }
 
-void Graphene::Scene::depict(Graphene::Scene::Aspect aspect)
+void Graphene::Scene::touch(const Aspect &aspect)
 {
-    m_Modified &= ~aspect;
+    m_Modified |= static_cast<uint16_t>(aspect);
+}
+
+void Graphene::Scene::depict(const Aspect &aspect)
+{
+    m_Modified &= ~static_cast<uint16_t>(aspect);
 }
 
 void Graphene::Scene::resetCamera()
 {
     m_Camera = m_DefaultCamera;
-    m_Modified |= Aspect::Camera;
+    m_Modified |= static_cast<uint16_t>(Aspect::Cameras);
 }
 
 std::shared_ptr<Graphene::Camera> Graphene::Scene::camera() const
@@ -37,14 +42,14 @@ std::shared_ptr<Graphene::Camera> Graphene::Scene::camera() const
 void Graphene::Scene::camera(std::shared_ptr<Graphene::Camera> &camera)
 {
     m_Camera = camera;
-    m_Modified |= Aspect::Camera;
+    m_Modified |= static_cast<uint16_t>(Aspect::Cameras);
 }
 
 void Graphene::Scene::addMaterial(std::shared_ptr<Graphene::Material> material)
 {
     m_Materials.insert(material);
     material->m_Program.use();
-    m_Modified |= Aspect::Shaders;
+    m_Modified |= static_cast<uint16_t>(Aspect::Shaders);
 }
 
 std::set<std::shared_ptr<Graphene::Material>> &Graphene::Scene::materials()
@@ -52,18 +57,18 @@ std::set<std::shared_ptr<Graphene::Material>> &Graphene::Scene::materials()
     return m_Materials;
 }
 
-void Graphene::Scene::addModel(const Graphene::Model &model)
+void Graphene::Scene::addModel(const Model &model)
 {
     m_Models.push_back(model);
     m_Materials.insert(model.material());
-    m_Modified |= Aspect::Shaders;
-    m_Modified |= Aspect::Geometry;
+    m_Modified |= static_cast<uint16_t>(Aspect::Shaders);
+    m_Modified |= static_cast<uint16_t>(Aspect::Geometry);
 }
 
-void Graphene::Scene::addLight(const Graphene::Light &light)
+void Graphene::Scene::addLight(const Light &light)
 {
     m_Lights.push_back(light);
-    m_Modified |= Aspect::Light;
+    m_Modified |= static_cast<uint16_t>(Aspect::Lights);
 }
 
 Graphene::Color Graphene::Scene::ambient() const
@@ -74,7 +79,7 @@ Graphene::Color Graphene::Scene::ambient() const
 void Graphene::Scene::ambient(const Graphene::Color color)
 {
     m_Ambient = color;
-    m_Modified |= Aspect::Environment;
+    m_Modified |= static_cast<uint16_t>(Aspect::Environment);
 }
 
 size_t Graphene::Scene::vertexCount() const
