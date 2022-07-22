@@ -9,9 +9,9 @@
 
 Graphene::SimpleObjects::Triangle::Triangle(const fvec3 position, const fquat rotation, const fvec3 scale, std::shared_ptr<Graphene::Material> material) : Model(position, rotation, scale, material)
 {
-    VERTEX( 0.f,  1.f / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.f,  1.f / sqrtf(3.f));
-    VERTEX(-0.5, -0.5 / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,  -0.5, -0.5 / sqrtf(3.f));
-    VERTEX( 0.5, -0.5 / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.5, -0.5 / sqrtf(3.f));
+    VERTEX( 0.f,  1.f / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   1.f,  0.5 - sqrtf(3.f) / 4.f);
+    VERTEX(-0.5, -0.5 / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.5,  0.5 + sqrtf(3.f) / 4.f);
+    VERTEX( 0.5, -0.5 / sqrtf(3.f), 0.f,   0.f, 0.f, -1.f,   0.f,  0.5 - sqrtf(3.f) / 4.f);
     ELEMENT(0, 1, 2);
 }
 
@@ -27,21 +27,21 @@ Graphene::SimpleObjects::Square::Square(const fvec3 position, const fquat rotati
 
 Graphene::SimpleObjects::Tetrahedron::Tetrahedron(const fvec3 position, const fquat rotation, const fvec3 scale, std::shared_ptr<Graphene::Material> material) : Model(position, rotation, scale, material)
 {
-    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  1.f,  1.f - sqrtf(3.f) / 2.f); // передний
-    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  0.5,  1.f                   ); // левый
-    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  0.f,  1.f - sqrtf(3.f) / 2.f); // правый
+    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  1.f,  0.5 - sqrtf(3.f) / 4.f); // передний
+    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  0.5,  0.5 + sqrtf(3.f) / 4.f); // левый
+    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f, -1.f / sqrtf(3.f),    0.f,                  0.f,  0.5 - sqrtf(3.f) / 4.f); // правый
 
-    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),   -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     1.f,  1.f - sqrtf(3.f) / 2.f); // передний
-    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.5,  1.f                   ); // верхний
-    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),   -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.f,  1.f - sqrtf(3.f) / 2.f); // левый
+    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),   -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     1.f,  0.5 - sqrtf(3.f) / 4.f); // передний
+    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.5,  0.5 + sqrtf(3.f) / 4.f); // верхний
+    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),   -0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.f,  0.5 - sqrtf(3.f) / 4.f); // левый
 
-    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),     0.5,  1.f - sqrtf(3.f) / 2.f); // левый
-    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                 0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),     0.f,  1.f                   ); // верхний
-    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),    -0.5,  1.f - sqrtf(3.f) / 2.f); // правый
+    VERTEX(-0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),     0.5,  0.5 - sqrtf(3.f) / 4.f); // левый
+    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                 0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),     0.f,  0.5 + sqrtf(3.f) / 4.f); // верхний
+    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.f,  sqrtf(6.f) /  12.f,  1.f / sqrtf(3.f),    -0.5,  0.5 - sqrtf(3.f) / 4.f); // правый
   
-    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.5,  1.f - sqrtf(3.f) / 2.f); // правый
-    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                 0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.f,  1.f                   ); // верхний
-    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),    0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),    -0.5,  1.f - sqrtf(3.f) / 2.f); // передний
+    VERTEX( 0.5,  sqrtf(6.f) / -12.f,  0.5 / sqrtf(3.f),    0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.5,  0.5 - sqrtf(3.f) / 4.f); // правый
+    VERTEX( 0.f,  1.f / sqrtf(3.f),    0.f,                 0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),     0.f,  0.5 + sqrtf(3.f) / 4.f); // верхний
+    VERTEX( 0.f,  sqrtf(6.f) / -12.f, -1.f / sqrtf(3.f),    0.5,  sqrtf(6.f) /  12.f, -0.5 / sqrtf(3.f),    -0.5,  0.5 - sqrtf(3.f) / 4.f); // передний
     
     ELEMENT(0, 1, 2);
     ELEMENT(3, 4, 5);

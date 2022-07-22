@@ -90,15 +90,15 @@ int main(int argc, char **argv)
     std::shared_ptr<Graphene::Texture> flatLime = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 1.f, 0.f));
     std::shared_ptr<Graphene::Texture> flatBlue = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 0.2, 0.9));
     std::shared_ptr<Graphene::Texture> whiteRedChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.6, 0.6, 0.6),
+        Graphene::Color(0.7, 0.7, 0.7),
         Graphene::Color(1.f, 0.f, 0.f)
     );
     std::shared_ptr<Graphene::Texture> whiteGreenChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.6, 0.6, 0.6),
-        Graphene::Color(0.f, 1.f, 0.f)
+        Graphene::Color(0.7, 0.7, 0.7),
+        Graphene::Color(0.f, 0.5, 0.f)
     );
     std::shared_ptr<Graphene::Texture> whiteBlueChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.6, 0.6, 0.6),
+        Graphene::Color(0.7, 0.7, 0.7),
         Graphene::Color(0.f, 0.f, 1.f)
     );
     

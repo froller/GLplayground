@@ -47,7 +47,6 @@ void main()
         vec3 viewDirection = normalize(cameraMatrices.position - vertex.position);
         vec3 bisect = normalize(lightingDirection + viewDirection);
 
-        //vec3 dimmedColor = lights.light[i].color;
         vec3 dimmedColor = lights.light[i].color * pow(clamp((lights.light[i].attenuation - length(lightingDistance)) / lights.light[i].attenuation, 0.f, 1.f), 2);
 
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;

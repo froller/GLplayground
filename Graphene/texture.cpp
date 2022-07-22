@@ -47,8 +47,7 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
     foo[4] = foo[9]  = 0xFF * color2.g;
     foo[5] = foo[10] = 0xFF * color2.b;
 
-    //glBindTexture(GL_TEXTURE_2D, m_TextureID);
-    glActiveTexture(m_TextureID);
+    glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
