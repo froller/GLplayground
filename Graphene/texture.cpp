@@ -2,6 +2,8 @@
 
 #define PIXEL_SIZE 4
 
+std::list<GLuint> Graphene::Texture::s_TextureUnits;
+
 Graphene::Texture::Texture()
 {
     glGenTextures(1, &m_TextureID);
@@ -24,7 +26,10 @@ Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
     pixel[0].r = 0xFF * color.r;
     pixel[0].g = 0xFF * color.g;
     pixel[0].b = 0xFF * color.b;
+    m_TextureUnit = GL_TEXTURE0 + s_TextureUnits.size();
+    s_TextureUnits.push_back(m_TextureUnit);
 
+//    glActiveTexture(m_TextureUnit);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -46,7 +51,10 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
     foo[3] = foo[8]  = 0xFF * color2.r;
     foo[4] = foo[9]  = 0xFF * color2.g;
     foo[5] = foo[10] = 0xFF * color2.b;
+    m_TextureUnit = GL_TEXTURE0 + s_TextureUnits.size();
+    s_TextureUnits.push_back(m_TextureUnit);
 
+//    glActiveTexture(m_TextureUnit);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

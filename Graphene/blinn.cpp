@@ -12,31 +12,49 @@ Graphene::Material::Blinn::Blinn() : m_Ambient(nullptr), m_Diffuse(nullptr), m_S
 
 void Graphene::Material::Blinn::use()
 {
-    Graphene::Material::use();
+    Material::use();
+/*
     if (m_Ambient)
+    {
         glBindTexture(GL_TEXTURE_2D, m_Ambient->textureID());
+        glBindTextureUnit(GL_TEXTURE0, m_Ambient->textureID());
+    }
+*/
     if (m_Diffuse)
+    {
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_Diffuse->textureID());
+        //glBindTextureUnit(GL_TEXTURE0, m_Diffuse->textureID());
+    }
     if (m_Specular)
+    {
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_Specular->textureID());
+        //glBindTextureUnit(GL_TEXTURE1, m_Specular->textureID());
+    }
+/*
     if (m_Bump)
+    {
         glBindTexture(GL_TEXTURE_2D, m_Bump->textureID());
+        glActiveTexture(GL_TEXTURE0);
+    }
+*/
 }
 
-void Graphene::Material::Blinn::setTexture(const Graphene::Material::Blinn::TextureChannel &channel, std::shared_ptr<Texture> texture)
+void Graphene::Material::Blinn::setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture)
 {
     switch (channel)
     {
-    case(Graphene::Material::Blinn::TextureChannel::Ambient):
+    case (TextureChannel::Ambient):
         m_Ambient = texture;
         break;
-    case(Graphene::Material::Blinn::TextureChannel::Diffuse):
+    case (TextureChannel::Diffuse):
         m_Diffuse = texture;
         break;
-    case (Graphene::Material::Blinn::TextureChannel::Specular):
+    case (TextureChannel::Specular):
         m_Specular = texture;
         break;
-    case (Graphene::Material::Blinn::TextureChannel::Bump):
+    case (TextureChannel::Bump):
         m_Bump = texture;
         break;
     default:

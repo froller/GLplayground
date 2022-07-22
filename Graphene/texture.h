@@ -31,13 +31,17 @@ public:
     constexpr size_t height() const { return m_Height; }
     constexpr void *buffer() const { return m_Buffer; }
     constexpr GLuint textureID() const { return m_TextureID; }
+    constexpr GLuint textureUnit() const { return m_TextureUnit; }
 
 protected:
     size_t m_Width = 0;
     size_t m_Height = 0;
     GLuint m_TextureID = 0;
-    GLuint m_BufferID = 0;
+    GLuint m_TextureUnit = 0;
     void *m_Buffer = nullptr;
+
+protected:
+    static std::list<GLuint> s_TextureUnits;
 };
 
 class Graphene::Texture::Color : public Graphene::Texture
