@@ -26,10 +26,10 @@ public:
     virtual void setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture);
 
 protected:
-    std::shared_ptr<Texture> m_Ambient;
-    std::shared_ptr<Texture> m_Diffuse;
-    std::shared_ptr<Texture> m_Specular;
-    std::shared_ptr<Texture> m_Bump;
+    std::shared_ptr<Texture> m_Ambient  = Graphene::Texture::FlatWhite();
+    std::shared_ptr<Texture> m_Diffuse  = Graphene::Texture::FlatGray();
+    std::shared_ptr<Texture> m_Specular = Graphene::Texture::FlatWhite();
+    std::shared_ptr<Texture> m_Bump     = Graphene::Texture::FlatGray();
 };
 
 #endif // __BLINN_H__

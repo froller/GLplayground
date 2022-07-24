@@ -155,7 +155,7 @@ protected:
 
     unsigned int m_VAO;
     unsigned int m_Buffers[size_t(BufferType::BufferTypeMax)];
-
+    
 public:
     Graphene();
     Graphene(const Graphene &) = delete;

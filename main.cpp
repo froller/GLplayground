@@ -87,8 +87,8 @@ int main(int argc, char **argv)
 
     // Текстуры
     SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Creating textures");
-    std::shared_ptr<Graphene::Texture> flatLime = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.f, 1.f, 0.f));
-    std::shared_ptr<Graphene::Texture> flatWhite = std::make_shared<Graphene::Texture::Color>(Graphene::Color(1.f, 1.f, 1.f));
+    std::shared_ptr<Graphene::Texture> flatGray = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.5));
+    std::shared_ptr<Graphene::Texture> flatWhite = std::make_shared<Graphene::Texture::Color>(Graphene::Color(1.f));
     std::shared_ptr<Graphene::Texture> whiteRedChecker = std::make_shared<Graphene::Texture::Checker>(
         Graphene::Color(0.7, 0.7, 0.7),
         Graphene::Color(1.f, 0.f, 0.f)
@@ -114,10 +114,8 @@ int main(int argc, char **argv)
     blinnRed->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, blackWhiteChecker);
     std::shared_ptr<Graphene::Material::Blinn> blinnGreen = std::make_shared<Graphene::Material::Blinn>();
     blinnGreen->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, whiteGreenChecker);
-    blinnGreen->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, flatWhite);
     std::shared_ptr<Graphene::Material::Blinn> blinnBlue = std::make_shared<Graphene::Material::Blinn>();
     blinnBlue->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, whiteBlueChecker);
-    blinnBlue->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, flatWhite);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());

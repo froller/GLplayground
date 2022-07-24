@@ -33,8 +33,11 @@ layout (std430, binding = 0) buffer Lights {
 } lights;
 
 
-uniform sampler2D diffuseTexture;
-uniform sampler2D specularTexture;
+layout (binding = 0) uniform sampler2D ambientTexture;
+layout (binding = 1) uniform sampler2D diffuseTexture;
+layout (binding = 2) uniform sampler2D specularTexture;
+layout (binding = 3) uniform sampler2D bumpTexture;
+
 
 out vec3 fragmentColor;
 
@@ -54,7 +57,8 @@ void main()
         diffuse = diffuse + max(dot(normalize(vertex.normal), lightingDirection), 0.0) * dimmedColor;
         specular = specular + pow(max(dot(normalize(vertex.normal), bisect), 0.0), 64) * dimmedColor;
     }
-    fragmentColor = specular * texture(specularTexture, vertex.UV * 2.0).rgb + (diffuse + lights.ambient) * texture(diffuseTexture, vertex.UV).rgb; // Включить для текстурирования
+    fragmentColor = 
+        specular * texture(specularTexture, vertex.UV).rgb + (diffuse + lights.ambient * texture(ambientTexture, vertex.UV).rgb) * texture(diffuseTexture, vertex.UV).rgb; // Включить для текстурирования
     //fragmentColor = normalize(vertex.position).rgb; // Включить для обображения координат вершин
     //fragmentColor = normalize(vec3(vertex.UV.x, 0.0, vertex.UV.y)); // Включить для отображения текстурных координат
 }

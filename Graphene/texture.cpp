@@ -2,7 +2,9 @@
 
 #define PIXEL_SIZE 4
 
-std::list<GLuint> Graphene::Texture::s_TextureUnits;
+std::shared_ptr<Graphene::Texture::Value> Graphene::Texture::s_FlatWhite = nullptr;
+std::shared_ptr<Graphene::Texture::Value> Graphene::Texture::s_FlatGray  = nullptr;
+std::shared_ptr<Graphene::Texture::Value> Graphene::Texture::s_FlatBlack = nullptr;
 
 Graphene::Texture::Texture()
 {
@@ -16,6 +18,23 @@ Graphene::Texture::~Texture()
         free(m_Buffer);
 }
 
+Graphene::Texture::Value::Value(const float &value) : m_Value(value)
+{
+    m_Width = 1;
+    m_Height = 1;
+    size_t bufferSize = width() * height() * sizeof(RGB8);
+    m_Buffer = malloc(bufferSize);
+    struct RGB8 *pixel = static_cast<struct RGB8 *>(m_Buffer);
+    pixel[0].r = pixel[0].g = pixel[0].b = 0xFF * value;
+
+    glBindTexture(GL_TEXTURE_2D, m_TextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+
 Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
 {
     m_Width = 1;
@@ -26,10 +45,7 @@ Graphene::Texture::Color::Color(const Graphene::Color &color) : m_Color(color)
     pixel[0].r = 0xFF * color.r;
     pixel[0].g = 0xFF * color.g;
     pixel[0].b = 0xFF * color.b;
-    m_TextureUnit = GL_TEXTURE0 + s_TextureUnits.size();
-    s_TextureUnits.push_back(m_TextureUnit);
 
-//    glActiveTexture(m_TextureUnit);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -51,10 +67,7 @@ Graphene::Texture::Checker::Checker(const Graphene::Color &color1, const Graphen
     foo[3] = foo[8]  = 0xFF * color2.r;
     foo[4] = foo[9]  = 0xFF * color2.g;
     foo[5] = foo[10] = 0xFF * color2.b;
-    m_TextureUnit = GL_TEXTURE0 + s_TextureUnits.size();
-    s_TextureUnits.push_back(m_TextureUnit);
 
-//    glActiveTexture(m_TextureUnit);
     glBindTexture(GL_TEXTURE_2D, m_TextureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width(), height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_Buffer);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
