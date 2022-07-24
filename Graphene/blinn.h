@@ -13,10 +13,9 @@ class Graphene::Material::Blinn : public Material
 {
 public:
     enum class TextureChannel {
-        Ambient,
+        Ambient = 0,
         Diffuse,
-        Specular,
-        Bump
+        Specular
     };
 
 public:
@@ -29,7 +28,6 @@ protected:
     std::shared_ptr<Texture> m_Ambient  = Graphene::Texture::FlatWhite();
     std::shared_ptr<Texture> m_Diffuse  = Graphene::Texture::FlatGray();
     std::shared_ptr<Texture> m_Specular = Graphene::Texture::FlatWhite();
-    std::shared_ptr<Texture> m_Bump     = Graphene::Texture::FlatGray();
 };
 
 #endif // __BLINN_H__

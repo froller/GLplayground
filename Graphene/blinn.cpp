@@ -28,11 +28,6 @@ void Graphene::Material::Blinn::use()
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, m_Specular->textureID());
     }
-    if (m_Bump)
-    {
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, m_Bump->textureID());
-    }
 }
 
 void Graphene::Material::Blinn::setTexture(const TextureChannel &channel, std::shared_ptr<Texture> texture)
@@ -47,9 +42,6 @@ void Graphene::Material::Blinn::setTexture(const TextureChannel &channel, std::s
         break;
     case (TextureChannel::Specular):
         m_Specular = texture;
-        break;
-    case (TextureChannel::Bump):
-        m_Bump = texture;
         break;
     default:
         SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Unknown texture channel %u", channel);

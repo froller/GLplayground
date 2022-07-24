@@ -12,6 +12,7 @@ class Graphene::Material
 public:
     class Default;
     class Blinn;
+    class Bumped;
 
 public:
     Graphene::Program m_Program;
@@ -37,5 +38,8 @@ public:
     Default();
     virtual ~Default();
 };
+
+#include "blinn.h"
+#include "bumped.h"
 
 #endif // __MATERIAL_H__

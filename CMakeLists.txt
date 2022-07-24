@@ -87,6 +87,8 @@ set(GRAPHENE_SOURCES
     Graphene/material.cpp
     Graphene/blinn.h
     Graphene/blinn.cpp
+    Graphene/bumped.h
+    Graphene/bumped.cpp
 )
 add_library(Graphene STATIC ${GRAPHENE_SOURCES})
 target_include_directories(Graphene PUBLIC ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
@@ -132,6 +134,7 @@ set(SHADERS
     Shaders/default.fragment.glsl
     Shaders/blinn.vertex.glsl
     Shaders/blinn.fragment.glsl
+    Shaders/bumped.fragment.glsl
 )
 add_custom_target(Shaders SOURCES ${SHADERS})
 

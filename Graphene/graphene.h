@@ -198,7 +198,6 @@ protected:
 
 #include "texture.h"
 #include "material.h"
-#include "blinn.h"
 
 #include "object.h"
 #include "model.h"

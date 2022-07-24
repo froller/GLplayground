@@ -90,20 +90,20 @@ int main(int argc, char **argv)
     std::shared_ptr<Graphene::Texture> flatGray = std::make_shared<Graphene::Texture::Color>(Graphene::Color(0.5));
     std::shared_ptr<Graphene::Texture> flatWhite = std::make_shared<Graphene::Texture::Color>(Graphene::Color(1.f));
     std::shared_ptr<Graphene::Texture> whiteRedChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.7, 0.7, 0.7),
+        Graphene::Color(0.7),
         Graphene::Color(1.f, 0.f, 0.f)
     );
     std::shared_ptr<Graphene::Texture> whiteGreenChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.7, 0.7, 0.7),
+        Graphene::Color(0.7),
         Graphene::Color(0.f, 0.5, 0.f)
     );
     std::shared_ptr<Graphene::Texture> whiteBlueChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.7, 0.7, 0.7),
+        Graphene::Color(0.7),
         Graphene::Color(0.f, 0.f, 1.f)
     );
     std::shared_ptr<Graphene::Texture> blackWhiteChecker = std::make_shared<Graphene::Texture::Checker>(
-        Graphene::Color(0.f, 0.f, 0.f),
-        Graphene::Color(0.7, 0.7, 0.7)
+        Graphene::Color(0.f),
+        Graphene::Color(1.f)
     );
 
     // Материалы
@@ -114,8 +114,12 @@ int main(int argc, char **argv)
     blinnRed->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, blackWhiteChecker);
     std::shared_ptr<Graphene::Material::Blinn> blinnGreen = std::make_shared<Graphene::Material::Blinn>();
     blinnGreen->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, whiteGreenChecker);
+    blinnGreen->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, blackWhiteChecker);
     std::shared_ptr<Graphene::Material::Blinn> blinnBlue = std::make_shared<Graphene::Material::Blinn>();
     blinnBlue->setTexture(Graphene::Material::Blinn::TextureChannel::Diffuse, whiteBlueChecker);
+    blinnBlue->setTexture(Graphene::Material::Blinn::TextureChannel::Specular, blackWhiteChecker);
+    std::shared_ptr<Graphene::Material::Bumped> bumped = std::make_shared<Graphene::Material::Bumped>();
+    bumped->setTexture(Graphene::Material::Bumped::TextureChannel::Bump, blackWhiteChecker);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Populating scene");
     //    graphene->addModel(Graphene::SimpleObjects::Triangle());
@@ -137,7 +141,7 @@ int main(int argc, char **argv)
         fvec3(0.0, 0.0, -1.f),
         fquat(fvec3(0.f, 0.f, 0.f)),
         fvec3(0.5, 0.5, 0.5),
-        blinnBlue
+        bumped
     ));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_RENDER, "Adding lights");
