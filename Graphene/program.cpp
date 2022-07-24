@@ -21,11 +21,27 @@ GLuint Graphene::Program::handle() const
     return m_Handle;
 }
 
-void Graphene::Program::addShader(std::shared_ptr<Shader> shader)
+void Graphene::Program::addShader(const std::shared_ptr<Shader> &shader)
 {
     shader->compile();
     glAttachShader(m_Handle, shader->handle());
     m_Shaders.push_back(shader);
+    SDL_LogDebug(SDL_LOG_CATEGORY_RENDER, "Shader %u added to program %u", shader->handle(), m_Handle);
+}
+
+void Graphene::Program::removeShader(const std::shared_ptr<Shader>& shader)
+{
+    m_Shaders.remove(shader);
+    glDetachShader(m_Handle, shader->handle());
+    SDL_LogDebug(SDL_LOG_CATEGORY_RENDER, "Shader %u removed from program %u", shader->handle(), m_Handle);
+}
+
+std::shared_ptr<Graphene::Shader> Graphene::Program::getShader(const ShaderType &type)
+{
+    for (auto shader = m_Shaders.begin(); shader != m_Shaders.end(); ++shader)
+        if ((*shader)->type() == type)
+            return (*shader);
+    return nullptr;
 }
 
 int Graphene::Program::use()

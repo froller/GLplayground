@@ -1,6 +1,8 @@
 #ifndef __PROGRAM_H__
 #define __PROGRAM_H__
 
+#include <list>
+
 /*******************************************************************************
  * 
  * Graphene::Program
@@ -11,7 +13,7 @@ class Graphene::Program
 {
 protected:
     GLuint m_Handle;
-    std::vector<std::shared_ptr<Shader>> m_Shaders;
+    std::list<std::shared_ptr<Shader>> m_Shaders;
     std::string m_Log;
     uint64_t m_LastError;
 
@@ -21,7 +23,9 @@ public:
     virtual ~Program();
     Program &operator=(const Program &) = delete;
     virtual GLuint handle() const;
-    virtual void addShader(std::shared_ptr<Shader> shader);
+    virtual void addShader(const std::shared_ptr<Shader> &shader);
+    virtual void removeShader(const std::shared_ptr<Shader> &shader);
+    virtual std::shared_ptr<Shader> getShader(const ShaderType &type);
     virtual int link();
     virtual int use();
     virtual bool linked() const;
