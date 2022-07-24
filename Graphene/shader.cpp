@@ -22,7 +22,8 @@ Graphene::Shader::~Shader()
 
 int Graphene::Shader::loadSource(const std::filesystem::path &path)
 {
-    FILE *shaderSourceFile = fopen(path.string().c_str(), "rb");
+    m_Path = path;
+    FILE *shaderSourceFile = fopen(m_Path.string().c_str(), "rb");
     if (!shaderSourceFile)
     {
         m_LastError = errno;
@@ -55,6 +56,7 @@ int Graphene::Shader::loadSource(const std::filesystem::path &path)
 
 void Graphene::Shader::setSource(const std::string &shaderSource)
 {
+    m_Path = "";
     const char *shaderSourceString = shaderSource.data();
     glShaderSource(m_Handle, 1, &shaderSourceString, nullptr);
 }
@@ -69,7 +71,10 @@ int Graphene::Shader::compile()
         m_Log.clear();
         m_Log.reserve(logLen);
         glGetShaderInfoLog(m_Handle, m_Log.capacity(), nullptr, m_Log.data());
-        SDL_LogCritical(SDL_LOG_CATEGORY_RENDER, "Error compiling shader: %s\n", m_Log.c_str());
+        if (m_Path == "")
+            SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Error compiling shader: %s\n", m_Log.c_str());
+        else
+            SDL_LogError(SDL_LOG_CATEGORY_RENDER, "Error compiling shader %s: %s\n", m_Path.c_str(), m_Log.c_str());
         return -1;
     }
     else

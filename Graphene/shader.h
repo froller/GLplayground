@@ -12,6 +12,7 @@ class Graphene::Shader
 protected:
     GLuint m_Handle;
     std::string m_Log;
+    std::filesystem::path m_Path = "";
     uint64_t m_LastError;
 
 public:
