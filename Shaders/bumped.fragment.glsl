@@ -43,6 +43,13 @@ void main()
 {
     vec3 diffuse = vec3(0);
     vec3 specular = vec3(0);
+
+    // Рассчет искажения нормалей bump-текстурой
+    vec2 normalDeform = 
+        texture(bumpTexture, vertex.UV - vec2(dFdx(vertex.UV.x), dFdy(vertex.UV.y))).xy
+        - texture(bumpTexture, vertex.UV + vec2(dFdx(vertex.UV.x), dFdy(vertex.UV.y))).xy;
+
+    // Рассчет освещенности для каждого источника света
     for (uint i = 0; i < lights.count; ++i)
     {
         vec3 lightingDirection = normalize(lights.light[i].position - vertex.position);
@@ -59,5 +66,6 @@ void main()
         specular * texture(specularTexture, vertex.UV).rgb + (diffuse + lights.ambient * texture(ambientTexture, vertex.UV).rgb) * texture(diffuseTexture, vertex.UV).rgb; // Включить для текстурирования
 //     fragmentColor = normalize(vertex.position).rgb; // Включить для обображения координат вершин
 //     fragmentColor = normalize(vec3(vertex.UV.x, 0.0, vertex.UV.y)); // Включить для отображения текстурных координат
-    fragmentColor = normalize(vertex.normal); // Включить для обображения нормалей
+//    fragmentColor = normalize(vertex.normal); // Включить для обображения нормалей
+    fragmentColor = vec3(normalDeform + 0.5, 0);
 }
