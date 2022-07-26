@@ -99,7 +99,7 @@ if (WIN32)
     set_property(TARGET Graphene PROPERTY VS_PACKAGE_REFERENCES "sdl2_2.0.5;GLEW_dynamic_2.0.0.0;glm_0.9.9.800")
 endif()
 source_group("Engine" REGULAR_EXPRESSION Graphene/.+\.\(cpp|h\))
-source_group("Materials" REGULAR_EXPRESSION Graphene/\(blinn\)\.\(cpp|h\))
+source_group("Materials" REGULAR_EXPRESSION Graphene/\(blinn|bumped\)\.\(cpp|h\))
 source_group("Simple objects" REGULAR_EXPRESSION Graphene/\(simpleobjects\)\.\(cpp|h\))
 
 ###############################################################################
@@ -139,5 +139,6 @@ set(SHADERS
 add_custom_target(Shaders SOURCES ${SHADERS})
 source_group("Default" REGULAR_EXPRESSION Shaders/default\..+\.glsl)
 source_group("Blinn" REGULAR_EXPRESSION Shaders/blinn\..+\.glsl)
+source_group("Bumped" REGULAR_EXPRESSION Shaders/bumped\..+\.glsl)
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
